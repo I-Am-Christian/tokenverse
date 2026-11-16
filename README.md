@@ -1,3 +1,41 @@
+# TOKENVERSE — Browser Flight Update v0.4
+
+**Play in your browser:** https://i-am-christian.github.io/tokenverse/
+
+The GitHub Pages build is a self-contained, playable **solo test sector**. No installation, game server, or wallet connection is required. Your simulated resources and upgrades are saved in this browser under the existing `tokenverse-pages-v1` save key, retaining earlier progress.
+
+## New in v0.4
+
+- **Zero-gravity inertia:** The ship accelerates under engine thrust and continues drifting without drag after releasing thrust. Active braking and an optional Flight Assist switch help pilots stabilize.
+- **Mouse aiming + click-to-navigate:** Face the cursor, click empty space for physics-based autopilot, click a mineral asteroid to mine it, or click the port or a space station to dock. The autopilot uses reverse thrust to slow for arrival.
+- **Ship combat and hazards:** Fight solo rogue-drone enemies, fire blasters, dodge their projectiles, collide with asteroids, collect wreck salvage and repair damaged hulls.
+- **Polished visuals:** Animated engine plumes, particle trails, laser effects, nebula parallax, station and port graphics, screen shake and a tactical minimap.
+- **Progression:** Repeatable mining, refinement and combat contracts grant simulated $JUNK credits and experience.
+- **Economy:** Four simulated material tokens, simulated token exchange, uncapped controlled $MOON/$NEON issuance and recycled upgrade/station token costs, with $DUST and $VOID limited by available reserves.
+- **Mobile:** Touch-to-navigate, directional thrust, boost, brake and fire buttons.
+
+### Browser controls
+
+| Input | Action |
+|---|---|
+| Move mouse over playfield | Aim the ship |
+| Click empty space | Set an autopilot waypoint |
+| Click asteroid | Fly to it and mine automatically |
+| Click port or your outpost | Autopilot and dock |
+| W / S | Forward / reverse thrust in facing direction |
+| A / D | Lateral maneuvering thrusters |
+| Shift | Boost (consumes energy) |
+| Space | Active braking thrust |
+| F | Fire weapon (disabled inside port safety zone) |
+| Right-click on the game | Fire weapon |
+| M | Mine nearest asteroid |
+| Escape | Cancel autopilot |
+| Flight assist toggle | Apply stabilizing thrust when controls are released |
+
+**Important:** The GitHub Pages version is not shared multiplayer. GitHub Pages serves static files only; the existing Node/WebSocket multiplayer code remains in `server.js` and `public/`, but it must be hosted separately and connected to the browser client for live shared PvP, chat, player stations, and authoritative trading. The solo economy is not a secure ledger, cryptocurrency, or withdrawal service.
+
+---
+
 ## Play immediately on GitHub Pages (solo mode)
 
 The static browser sandbox lives in `docs/index.html`. After enabling **Settings → Pages → Deploy from a branch → main /docs**, the website will be `https://i-am-christian.github.io/tokenverse/`. This version saves locally in the player's browser, supports spaceflight, asteroid mining, refining, ship upgrades, token recycling and station construction. **It is NOT multiplayer**: GitHub Pages cannot host the WebSocket game server, persistent shared stations or authenticated real-crypto balances. The existing Node server remains available for later deployment behind a separate hosting service or Supabase-backed architecture.
