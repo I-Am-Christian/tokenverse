@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: tokenverse
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+# WARNING: local JSON saves are ephemeral on services without persistent disks.
+# Add a persistent data store and set DATA_DIR before real public play.
