@@ -15,8 +15,8 @@ const PORT = Number(process.env.PORT) || 3000;
 const WIDTH = 2600, HEIGHT = 1800, CX = WIDTH/2, CY = HEIGHT/2, SAFE = 240;
 const TYPES = ['moon','neon','dust','void'];
 const DEFINITIONS = {
-  moon: {name:'Moonstone', ticker:'MOON', color:'#91b9ff', cap:1000000, poolTokens:4000, poolCredits:84000, reserve:140000, day:5000, personal:100, ore:4, payout:2, fee:3, rawPrice:7},
-  neon: {name:'Neonite', ticker:'NEON', color:'#55f4db', cap:400000, poolTokens:1700, poolCredits:85000, reserve:55000, day:1800, personal:40, ore:3, payout:1, fee:5, rawPrice:16},
+  moon: {name:'Moonstone', ticker:'MOON', color:'#91b9ff', cap:null, poolTokens:4000, poolCredits:84000, reserve:140000, day:5000, personal:100, ore:4, payout:2, fee:3, rawPrice:7},
+  neon: {name:'Neonite', ticker:'NEON', color:'#55f4db', cap:null, poolTokens:1700, poolCredits:85000, reserve:55000, day:1800, personal:40, ore:3, payout:1, fee:5, rawPrice:16},
   dust: {name:'Stardust', ticker:'DUST', color:'#ffd17b', cap:100000, poolTokens:500, poolCredits:65000, reserve:13500, day:440, personal:12, ore:2, payout:1, fee:8, rawPrice:39},
   void: {name:'Void crystal', ticker:'VOID', color:'#c5a0ff', cap:20000, poolTokens:130, poolCredits:76000, reserve:2500, day:70, personal:3, ore:1, payout:1, fee:25, rawPrice:100}
 };
@@ -37,6 +37,13 @@ for (const k of TYPES) {
   if(!l || !Number.isFinite(l.poolTokens) || !Number.isFinite(l.rewardReserve)) {
     ledger[k]={poolTokens:d.poolTokens,poolCredits:d.poolCredits,rewardReserve:d.reserve,burned:0,issued:0,daily:0};
   }
+  ledger[k].recycled ||= 0; ledger[k].newlyMinted ||= 0;
+}
+// Upgrade payments return to the reward vault. Only controlled rewards create new supply.
+function recycleToken(account, kind, quantity){
+  account.tokens[kind]-=quantity;
+  ledger[kind].rewardReserve+=quantity;
+  ledger[kind].recycled+=quantity;
 }
 let day=save.day||utcDay();
 let portBudget=save.portBudget ?? 24000;
@@ -90,7 +97,7 @@ function randomAsteroid(){
 for(let i=0;i<100;i++)asteroids.push(randomAsteroid());
 function respawnAsteroid(a){Object.assign(a,randomAsteroid(),{id:a.id});}
 function price(k){const l=ledger[k];return +(l.poolCredits/l.poolTokens).toFixed(3);}
-function market(){return Object.fromEntries(TYPES.map(k=>[k,{...DEFINITIONS[k], ...ledger[k], price:price(k), dailyRemaining:Math.max(0,Math.min(DEFINITIONS[k].day-ledger[k].daily,ledger[k].rewardReserve))}]));}
+function market(){return Object.fromEntries(TYPES.map(k=>[k,{...DEFINITIONS[k], ...ledger[k], price:price(k), dailyRemaining:Math.max(0,Math.min(DEFINITIONS[k].day-ledger[k].daily,DEFINITIONS[k].cap===null?Infinity:ledger[k].rewardReserve))}]));}
 function snapshot(){
  const ps=[...players.values()].map(p=>({id:p.id,name:p.account.name,x:Math.round(p.x),y:Math.round(p.y),angle:p.angle,hp:Math.round(p.hp),energy:Math.round(p.energy),kills:p.account.kills,level:p.account.level,invulnerable:now()<p.invuln}));
  const world={t:'world',time:now(),day, players:ps, asteroids:asteroids.filter(a=>a.remaining>0).map(a=>({id:a.id,x:a.x,y:a.y,kind:a.kind,remaining:a.remaining,r:a.r})),
@@ -146,10 +153,13 @@ function doRefine(p,k){
  resetDaily(); const d=DEFINITIONS[k],l=ledger[k],a=p.account;
  if(a.hold[k]<d.ore)return notify(p,`Need ${d.ore} ${d.name} ore to refine.`,'warn');
  if(a.credits<d.fee)return notify(p,`Refining costs ${d.fee} $JUNK.`,'warn');
- if(l.rewardReserve<d.payout||l.daily+d.payout>d.day||a.daily.minted[k]+d.payout>d.personal)
+ if((d.cap!==null&&l.rewardReserve<d.payout)||l.daily+d.payout>d.day||a.daily.minted[k]+d.payout>d.personal)
    return notify(p,'Daily token release limit reached. Ore remains yours.','warn');
  a.hold[k]-=d.ore;a.credits-=d.fee;a.tokens[k]+=d.payout;
- a.daily.minted[k]+=d.payout;l.daily+=d.payout;l.rewardReserve-=d.payout;l.issued+=d.payout;
+ const fromReserve=Math.min(l.rewardReserve,d.payout);
+ const newlyMinted=d.payout-fromReserve; // Only uncapped common tokens may be minted here.
+ l.rewardReserve-=fromReserve;l.newlyMinted+=newlyMinted;
+ a.daily.minted[k]+=d.payout;l.daily+=d.payout;l.issued+=d.payout;
  notify(p,`Refined ${d.ore} ore into ${d.payout} $${d.ticker}.`,'good');self(p);
 }
 function sellOre(p,k,qty){
@@ -201,7 +211,7 @@ function buildStation(p){
  const cost={moon:10,neon:4,dust:1};
  if(Object.keys(cost).some(k=>a.hold[k]<cost[k])||a.tokens.moon<2||a.credits<160)
   return notify(p,'Station costs 10 Moonstone, 4 Neonite, 1 Stardust ore, 2 $MOON and 160 $JUNK.','warn');
- for(const k in cost)a.hold[k]-=cost[k];a.tokens.moon-=2;ledger.moon.burned+=2;a.credits-=160;
+ for(const k in cost)a.hold[k]-=cost[k];recycleToken(a,'moon',2);a.credits-=160;
  const s={id:nextStationId++,owner:p.id,name:`${a.name}'s Outpost`,x:Math.round(p.x),y:Math.round(p.y),tier:1,maxHp:440,hp:440,storage:makeMap()};
  stations.push(s);publish('station',`${a.name} established a new space station!`);notify(p,'Space station built! Dock here to refine, repair and store cargo.','good');self(p);
 }
@@ -215,7 +225,7 @@ function serviceStation(p,mode){const st=atOwnStation(p);if(!st)return notify(p,
  }else if(mode==='fortify'){
   if((st.tier||1)>=3)return notify(p,'Station already at maximum tier.','warn');
   if(a.tokens.void<1||a.tokens.dust<2||a.tokens.neon<3||a.credits<150)return notify(p,'Fortification needs 1 $VOID, 2 $DUST, 3 $NEON and 150 $JUNK.','warn');
-  a.tokens.void--;a.tokens.dust-=2;a.tokens.neon-=3;a.credits-=150;for(const [k,n] of [['void',1],['dust',2],['neon',3]])ledger[k].burned+=n;
+  for(const [k,n] of [['void',1],['dust',2],['neon',3]])recycleToken(a,k,n);a.credits-=150;
   st.tier=(st.tier||1)+1;st.maxHp=440*st.tier;st.hp=Math.min(st.maxHp,st.hp+440);notify(p,`Outpost fortification upgraded to tier ${st.tier}!`,'good');publish('station',`${a.name} fortified an outpost to tier ${st.tier}.`);
  }else if(mode==='deposit'){
   let n=0;for(const k of TYPES){const room=140*(st.tier||1)-TYPES.reduce((sum,t)=>sum+st.storage[t],0);const q=Math.min(a.hold[k],Math.max(0,room));st.storage[k]+=q;a.hold[k]-=q;n+=q;}
@@ -232,7 +242,7 @@ function upgrade(p,kind){const a=p.account;if(!['laser','engine','cargo'].includ
  const cost=80*level*level+40;
  const [token,q]=EXTRA[kind][level];
  if(a.credits<cost||a.tokens[token]<q)return notify(p,`Upgrade costs ${cost} $JUNK and ${q} $${DEFINITIONS[token].ticker}.`,'warn');
- a.credits-=cost;a.tokens[token]-=q;ledger[token].burned+=q;a.upgrades[kind]++;notify(p,`${kind} upgraded to level ${level+1}!`,'good');self(p);
+ a.credits-=cost;recycleToken(a,token,q);a.upgrades[kind]++;notify(p,`${kind} upgraded to level ${level+1}!`,'good');self(p);
 }
 function repairShip(p){const a=p.account;if(!dockLocation(p))return notify(p,'Dock to repair your ship.','warn');
  if(p.hp>=100)return notify(p,'Hull is already fully repaired.');
@@ -244,7 +254,7 @@ function warp(p){const a=p.account,targets=stations.filter(s=>s.owner===p.id);
  if(now()-(p.lastWarp||0)<75000)return notify(p,'Warp drive cooling down.','warn');
  if(a.tokens.void<1)return notify(p,'Emergency warp consumes 1 $VOID token.','warn');
  const dest=targets.sort((s,t)=>distance(t,p)-distance(s,p))[0];
- a.tokens.void--;ledger.void.burned++;p.lastWarp=now();p.x=rate(dest.x+75,20,WIDTH-20);p.y=rate(dest.y+65,20,HEIGHT-20);p.target=null;p.invuln=now()+2500;notify(p,'Emergency warp complete! 1 $VOID burned.','good');self(p);}
+ recycleToken(a,'void',1);p.lastWarp=now();p.x=rate(dest.x+75,20,WIDTH-20);p.y=rate(dest.y+65,20,HEIGHT-20);p.target=null;p.invuln=now()+2500;notify(p,'Emergency warp complete! 1 $VOID recycled into the reward vault.','good');self(p);}
 function fire(p,angle){
  if(!Number.isFinite(angle))return;
  if(distance(p,{x:CX,y:CY})<SAFE+10)return notifyThrottled(p,'Weapons disabled within the port safe zone.');

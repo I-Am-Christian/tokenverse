@@ -1,3 +1,11 @@
+## Play immediately on GitHub Pages (solo mode)
+
+The static browser sandbox lives in `docs/index.html`. After enabling **Settings → Pages → Deploy from a branch → main /docs**, the website will be `https://i-am-christian.github.io/tokenverse/`. This version saves locally in the player's browser, supports spaceflight, asteroid mining, refining, ship upgrades, token recycling and station construction. **It is NOT multiplayer**: GitHub Pages cannot host the WebSocket game server, persistent shared stations or authenticated real-crypto balances. The existing Node server remains available for later deployment behind a separate hosting service or Supabase-backed architecture.
+
+## Revised economy
+
+Ship upgrades, station construction and fortification, and warp now return spent tokens to the refinement reward reserve. $MOON and $NEON no longer have a maximum supply in the prototype: controlled new issuance occurs only when their recycled reward reserve is insufficient, with the original per-day and per-player reward caps. $DUST and $VOID remain capped. Marketplace fees still burn tokens. See `ECONOMY.md`.
+
 > **Website proposal:** `tokenverse.online` (availability and ownership not confirmed). This prototype is not deployed yet.
 
 # TOKENVERSE — The Tokenized Frontier (Multiplayer Alpha 0.2)
