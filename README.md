@@ -1,3 +1,11 @@
+## Tokenverse v0.5 — Galactic Expansion
+
+Play: https://i-am-christian.github.io/tokenverse/
+
+New: original synthesized sound effects, working dock upgrades and stable button interaction, Full HD mission-control layout, 7,200×4,800 galaxy, gated high-tier PvE sectors, and a diamond-rich contested solo zone with simulated $DIAM. See [release notes](RELEASE_NOTES.md). **This GitHub Pages version is single-player; real multiplayer/PvP and on-chain tokens are not active.**
+
+---
+
 # TOKENVERSE — Browser Flight Update v0.4
 
 **Play in your browser:** https://i-am-christian.github.io/tokenverse/
