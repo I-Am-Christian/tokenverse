@@ -1,3 +1,15 @@
+# Tokenverse v0.13 — Faction Frontiers
+
+**Play directly in your browser:** https://i-am-christian.github.io/tokenverse/
+
+Choose one of four factions, establish a home base in a separate territory, earn reputation through repeatable contracts, and explore a **48,000 × 28,800** universe (four times the previous area). Each faction has protected stations and patrols; the neutral Disputed Rift has dense rare ore. The existing 36-ship dealer, crafting, markets, scanner, drones, bosses, modular player outposts and five connected star systems remain.
+
+[Read v0.13 release notes](FACTION_FRONTIERS_V013.md).
+
+**This GitHub Pages build is a solo browser simulation.** Faction rivals are NPCs; shared PvP, player-owned territory, crypto wallet transfers and real token trading are not active.
+
+---
+
 # Tokenverse v0.12 — Frontier Industries
 
 **Play the browser game:** https://i-am-christian.github.io/tokenverse/
