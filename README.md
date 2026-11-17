@@ -1,5 +1,10 @@
 # Tokenverse v0.13 — Faction Frontiers
 
+## Universe design archive — lore and v0.14 planning
+
+**New planning documents (18 November 2026):** [The Eidon Chronicles lore bible](docs/design/TOKENVERSE_LORE_BIBLE.md), [game design document](docs/design/TOKENVERSE_GAME_DESIGN_DOCUMENT.md), and [v0.14 The Twelve Bells implementation roadmap](docs/design/TOKENVERSE_V014_IMPLEMENTATION_ROADMAP.md). These describe **proposed** lore and future gameplay. The current GitHub Pages build remains the v0.13 solo prototype; real NFTs, shared PvP and crypto settlement are not deployed.
+
+
 **Play directly in your browser:** https://i-am-christian.github.io/tokenverse/
 
 Choose one of four factions, establish a home base in a separate territory, earn reputation through repeatable contracts, and explore a **48,000 × 28,800** universe (four times the previous area). Each faction has protected stations and patrols; the neutral Disputed Rift has dense rare ore. The existing 36-ship dealer, crafting, markets, scanner, drones, bosses, modular player outposts and five connected star systems remain.
