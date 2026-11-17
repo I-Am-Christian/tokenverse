@@ -1,3 +1,15 @@
+# Tokenverse v0.14 — The Twelve Bells
+
+**Play in your browser:** https://i-am-christian.github.io/tokenverse/
+
+The **Eidon Chronicles** has arrived in the solo browser prototype: a twelve-times-daily local Heart Chamber event, faction-specific ship silhouettes, more grounded Canvas effects, regional ore exchange, cross-system cargo deliveries, cosmetic ship skins and the Chapter Zero lore mission. [Read the v0.14 release notes](TWELVE_BELLS_V014.md) and the [complete narrative/game-design archive](docs/design/README.md).
+
+The existing 48,000 × 28,800 worlds, five connected systems, four factions, 36 ships, weapons, drones, bases and markets remain. Older pilot saves are migrated in place.
+
+**Important:** GitHub Pages is a local solo simulation: no shared PvP, real NFTs, crypto withdrawals, or genuine global scarcity. All material token prices, collections and SC rewards are for gameplay only.
+
+---
+
 # Tokenverse v0.13 — Faction Frontiers
 
 ## Universe design archive — lore and v0.14 planning

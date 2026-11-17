@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#050b19" />
-<title>Tokenverse v0.13 — Faction Frontiers</title>
+<title>Tokenverse v0.14 — The Twelve Bells</title>
 <style>
 
 :root{color-scheme:dark;--ink:#040a18;--glass:rgba(5,15,35,.72);--panel:rgba(7,19,42,.92);--stroke:rgba(99,171,215,.25);--text:#e9f6ff;--muted:#7e9db4;--ice:#6de8f2;--mint:#70f4cd;--violet:#9684ff;--amber:#ffca7a;--danger:#ff788d;font-family:Inter, 'Segoe UI',system-ui,sans-serif}
@@ -95,6 +95,38 @@
 .faction-badge-map span{font-size:10px;padding:5px 7px;border:1px solid currentColor;border-radius:5px;background:#0d223b}
 @media(max-width:700px){.faction-join-card{padding:13px;max-height:92vh}.faction-join-card h2{font-size:18px}.faction-join-card .faction-options{grid-template-columns:1fr}.faction-card{grid-template-columns:35px minmax(0,1fr) auto;gap:7px;padding:8px}.faction-card h4{font-size:12px}.faction-card button{padding:6px 8px}.faction-join-card .faction-card{grid-template-columns:32px minmax(0,1fr)}#factionDrawer{max-width:90vw}}
 @media(prefers-reduced-motion:reduce){.faction-join-modal{backdrop-filter:none}}
+/* Tokenverse v0.14: unobtrusive Bell, contextual logistics, collectibles and archive */
+#v14BellButton{font-weight:800;letter-spacing:.05em;border:1px solid #7d72bd;background:linear-gradient(160deg,#35215b,#172b51);color:#f8eaff;box-shadow:0 0 13px #9873ff25}
+#v14BellButton.v14-live{border-color:#ffc96b;background:linear-gradient(160deg,#795c1f,#3b244a);color:#fff3ca;box-shadow:0 0 16px #ffa93a44}
+#v14BellBadge{color:#ddcfef;white-space:nowrap;font-size:11px}
+#v14BellDrawer .v14-hero{padding:12px;background:linear-gradient(160deg,#28204b,#152c48);border-radius:12px;text-align:center;border:1px solid #615988}
+#v14BellDrawer .v14-clock{font-size:31px;font-weight:850;font-variant-numeric:tabular-nums;margin:8px 0}
+#v14BellDrawer .v14-actions{margin-top:10px}
+.v14-caption{margin:14px 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#b6dcfa}
+.v14-disclaimer,.v14-sub{font-size:11px;line-height:1.5;color:#a8bdd7;margin:8px 0}
+.v14-skin-row,.v14-contract{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:9px;padding:12px 5px;border-bottom:1px solid #ffffff18}
+.v14-skin-row b,.v14-contract b{display:block;color:#f0f6ff;font-size:13px}
+.v14-skin-row small,.v14-contract small{display:block;color:#b1c0dc;font-size:11px;line-height:1.5;margin-top:5px}
+.v14-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.v14-actions button,.v14-contract button,.v14-mode-buttons button,.v14-skin-row button{padding:7px 10px;border:1px solid #49689a;background:#20396a;border-radius:8px;color:white;font-size:11px}
+.v14-actions button:disabled,.v14-contract button:disabled{opacity:.35}
+.v14-mode-buttons{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.v14-mode-buttons .v14-selected{background:#276e99;border-color:#88e4ff}
+#v14ShipPreview{width:min(100%,440px);height:auto;display:block;margin:8px auto;border:1px solid #2c5c73;border-radius:12px}
+#v14LogisticsBody{min-height:120px}
+#v14LogisticsBody .rowItem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+.v14-contract{display:block;padding:12px;background:#101d3a;border:1px solid #30436a;border-radius:10px;margin:10px 0}
+.v14-contract button{margin-top:8px}
+.v14-bulletin{padding:8px 2px;border-bottom:1px solid #ffffff13;font-size:12px;color:#c2d4e9}
+#v14LoreRows details{padding:10px;background:#111d36;border:1px solid #2b4970;border-radius:9px;margin:8px 0}
+#v14LoreRows summary{cursor:pointer;color:#c6e6ff;font-weight:700;font-size:12px}
+#v14LoreRows p{font-size:12px;line-height:1.65;color:#c9d1ea}
+#v14BellDrawer .v14-actions button:disabled{opacity:.36}
+#v14Quality,#v14ReducedMotion{accent-color:#70cbf5}
+#v14Quality{background:#101e3d;border:1px solid #3a6481;color:#e5f5ff;border-radius:8px;padding:5px}
+.v14-archive-label{font-size:12px;line-height:1.45;color:#def3ff}
+@media(max-width:850px){#v14BellBadge{display:none}#v14BellButton{padding:8px 10px;font-size:10px}.v14-skin-row{display:block}.v14-skin-row .v14-actions{justify-content:flex-start;margin-top:8px}}
+@media(max-height:650px){#v14BellDrawer .v14-clock{font-size:24px}}
 </style>
 </head>
 <body>
@@ -104,9 +136,9 @@
   <div id="topBar" class="hud">
     <div id="brand">
       <div class="brand-mark"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true"><circle cx="16" cy="16" r="4" fill="#6fe8f2"/><ellipse cx="16" cy="16" rx="15" ry="6" stroke="#6fe8f2" fill="none" stroke-width="1.2" transform="rotate(-37 16 16)"/><path d="M7 26 25 6" stroke="#fff" stroke-width="1.1"/></svg></div>
-      <div class="brand-copy"><div class="logo">TOKEN<span>VERSE</span></div><div class="sub">Pilot command · Faction Frontiers 0.13</div></div>
+      <div class="brand-copy"><div class="logo">TOKEN<span>VERSE</span></div><div class="sub">Pilot command · The Twelve Bells 0.14</div></div>
     </div>
-    <div id="topCenter"><span class="sector-signal"><i class="signal-dot"></i>Solo sector</span><i class="sector-divider"></i><span id="systemTag" class="pill">Orion Belt</span><span id="factionTag" class="pill">Choose faction</span><span id="zoneTag" class="pill">Frontier</span><i class="sector-divider"></i><span id="dockTag" class="pill">In flight</span><span id="hostileTag" class="pill">0 hostiles</span><span id="coordsTag" class="pill">X 0 • Y 0</span></div>
+    <div id="topCenter"><span class="sector-signal"><i class="signal-dot"></i>Solo sector</span><i class="sector-divider"></i><span id="systemTag" class="pill">Orion Belt</span><span id="factionTag" class="pill">Choose faction</span><button id="v14BellButton" class="pill" aria-label="Open the Twelve Bells event console">BELL · COUNTDOWN</button><span id="v14BellBadge" class="pill" aria-hidden="true">NEXT BELL</span><span id="zoneTag" class="pill">Frontier</span><i class="sector-divider"></i><span id="dockTag" class="pill">In flight</span><span id="hostileTag" class="pill">0 hostiles</span><span id="coordsTag" class="pill">X 0 • Y 0</span></div>
     <div id="topRight"><div class="top-credit"><div class="credit-caption">Credit balance</div><div id="topCredits">0 <small>SC</small></div></div></div>
   </div>
 
@@ -146,6 +178,16 @@
 <h3 style="margin-top:16px">Faction contract</h3><div id="factionMission"></div>
 <h3>Choose allegiance</h3><div id="factionOptions" class="faction-options"></div>
 </div>
+    <div id="v14BellDrawer" class="hud drawer" aria-label="Twelve Bells and event preparations">
+      <h3>The Twelve Bells <span class="test-pill">SOLO EVENT</span></h3>
+      <div class="v14-hero"><div id="v14BellPhase" class="v14-caption">NEXT BELL</div><div id="v14BellClock" class="v14-clock">00:00:00</div><div class="v14-sub" id="v14BellDate"></div></div>
+      <p class="v14-sub" id="v14BellDetails"></p>
+      <div class="v14-actions"><button id="v14BellRoute">Plot course to Rift</button><button id="v14BellEntry">Enter Heart Chamber</button><button id="v14BellExit" class="hidden">Extract cargo</button></div>
+      <div class="v14-caption">Expedition ledger</div><p id="v14RiftCount" class="v14-sub"></p><p id="v14RiftResult" class="v14-sub"></p>
+      <div class="v14-caption">Graphics & access</div><label class="v14-sub">Visual quality <select id="v14Quality"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="auto">Auto</option></select></label>
+      <label class="v14-sub" style="display:block;margin-top:10px"><input id="v14ReducedMotion" type="checkbox"> Reduced motion and flashes</label>
+      <p class="v14-disclaimer">Simulated local event. Each Bell uses your device clock; no shared PvP or cryptocurrency payouts are active.</p>
+    </div>
   </div>
 
   <div id="quickLog" class="hud hidden"></div>
@@ -176,7 +218,7 @@
       <button class="tab active" data-tab="market">Trade hub</button>
       <button class="tab" data-tab="upgrades">Ship systems</button>
       <button class="tab" data-tab="workshop">Fabricator</button>
-      <button class="tab" data-tab="shipyard">Customise</button><button class="tab" data-tab="exchange">Token Exchange</button><button class="tab" data-tab="construction">Construction</button><button class="tab" data-tab="dronehangar">Drones</button><button class="tab" data-tab="exploration">Exploration</button>
+      <button class="tab" data-tab="shipyard">Customise</button><button class="tab" data-tab="exchange">Token Exchange</button><button class="tab" data-tab="construction">Construction</button><button class="tab" data-tab="dronehangar">Drones</button><button class="tab" data-tab="exploration">Exploration</button><button class="tab" data-tab="logistics">Exchange & Logistics</button><button class="tab" data-tab="archive">Eidon Archives</button>
     </div>
     <div class="modalBody">
       <section class="stationSection active" data-section="market">
@@ -199,7 +241,7 @@
         <div class="ship-summary">Scrap Credits (SC) purchase ordinary ships. Material tokens are reserved for specialist crafting and existing premium hulls.</div><select id="shipFilter" class="ship-filter" aria-label="Filter ship dealership"><option value="all">All 36 ships</option><option value="scout">Scouts</option><option value="miner">Miners</option><option value="fighter">Fighters</option><option value="hauler">Haulers</option><option value="explorer">Explorers</option><option value="premium">Premium originals</option></select><div id="shipList"></div>
         <div class="fabricator-label">EQUIPMENT & PAINT</div>
         <div class="rowItem"><div><strong>Paint</strong><small>Customize hull and accent color.</small></div><div class="inlineBtns"><input type="color" id="hullColor" value="#d9e8ff"><input type="color" id="accentColor" value="#71e8ff"><button id="savePaint">Save paint</button></div></div>
-        <div id="equipList"></div>
+        <div id="equipList"></div><h4 class="v14-caption">Cosmetic ship skins — local preview</h4><canvas id="v14ShipPreview" width="440" height="168" role="img" aria-label="Preview of faction ship appearance"></canvas><div id="v14SkinDescription" class="v14-sub"></div><div id="v14SkinRows"></div><button id="v14SkinNone">Remove cosmetic</button>
       </section>
 
 <section class="stationSection expansion-section" data-section="exchange">
@@ -225,6 +267,17 @@
 <section class="stationSection expansion-section" data-section="exploration">
  <div id="scanInfo" class="expansion-hint"></div><div id="scannerUpgrade"></div><div id="bossInfo" class="expansion-caption"></div>
  <div class="expansion-hint">Scan space to reveal alien motherships and one-time salvage discoveries. Exploration awards Scrap Credits and blueprint fragments.</div>
+</section>
+<section class="stationSection" data-section="logistics">
+  <div class="v14-caption" id="v14LogisticsHeader">Regional stock exchange and cargo transport</div>
+  <div id="v14LogisticsTabs" class="v14-mode-buttons"></div><div id="v14LogisticsBody"></div>
+  <p class="v14-disclaimer">All quotes and convoys are NPC simulations. No actual securities, stock exchange, crypto deposits or payouts.</p>
+</section>
+<section class="stationSection" data-section="archive">
+  <div class="v14-caption">Chapter Zero — The Broken Relay</div><p class="v14-archive-label" id="v14LoreStep"></p>
+  <div class="v14-actions" style="justify-content:flex-start"><button id="v14StoryRepair" class="hidden">Repair the relay</button><button id="v14StoryContact" class="hidden">Consult faction archives</button></div>
+  <div class="v14-caption">Recovered recordings</div><div id="v14LoreRows"></div>
+  <p class="v14-disclaimer">Original story: The Eidon Chronicles. Recordings are collected in your local save.</p>
 </section>
     </div>
   </div>
@@ -355,7 +408,7 @@ function upgradeGun(id=S.equipped.gun){if(!dockedStation)return toast('Dock firs
 function buyShip(id){if(!dockedStation)return toast('Dock first');const ship=SHIPS[id];if(!ship||S.ownedShips[id])return;if(!spend(ship.cost))return toast('Need '+costText(ship.cost));S.ownedShips[id]=true;log('Purchased '+ship.name+'.');toast(ship.name+' added to hangar');save();renderUI(true);}
 function equipShip(id){if(!dockedStation)return toast('Dock first');if(!S.ownedShips[id]||!SHIPS[id])return;const ratio=S.hp/Math.max(1,S.maxHp);S.shipId=id;S.maxHp=activeShip().hull+(S.equipped.utility==='shield'?20:0);S.hp=Math.max(1,Math.min(S.maxHp,Math.round(S.maxHp*ratio)));S.vx=0;S.vy=0;log('Now piloting '+activeShip().name+'.');toast(activeShip().name+' deployed');save();renderUI(true);}
 function manualOverride(){if(autopilot||miningTarget){autopilot=null;miningTarget=null;clickMarker=null;}}
-function fireGun(){const now=performance.now()/1000, gun=GUNS[S.equipped.gun]; if(now-lastShot<gun.fireRate*(S.weaponMod==='capacitor'?.82:1)) return; if(factionSafeAt(S.x,S.y)){if(performance.now()-lastSafeLog>2200){toast('Weapons disabled in the protected port.');lastSafeLog=performance.now();}return} lastShot=now; S.energy=Math.max(0,S.energy-(S.weaponMod==='recycler'?1:S.weaponMod==='capacitor'?4:3)); sfx.fire(); const pellets=gun.pellets||1; for(let i=0;i<pellets;i++){const spread=(i-(pellets-1)/2)*(gun.spread||0); const ang=S.angle+spread; bullets.push({from:'player',x:S.x+Math.cos(ang)*24,y:S.y+Math.sin(ang)*24,vx:Math.cos(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),vy:Math.sin(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),life:1.5,damage:Math.round(actualDamage()*(S.weaponMod==='focus'?1.20:1)*factionDamageMultiplier()),color:gun.color})}}
+function fireGun(){if(S.rift?.inside){v14RiftFire();return;}const now=performance.now()/1000, gun=GUNS[S.equipped.gun]; if(now-lastShot<gun.fireRate*(S.weaponMod==='capacitor'?.82:1)) return; if(factionSafeAt(S.x,S.y)){if(performance.now()-lastSafeLog>2200){toast('Weapons disabled in the protected port.');lastSafeLog=performance.now();}return} lastShot=now; S.energy=Math.max(0,S.energy-(S.weaponMod==='recycler'?1:S.weaponMod==='capacitor'?4:3)); sfx.fire(); const pellets=gun.pellets||1; for(let i=0;i<pellets;i++){const spread=(i-(pellets-1)/2)*(gun.spread||0); const ang=S.angle+spread; bullets.push({from:'player',x:S.x+Math.cos(ang)*24,y:S.y+Math.sin(ang)*24,vx:Math.cos(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),vy:Math.sin(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),life:1.5,damage:Math.round(actualDamage()*(S.weaponMod==='focus'?1.20:1)*factionDamageMultiplier()),color:gun.color})}}
 function spawnParticles(x,y,color,n=6,power=90){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2, sp=Math.random()*power; particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:.25+Math.random()*.55,color,size:1+Math.random()*2})}}
 function takeDamage(n){n=Math.max(1,Math.round(n*(S.faction==='solar'?.90:1)));S.hp-=n; shake=Math.max(shake,n*0.45); spawnParticles(S.x,S.y,'#ff8ba0',8,110); sfx.hit(); if(S.hp<=0){S.hp=S.maxHp; const home=FACTIONS[S.faction]?.home||WORLD.port;S.x=home.x+110;S.y=home.y+10;S.vx=S.vy=0; S.credits=Math.max(0,S.credits-80); log('Ship destroyed! Emergency tug recovered you at Orion Port.'); toast('Ship destroyed')}}
 // Obstacle-aware eight-direction A* routing. The ship never uses a straight-line
@@ -457,7 +510,7 @@ function routeGate(dir){
  if(!gateUnlocked(target)){toast('Upgrade first: '+target.name);log('Gate locked: '+target.name+' requires '+Object.entries(target.req).map(([k,v])=>k+' Mk-'+v).join(' and ')+'.');return;}
  if(setAutopilot('gate',gate.x,gate.y,gate))toast('Navigation: '+gate.name+' → '+target.name);
 }
-function useGate(gate){
+function useGate(gate){if(S.rift?.inside)return;
  if(performance.now()<portalCooldown)return;
  const target=gateDestination(gate.id);
  if(!gateUnlocked(target)){portalCooldown=performance.now()+2400;toast('Gateway locked: upgrade first.');return;}
@@ -466,7 +519,7 @@ function useGate(gate){
  S.hp=Math.min(S.hp,S.maxHp);S.energy=Math.min(100,S.energy+15);
  autopilot=null;miningTarget=null;dockedStation=null;mineClock=0;
  portalCooldown=performance.now()+6000;
- spawnWorld();spawnExpansionWorld();
+ spawnWorld();spawnExpansionWorld();v14SpawnConvoys();
  log('Gate transit complete. Arrived in '+SYSTEMS[S.system].name+'.');toast('Welcome to '+SYSTEMS[S.system].name);
  renderUI(true);save();
 }
@@ -478,7 +531,7 @@ function updateGates(){
 }
 
 function renderGates(){const sys=SYSTEMS[S.system]||SYSTEMS.orion;$('gateList').innerHTML=GATES.map(g=>{const dest=SYSTEMS[sys.links[g.id]],ok=gateUnlocked(dest);return '<div class="gate-entry"><div><strong style="color:'+g.color+'">'+g.name+' · '+dest.name+'</strong><small>Tier '+dest.tier+' · '+(ok?'Route available':'Requires '+Object.entries(dest.req||{}).map(([k,v])=>k+' Mk-'+v).join(' + '))+'</small></div><button data-gate="'+g.id+'" '+(ok?'':'disabled')+'>Plot route</button></div>';}).join('');}
-function mineNearest(){
+function mineNearest(){if(S.rift?.inside)return toast('Mine the glowing Heart seams while inside the Rift');
  if(cargoCount()>=cargoCap())return toast('Hold full; return to port and sell ore.');
  const choices=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-S.x,a.y-S.y)-Math.hypot(b.x-S.x,b.y-S.y));
  for(const a of choices.slice(0,25)){
@@ -487,7 +540,7 @@ function mineNearest(){
  }
  toast('No reachable mining deposits nearby.');
 }
-function routeToStation(id){const st=STATIONS.find(s=>s.id===id);if(st?.kind==='faction'&&st.faction!==S.faction){toast('Enemy faction bases deny docking.');return;}if(st&&setAutopilot('dock',st.x,st.y,st))toast('Safe course plotted: '+(id==='port'?SYSTEMS[S.system].name+' Spaceport':st.name));}
+function routeToStation(id){if(S.rift?.inside)return toast('Extract from the Heart Chamber first');const st=STATIONS.find(s=>s.id===id);if(st?.kind==='faction'&&st.faction!==S.faction){toast('Enemy faction bases deny docking.');return;}if(st&&setAutopilot('dock',st.x,st.y,st))toast('Safe course plotted: '+(id==='port'?SYSTEMS[S.system].name+' Spaceport':st.name));}
 function routeZone(name){const z=ZONES.find(z=>z.name.includes(name));if(z){if(!canEnter(z))return toast('Upgrade first to enter '+z.name);setAutopilot('point',(z.x1+z.x2)/2,(z.y1+z.y2)/2);}}
 
 
@@ -662,20 +715,20 @@ function drawNavigationChart(){
   drawTacticalRadar(g,{x:0,y:0,w:map.width,h:map.height});
 }
 
-function draw(){const w=innerWidth,h=innerHeight,t=performance.now()/1000; ctx.clearRect(0,0,w,h); const bg=ctx.createRadialGradient(w*.72,h*.22,40,w*.52,h*.5,Math.max(w,h)); bg.addColorStop(0,'#2a2660'); bg.addColorStop(.46,'#0c1c49'); bg.addColorStop(1,'#020714'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h); ctx.save(); if(shake>0){ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake); shake*=.82}
+function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=innerHeight,t=performance.now()/1000; ctx.clearRect(0,0,w,h); const bg=ctx.createRadialGradient(w*.72,h*.22,40,w*.52,h*.5,Math.max(w,h)); bg.addColorStop(0,'#2a2660'); bg.addColorStop(.46,'#0c1c49'); bg.addColorStop(1,'#020714'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h); v14VisualBackdrop(ctx,w,h,t);ctx.save(); if(shake>0){ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake); shake*=.82}
  for(let i=0;i<240;i++){const sx=((i*129.13-S.x*.11)%w+w)%w, sy=((i*77.33-S.y*.11)%h+h)%h; ctx.fillStyle=i%9===0?'#c7f7ff':i%4===0?'#93baf8':'#5870a8'; const rr=i%9===0?1.8:1; ctx.beginPath(); ctx.arc(sx,sy,rr,0,7); ctx.fill()}
  for(const z of ZONES.slice(1)){const [x1,y1]=worldToScreen(z.x1,z.y1), [x2,y2]=worldToScreen(z.x2,z.y2); ctx.fillStyle=z.color+'10'; ctx.strokeStyle=z.color+'35'; ctx.lineWidth=1; ctx.fillRect(x1,y1,x2-x1,y2-y1); ctx.strokeRect(x1,y1,x2-x1,y2-y1)}
  const [px,py]=worldToScreen(WORLD.port.x,WORLD.port.y); ctx.strokeStyle='#59dfff55'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(px,py,WORLD.safeRadius,0,7); ctx.stroke();
  for(const gate of GATES){const [x,y]=worldToScreen(gate.x,gate.y);if(x<-120||x>w+120||y<-120||y>h+120)continue;ctx.save();ctx.translate(x,y);ctx.rotate(t*.24);ctx.shadowColor=gate.color;ctx.shadowBlur=24;ctx.strokeStyle=gate.color;ctx.lineWidth=6;ctx.beginPath();ctx.ellipse(0,0,53,32,0,0,7);ctx.stroke();ctx.strokeStyle='#dcefff';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,0,34,20,-t*.4,0,7);ctx.stroke();ctx.fillStyle=gate.color;ctx.beginPath();ctx.arc(0,0,8,0,7);ctx.fill();ctx.restore();ctx.textAlign='center';ctx.font='bold 12px system-ui';ctx.fillStyle='#d4f3ff';ctx.fillText(SYSTEMS[SYSTEMS[S.system].links[gate.id]].name,x,y+66);} 
  if(autopilot){const pts=[{x:S.x,y:S.y},...autopilot.path.slice(autopilot.step)];ctx.save();ctx.setLineDash([8,12]);ctx.strokeStyle='#79e6ff75';ctx.lineWidth=2;ctx.beginPath();pts.forEach((pt,i)=>{const [x,y]=worldToScreen(pt.x,pt.y);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.restore();}
- drawFactionWorld();for(const st of STATIONS){const [x,y]=worldToScreen(st.x,st.y); if(x<-100||x>w+100||y<-100||y>h+100) continue; ctx.save(); ctx.translate(x,y); ctx.shadowColor=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#64dfff':'#b89cff'; ctx.shadowBlur=18; ctx.fillStyle=st.kind==='port'?'#153b71':'#302360'; ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#72efff':'#c6aeff'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,st.kind==='port'?28:18,0,7); ctx.fill(); ctx.stroke(); ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#8ef6ff':'#d4c2ff'; ctx.lineWidth=4; ctx.beginPath(); ctx.ellipse(0,0,42,10,t*.4,0,7); ctx.stroke(); ctx.restore();}
- for(const a of asteroids){if(a.ore<=0) continue; const [x,y]=worldToScreen(a.x,a.y); if(x<-70||x>w+70||y<-70||y>h+70) continue; ctx.save(); ctx.translate(x,y); ctx.rotate(a.rot+t*.06); const col=OREDEF[a.kind].color; ctx.shadowColor=col; ctx.shadowBlur=a.kind==='diam'?24:10; const gr=ctx.createRadialGradient(-a.r*.3,-a.r*.4,2,0,0,a.r*1.5); gr.addColorStop(0,'#ffffff'); gr.addColorStop(.2,col); gr.addColorStop(1,'#111a36'); ctx.fillStyle=gr; ctx.beginPath(); for(let i=0;i<7;i++){const aa=i*Math.PI*2/7, rr=a.r*(i%2?0.82:1), xx=Math.cos(aa)*rr, yy=Math.sin(aa)*rr; i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)} ctx.closePath(); ctx.fill(); if(miningTarget===a||autopilot?.target===a){ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(0,0,a.r+8,0,7); ctx.stroke()} ctx.restore()}
+ drawFactionWorld();v14WorldOverlay();for(const st of STATIONS){const [x,y]=worldToScreen(st.x,st.y); if(x<-100||x>w+100||y<-100||y>h+100) continue; ctx.save(); ctx.translate(x,y); ctx.shadowColor=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#64dfff':'#b89cff'; ctx.shadowBlur=18; ctx.fillStyle=st.kind==='port'?'#153b71':'#302360'; ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#72efff':'#c6aeff'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,st.kind==='port'?28:18,0,7); ctx.fill(); ctx.stroke(); ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#8ef6ff':'#d4c2ff'; ctx.lineWidth=4; ctx.beginPath(); ctx.ellipse(0,0,42,10,t*.4,0,7); ctx.stroke(); ctx.restore();}
+ for(const a of asteroids){if(a.ore<=0) continue; const [x,y]=worldToScreen(a.x,a.y); if(x<-70||x>w+70||y<-70||y>h+70) continue; ctx.save(); ctx.translate(x,y); ctx.rotate(a.rot+t*.06); const col=OREDEF[a.kind].color; ctx.shadowColor=col; ctx.shadowBlur=a.kind==='diam'?24:10; const gr=ctx.createRadialGradient(-a.r*.3,-a.r*.4,2,0,0,a.r*1.5); gr.addColorStop(0,'#ffffff'); gr.addColorStop(.2,col); gr.addColorStop(1,'#111a36'); ctx.fillStyle=gr; ctx.beginPath(); for(let i=0;i<7;i++){const aa=i*Math.PI*2/7, rr=a.r*(i%2?0.82:1), xx=Math.cos(aa)*rr, yy=Math.sin(aa)*rr; i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)} ctx.closePath(); ctx.fill(); v14AsteroidSurface(ctx,a); if(miningTarget===a||autopilot?.target===a){ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(0,0,a.r+8,0,7); ctx.stroke()} ctx.restore()}
  for(const d of drones){const [x,y]=worldToScreen(d.x,d.y); if(x<-60||x>w+60||y<-60||y>h+60) continue; ctx.save(); ctx.translate(x,y); ctx.rotate(d.angle); ctx.shadowColor=d.tier>2?'#ff9fe8':'#ff94a8'; ctx.shadowBlur=10; ctx.fillStyle=d.tier>2?'#702f79':'#66243c'; ctx.strokeStyle=d.tier>2?'#ffc5fb':'#ffb4c3'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(16,0); ctx.lineTo(0,-12); ctx.lineTo(-15,0); ctx.lineTo(0,12); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore(); ctx.fillStyle='#ffd5de'; ctx.fillRect(x-16,y-24,32,4); ctx.fillStyle='#ff4f77'; ctx.fillRect(x-16,y-24,32*(d.hp/d.maxHp),4)}
  for(const b of bullets){const [x,y]=worldToScreen(b.x,b.y); ctx.strokeStyle=b.color; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x-b.vx*.02,y-b.vy*.02); ctx.stroke()}
  for(const p of particles){const [x,y]=worldToScreen(p.x,p.y); ctx.globalAlpha=Math.max(0,p.life); ctx.fillStyle=p.color; ctx.fillRect(x,y,p.size,p.size); ctx.globalAlpha=1}
  for(const n of damagePopups){const [dx,dy]=worldToScreen(n.x,n.y);if(dx>0&&dx<w&&dy>0&&dy<h){ctx.fillStyle='rgba(255,222,153,'+Math.min(1,n.life/.45)+')';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText('-'+n.amount,dx,dy);ctx.textAlign='left';}}
  if(clickMarker){const [mx,my]=worldToScreen(clickMarker.x,clickMarker.y); if(mx>-80&&mx<w+80&&my>-80&&my<h+80){const pulse=(Math.sin(t*5)+1)/2; ctx.strokeStyle='rgba(114,235,255,.95)'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(mx,my,10+pulse*8,0,7); ctx.stroke(); ctx.beginPath(); ctx.arc(mx,my,24+pulse*12,0,7); ctx.stroke(); ctx.fillStyle='rgba(114,235,255,.18)'; ctx.beginPath(); ctx.arc(mx,my,5,0,7); ctx.fill();}}
- extDraw();const sx=w/2, sy=h/2; ctx.save(); ctx.translate(sx,sy); ctx.rotate(S.angle); const thrust=Math.min(1,Math.hypot(S.vx,S.vy)/300); if(pressed.w||autopilot){const flame=ctx.createLinearGradient(-14,0,-44,0); flame.addColorStop(0,'#fff'); flame.addColorStop(.35,S.ship.accent); flame.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=flame; ctx.beginPath(); ctx.moveTo(-12,-6); ctx.lineTo(-32-Math.random()*14*thrust,0); ctx.lineTo(-12,6); ctx.closePath(); ctx.fill()} ctx.shadowColor=S.ship.accent; ctx.shadowBlur=16; const hull=ctx.createLinearGradient(-18,-12,24,10); hull.addColorStop(0,'#2a4f8d'); hull.addColorStop(.55,S.ship.hull); hull.addColorStop(1,'#4d75b7'); ctx.fillStyle=hull; ctx.strokeStyle=S.ship.accent; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(25,0); ctx.lineTo(3,-10); ctx.lineTo(-11,-activeShip().wing); ctx.lineTo(-13,-8); ctx.lineTo(-22,-5); ctx.lineTo(-22,5); ctx.lineTo(-13,8); ctx.lineTo(-11,activeShip().wing); ctx.lineTo(3,10); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle='rgba(110,240,255,.85)'; ctx.beginPath(); ctx.ellipse(10,0,7,3,0,0,7); ctx.fill(); ctx.restore();
+ extDraw();v14DrawFactionHull(ctx,w/2,h/2,S.angle,1);
  const radarBox=hudRadarBounds(w,h);if(radarBox)drawTacticalRadar(ctx,radarBox);drawNavigationChart(); ctx.restore()}
 /* TOKENVERSE 0.12 — local, simulated extension. Runs inside the main game closure.
  * Uses existing S, SHIPS, GUNS, WORLD, asteroids, drones, bullets, ctx, etc.
@@ -751,7 +804,7 @@ function spawnExpansionWorld(){
 function extScan(){
  const now=Date.now(),cooldown=22e3;
  if(now-S.scanLast<cooldown){toast('Scanner recharging: '+Math.ceil((cooldown-(now-S.scanLast))/1000)+'s');return;}
- S.scanLast=now;S.stats.scans=(S.stats.scans||0)+1;const radius=(4500+(S.scannerLevel-1)*1700)*factionScanMultiplier();
+ S.scanLast=now;v14StoryScan();S.stats.scans=(S.stats.scans||0)+1;const radius=(4500+(S.scannerLevel-1)*1700)*factionScanMultiplier();
  extVisibleSignals=extSites.filter(p=>!p.collected&&Math.hypot(p.x-S.x,p.y-S.y)<radius).map(p=>({...p,until:performance.now()+35e3}));
  const nearby=asteroids.filter(a=>a.ore>0&&Math.hypot(a.x-S.x,a.y-S.y)<radius);
  const rare=nearby.filter(a=>['dust','void','diam'].includes(a.kind)).sort((a,b)=>Math.hypot(a.x-S.x,a.y-S.y)-Math.hypot(b.x-S.x,b.y-S.y));
@@ -1163,9 +1216,464 @@ function factionStationLabel(st){
  if(st.kind==='faction'&&FACTIONS[st.faction])return FACTIONS[st.faction].name+' Base';
  return st.name;
 }
-factionInit();
-function renderUI(includePanels=true){const zone=currentZone();$('systemTag').textContent=SYSTEMS[S.system].name;$('factionTag').textContent=S.faction?FACTIONS[S.faction].name:'Unaligned';$('factionTag').style.color=S.faction?FACTIONS[S.faction].color:'#dceafa'; $('zoneTag').textContent=zone.name+' · '+zone.tier; $('dockTag').textContent=dockedStation?('Dock: '+dockedStation.name):'Dock: no'; $('hostileTag').textContent=drones.filter(d=>Math.hypot(d.x-S.x,d.y-S.y)<700).length+' hostiles'; $('coordsTag').textContent='X '+Math.round(S.x)+' • Y '+Math.round(S.y); $('topCredits').innerHTML=S.credits+' <small>SC</small>'; $('hpText').textContent=Math.round(100*S.hp/S.maxHp)+'%'; $('energyText').textContent=Math.round(S.energy)+'%'; $('cargoText').textContent=cargoCount()+' / '+cargoCap(); $('speedText').textContent=Math.round(Math.hypot(S.vx,S.vy)); $('xpText').textContent=S.xp; $('gunText').textContent=GUNS[S.equipped.gun].name.replace(' Blaster','').replace(' Cannon','');$('damageBonusText').textContent='+'+damagePercent()+'%';$('combatReadout').textContent=activeShip().name+' · '+actualDamage()+' DMG / hit · '+gunDps()+' DPS · Mk-'+gunLevel(); $('assistBtnState').textContent=S.settings.assist?'ON':'OFF'; $('hpBar').style.width=(100*S.hp/S.maxHp)+'%'; $('energyBar').style.width=S.energy+'%'; $('cargoBar').style.width=(100*cargoCount()/cargoCap())+'%'; $('stationBtn').disabled=!dockedStation; $('stationPrompt').classList.toggle('hidden', !!dockedStation); $('stationSubtitle').textContent=dockedStation?('Docked at '+dockedStation.name):'Dock first'; $('stationTitle').textContent=dockedStation?(dockedStation.name+' • Ship console'):'Station services'; if(!dockedStation)$('stationModal').classList.remove('open'); $('toggleSound').setAttribute('aria-pressed',String(S.settings.sound)); $('toggleSound').title=S.settings.sound?'Mute audio':'Enable audio';
- if(!includePanels)return;renderGates();extRenderUI();renderFactionUI();
+// Tokenverse v0.14 — The Twelve Bells. Local, browser-only game simulation.
+// The functions in this extension live inside the original game closure.
+const V14_VERSION=14, V14_CYCLE=2*60*60*1000, V14_OPEN=12*60*1000,
+      V14_MUSTER=20*60*1000, V14_COLLAPSE=3*60*1000;
+const V14_RIFT_PORTAL={x:24000,y:13300},V14_RIFT_SIZE={w:4200,h:2800},
+      V14_EXTRACT={x:420,y:1380};
+const V14_SKINS=[
+ {id:'founders',name:'Founders Fleet',faction:'all',cap:500,price:420,primary:'#d0e7fb',trim:'#64c8ff',trail:'#7bf4ff',desc:'Recovered ceramic armor from the first Concord expeditions.'},
+ {id:'solar',name:'Solar Relic',faction:'solar',cap:300,price:350,primary:'#f4e9cc',trim:'#e9c878',trail:'#a2edff',desc:'Sun-white defense plating manufactured before the Concord peace.'},
+ {id:'crimson',name:'Crimson Warframe',faction:'crimson',cap:300,price:350,primary:'#49272f',trim:'#ff626e',trail:'#ff9f58',desc:'Reclaimed raider hull with visible battle scars.'},
+ {id:'verdant',name:'Verdant Industrial',faction:'verdant',cap:300,price:350,primary:'#47685b',trim:'#7ce6a8',trail:'#8deecf',desc:'Heavy bronze and moss-green guild armor.'},
+ {id:'void',name:'Void Archive Prototype',faction:'void',cap:300,price:350,primary:'#34374d',trim:'#ad8bfc',trail:'#d6a9ff',desc:'Recovered lens panels and original Navigator inscriptions.'},
+ {id:'survivor',name:'Bell Survivor',faction:'all',cap:100,price:0,primary:'#6c5699',trim:'#f0d59b',trail:'#f9f2c0',desc:'Awarded after three successful Rift extractions. Cosmetic only.'}
+];
+const V14_REGIONS={
+ orion:{name:'Orion Belt',surplus:'moon',shortage:'neon',risk:1.1},
+ borealis:{name:'Borealis Drift',surplus:'neon',shortage:'dust',risk:1.3},
+ helios:{name:'Helios Reach',surplus:'dust',shortage:'void',risk:1.5},
+ forge:{name:'Titan Foundry',surplus:'void',shortage:'moon',risk:2.1},
+ umbra:{name:'Umbra Exclusion',surplus:'diam',shortage:'neon',risk:2.6}
+};
+const V14_ARCHIVE=[
+ {id:'broken-relay',name:'The Broken Relay',text:'CONCORD CONTROL: The relay blinks twelve times, then a thirteenth pulse arrives from Eidon. Find its crystalline memory and bring the signal home.'},
+ {id:'navigator-echo',name:'Navigator Echo 01',text:'ARCHIVE: The First Navigators did not mine Eidon. They taught a star to manufacture its own bones, then forgot how to make it stop.'},
+ {id:'silent-anchors',name:'The Four Anchors',text:'ARCHIVE: The twelve Bells are synchronization attempts. Four Anchors turn in lockstep, and only for a few minutes can the Heart Chamber be reached.'},
+ {id:'bell-survivor',name:'Thirteenth Note',text:'DISTORTED TRANSMISSION: You are looking for the dead star. The star is looking back.'}
+];
+let v14ShowLogistics='exchange',v14SkinPreview='founders',v14LastPaint=-Infinity,
+    v14LastHud=-Infinity,v14VisualClock=0,v14RiftBullets=[],v14RiftHazards=[],v14LastRiftFire=0;
+function v14BellClock(now=Date.now()){
+ const t=Number.isFinite(now)?now:Date.now();
+ const current=Math.floor(t/V14_CYCLE)*V14_CYCLE,elapsed=t-current;
+ const active=elapsed<V14_OPEN;
+ const phase=active?(elapsed>=V14_OPEN-V14_COLLAPSE?'collapsing':'open'):(V14_CYCLE-elapsed<=V14_MUSTER?'muster':'closed');
+ const nextStart=active?current:current+V14_CYCLE;
+ const eventStart=active?current:nextStart;
+ return {id:new Date(eventStart).toISOString().slice(0,13),start:eventStart,end:eventStart+V14_OPEN,
+  now:t,phase,active,timeLeft:active?V14_OPEN-elapsed:nextStart-t,nextStart,
+  nextLocal:new Date(nextStart).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})};
+}
+function v14Time(ms){const n=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(n/3600)).padStart(2,'0')+':'+String(Math.floor(n%3600/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
+function v14Init(){
+ S.saveVersion=14;
+ S.lastBellId=typeof S.lastBellId==='string'?S.lastBellId:null;
+ S.riftRuns=Array.isArray(S.riftRuns)?S.riftRuns.slice(-32):[];
+ S.riftLootClaimed=S.riftLootClaimed&&typeof S.riftLootClaimed==='object'?S.riftLootClaimed:{};
+ S.rift=S.rift&&typeof S.rift==='object'?S.rift:null;
+ S.loreFound=Array.isArray(S.loreFound)?[...new Set(S.loreFound.filter(x=>V14_ARCHIVE.some(y=>y.id===x)))]:[];
+ S.cosmetics=S.cosmetics&&typeof S.cosmetics==='object'?S.cosmetics:{};
+ S.cosmetics.ownedSkinIds=Array.isArray(S.cosmetics.ownedSkinIds)?[...new Set(S.cosmetics.ownedSkinIds.filter(x=>V14_SKINS.some(k=>k.id===x)))]:[];
+ S.cosmetics.equippedByHull=S.cosmetics.equippedByHull&&typeof S.cosmetics.equippedByHull==='object'?S.cosmetics.equippedByHull:{};
+ S.cosmetics.serials=S.cosmetics.serials&&typeof S.cosmetics.serials==='object'?S.cosmetics.serials:{};
+ S.regionalMarkets=S.regionalMarkets&&typeof S.regionalMarkets==='object'?S.regionalMarkets:{};
+ for(const [region,data] of Object.entries(V14_REGIONS)){
+  const m=S.regionalMarkets[region]||{};m.stock=m.stock&&typeof m.stock==='object'?m.stock:{};
+  m.bulletin=Array.isArray(m.bulletin)?m.bulletin.slice(-18):[];
+  for(const k of KINDS){const defaultStock=k===data.surplus?90:k===data.shortage?10:32;
+   m.stock[k]=Math.max(0,Math.min(300,Math.floor(Number.isFinite(+m.stock[k])?+m.stock[k]:defaultStock)));}
+  m.budget=Math.max(0,Math.min(12000,Number.isFinite(+m.budget)?+m.budget:3400));
+  S.regionalMarkets[region]=m;
+ }
+ S.convoyContracts=Array.isArray(S.convoyContracts)?S.convoyContracts.filter(c=>c&&typeof c.id==='string').slice(-24):[];
+ S.convoyCompleted=Array.isArray(S.convoyCompleted)?S.convoyCompleted.slice(-90):[];
+ S.cosmeticPreview=null;
+ S.settings=S.settings||{}; S.settings.quality=['auto','low','medium','high'].includes(S.settings.quality)?S.settings.quality:'medium';
+ S.settings.reducedMotion=!!S.settings.reducedMotion;
+ S.storyStep=Math.max(0,Math.min(5,Math.floor(Number(S.storyStep)||0)));
+ if(!S.loreFound.includes('broken-relay'))S.loreFound.push('broken-relay');
+ if(S.rift?.inside){const b=v14BellClock();if(S.rift.bellId!==b.id||!b.active)v14ResolveRift('recovered');}
+}
+function v14Random(seed){let n=seed>>>0;return ()=>{n^=n<<13;n^=n>>>17;n^=n<<5;return ((n>>>0)%1000000)/1000000;};}
+function v14Seed(text){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function v14BuildDeposits(id){const rng=v14Random(v14Seed(id));const kinds=['neon','dust','void','diam'];const out=[];
+ for(let i=0;i<18;i++){const a=i*2.39996323,r=580+Math.sqrt(i/18)*1200;
+   out.push({id:'seam-'+i,x:2100+Math.cos(a)*r+(rng()-.5)*100,y:1400+Math.sin(a)*r*.65+(rng()-.5)*70,
+     kind:kinds[Math.min(3,Math.floor(rng()*4))],ore:1+(rng()>.69?1:0),radius:20+rng()*13});}
+ return out;
+}
+function v14CanEnter(){const b=v14BellClock();return b.active&&!S.riftRuns.some(r=>r.id===b.id)&&S.system==='orion'&&Math.hypot(S.x-V14_RIFT_PORTAL.x,S.y-V14_RIFT_PORTAL.y)<450&&Math.hypot(S.vx,S.vy)<95;}
+function v14RouteRift(){if(S.rift?.inside)return; if(S.system!=='orion'){toast('The Heart Chamber opens from Orion Belt. Take a gate to Orion.');return;}
+ if(typeof setAutopilot==='function'&&setAutopilot('point',V14_RIFT_PORTAL.x,V14_RIFT_PORTAL.y)){toast('Plotting course to the central Rift Anchor');}else toast('Rift route unavailable — use Navigation');}
+function v14EnterRift(){const b=v14BellClock();if(!b.active)return toast('The Bell is closed. Watch the countdown.');if(!v14CanEnter())return toast('Fly to the central Anchor and brake below 95 units/s');
+ if(S.rift?.inside)return;
+ let old=S.rift;
+ const same=old&&old.bellId===b.id;
+ const previous= {system:S.system,x:S.x,y:S.y,angle:S.angle};
+ S.rift=same?old:{bellId:b.id,inside:false,deposits:v14BuildDeposits(b.id),oreTaken:0,claimed:[],guardianHp:450,resolved:false};
+ S.rift.inside=true;S.rift.returnTo=previous;S.rift.enteredAt=Date.now();
+ S.x=540;S.y=1400;S.vx=0;S.vy=0;S.angle=0;autopilot=null;miningTarget=null;
+ v14RiftBullets=[];v14RiftHazards=[];
+ S.lastBellId=b.id;
+ if(!S.loreFound.includes('silent-anchors'))S.loreFound.push('silent-anchors');
+ $('stationModal').classList.remove('open');$('bellDrawer').classList.remove('open');
+ v14Chime('enter');log('Heart Chamber breached. Extract before the twelfth minute.');toast('THE BELL HAS OPENED');save();
+}
+function v14ResolveRift(result){const r=S.rift;if(!r||!r.inside)return false;
+ r.inside=false;
+ const already=S.riftRuns.some(x=>x.id===r.bellId);
+ if(!already){
+  let lost=0;if(result!=='extracted'){const kinds=['diam','void','dust','neon'];let left=Math.min(3,r.oreTaken||0);
+    for(const k of kinds){const remove=Math.min(left,S.ore[k]||0);S.ore[k]-=remove;left-=remove;lost+=remove;if(!left)break;}
+    S.hp=Math.max(1,S.hp-25);
+  }
+  const reward=result==='extracted'&&r.oreTaken>0?Math.min(90,30+Math.floor(r.oreTaken*4)):0;
+  S.credits+=reward;
+  S.riftRuns.push({id:r.bellId,result,ore:r.oreTaken||0,sc:reward,at:Date.now(),lost});
+  S.riftRuns=S.riftRuns.slice(-32);S.riftLootClaimed[r.bellId]=true;
+  if(result==='extracted'&&!S.loreFound.includes('bell-survivor'))S.loreFound.push('bell-survivor');
+  if(result==='extracted'&&S.storyStep>=4)S.storyStep=5;
+  if(result==='extracted')v14RecordBellSupply(r);
+ }
+ const home=r.returnTo||{system:'orion',x:V14_RIFT_PORTAL.x,y:V14_RIFT_PORTAL.y};
+ S.system=SYSTEMS[home.system]?home.system:'orion';
+ S.x=clamp(home.x,10,WORLD.w-10);S.y=clamp(home.y,10,WORLD.h-10);S.vx=S.vy=0;S.angle=home.angle||0;
+ v14RiftBullets=[];v14RiftHazards=[];r.returnTo=null;
+ log(result==='extracted'?'Rift extraction complete. Cargo secured.':'Rift collapsed: emergency recovery; limited raw cargo and hull loss.');
+ v14Chime(result==='extracted'?'extract':'collapse');toast(result==='extracted'?'EXTRACTED':'EMERGENCY RECOVERY');save();renderUI(true);return true;
+}
+function v14RecordBellSupply(run){if(run.bulletinRecorded)return;run.bulletinRecorded=true;
+ const reg=S.regionalMarkets.orion;reg.bulletin.push({id:run.bellId,kind:'mixed',quantity:run.oreTaken||0,at:Date.now(),text:'Bell extraction: '+(run.oreTaken||0)+' raw ore secured'});
+ reg.bulletin=reg.bulletin.slice(-18);}
+function v14Chime(type){
+ if(!S.settings.sound)return;
+ try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
+  const c=new Audio(),t=c.currentTime,notes=type==='collapse'?[220,196,130]:type==='extract'?[440,554,660]:[330,440,554];
+  notes.forEach((n,i)=>{const o=c.createOscillator(),gain=c.createGain();o.type='sine';o.frequency.value=n;
+    const begin=t+i*.12;gain.gain.setValueAtTime(.001,begin);gain.gain.exponentialRampToValueAtTime(.035,begin+.04);gain.gain.exponentialRampToValueAtTime(.001,begin+.3);
+    o.connect(gain);gain.connect(c.destination);o.start(begin);o.stop(begin+.31);});
+  setTimeout(()=>c.close(),1200);
+ }catch{/* Muted browsers can reject audio context; subtitles remain. */}
+}
+function v14RiftAim(){if(pointer.inside){const dx=pointer.x-innerWidth/2,dy=pointer.y-innerHeight/2;if(Math.hypot(dx,dy)>6)S.angle=Math.atan2(dy,dx);}}
+function v14RiftFire(){const now=performance.now()/1000,gun=GUNS[S.equipped.gun];if(now-v14LastRiftFire<gun.fireRate)return;v14LastRiftFire=now;
+ S.energy=Math.max(0,S.energy-2.5);
+ const count=gun.pellets||1;for(let i=0;i<count;i++){const a=S.angle+(i-(count-1)/2)*(gun.spread||0);
+ v14RiftBullets.push({x:S.x+Math.cos(a)*26,y:S.y+Math.sin(a)*26,vx:Math.cos(a)*gun.speed,vy:Math.sin(a)*gun.speed,life:1.8,dmg:actualDamage(),color:gun.color});}
+ sfx.fire();
+}
+function v14RiftUpdate(dt){const b=v14BellClock();if(!S.rift?.inside)return;
+ if(!b.active||S.rift.bellId!==b.id){v14ResolveRift('recovered');return;}
+ v14RiftAim();v14RiftAutopilot(dt);const drive=activeShip().accel*(255+(S.upgrades.thrusters-1)*25),ax=Math.cos(S.angle),ay=Math.sin(S.angle);
+ const movement=pressed.w||pressed.ArrowUp||pressed.s||pressed.ArrowDown||pressed.a||pressed.d;
+ if(pressed.w||pressed.ArrowUp){S.vx+=ax*drive*dt;S.vy+=ay*drive*dt;}
+ if(pressed.s||pressed.ArrowDown){S.vx-=ax*drive*.7*dt;S.vy-=ay*drive*.7*dt;}
+ if(pressed.a||pressed.ArrowLeft){S.vx+=ay*drive*.6*dt;S.vy-=ax*drive*.6*dt;}
+ if(pressed.d||pressed.ArrowRight){S.vx-=ay*drive*.6*dt;S.vy+=ax*drive*.6*dt;}
+ if(pressed.brake||pressed[' ']){S.vx-=S.vx*4*dt;S.vy-=S.vy*4*dt;}
+ if(!movement&&S.settings.assist){S.vx-=S.vx*1.25*dt;S.vy-=S.vy*1.25*dt;}
+ const cap=340*activeShip().speed,v=Math.hypot(S.vx,S.vy);if(v>cap){S.vx*=cap/v;S.vy*=cap/v;}
+ S.x=clamp(S.x+S.vx*dt,22,V14_RIFT_SIZE.w-22);S.y=clamp(S.y+S.vy*dt,22,V14_RIFT_SIZE.h-22);
+ S.energy=Math.min(100,S.energy+dt*9);
+ if(S.rift.guardianHp>0){
+   const d=Math.hypot(S.x-3180,S.y-1320);
+   if(d<600){S.rift.guardianAttack=(S.rift.guardianAttack||0)+dt;
+    if(S.rift.guardianAttack>2.8){S.rift.guardianAttack=0;const a=Math.atan2(S.y-1320,S.x-3180);v14RiftHazards.push({x:3180,y:1320,vx:Math.cos(a)*270,vy:Math.sin(a)*270,life:2.7});}}
+ }
+ for(let i=v14RiftHazards.length-1;i>=0;i--){const h=v14RiftHazards[i];h.x+=h.vx*dt;h.y+=h.vy*dt;h.life-=dt;
+   if(Math.hypot(h.x-S.x,h.y-S.y)<30){S.hp=Math.max(1,S.hp-11);h.life=0;sfx.hit();}
+   if(h.life<=0)v14RiftHazards.splice(i,1);
+ }
+ for(let i=v14RiftBullets.length-1;i>=0;i--){const q=v14RiftBullets[i];q.x+=q.vx*dt;q.y+=q.vy*dt;q.life-=dt;
+   if(S.rift.guardianHp>0&&Math.hypot(q.x-3180,q.y-1320)<110){S.rift.guardianHp=Math.max(0,S.rift.guardianHp-q.dmg);q.life=0;
+     if(!S.rift.guardianHp)log('Heart guardian disabled. The inner deposits are clear.');}
+   if(q.life<=0)v14RiftBullets.splice(i,1);
+ }
+ if(S.hp<=1){v14ResolveRift('recovered');return;}
+ if(Math.hypot(S.x-V14_EXTRACT.x,S.y-V14_EXTRACT.y)<130&&Math.hypot(S.vx,S.vy)<120&&S.rift.oreTaken>0){ /* Extraction remains explicit through Bell panel or E key. */ }
+ // Local mining requires holding position near a deposit. Persistent one-time ore counts.
+ const near=S.rift.deposits.find(x=>x.ore>0&&Math.hypot(S.x-x.x,S.y-x.y)<x.radius+55);
+ if(near&&cargoCount()<cargoCap()&&S.rift.oreTaken<14){S.rift.mineProgress=(S.rift.mineProgress||0)+dt;
+  if(S.rift.mineProgress>=3.7/(1+Math.min(.9,activeShip().miningBonus||0))){S.rift.mineProgress=0;near.ore--;
+    S.rift.oreTaken++;S.ore[near.kind]++;S.stats.mined++;sfx.mine();
+    log('Heart seam recovered: 1 '+OREDEF[near.kind].name+'.');save();}}
+ else S.rift.mineProgress=0;
+}
+function v14TryExtract(){if(!S.rift?.inside)return toast('You are not inside the Heart Chamber');
+ if(Math.hypot(S.x-V14_EXTRACT.x,S.y-V14_EXTRACT.y)>155)return toast('Return to the blue extraction beacon');
+ if(Math.hypot(S.vx,S.vy)>125)return toast('Brake before extracting');v14ResolveRift('extracted');}
+function v14RiftClick(x,y){if(!S.rift?.inside)return false;
+ if(Math.hypot(x-V14_EXTRACT.x,y-V14_EXTRACT.y)<115){if(Math.hypot(S.x-V14_EXTRACT.x,S.y-V14_EXTRACT.y)<155)v14TryExtract();else toast('Fly to the extraction beacon');return true;}
+ // Click-to-fly inside Rift with straightforward arrival damping, no hidden teleport.
+ S.rift.waypoint={x:clamp(x,40,V14_RIFT_SIZE.w-40),y:clamp(y,40,V14_RIFT_SIZE.h-40)};
+ return true;
+}
+function v14RiftAutopilot(dt){if(!S.rift?.waypoint)return;const p=S.rift.waypoint,dx=p.x-S.x,dy=p.y-S.y,d=Math.hypot(dx,dy);
+ if(d<50&&Math.hypot(S.vx,S.vy)<55){S.rift.waypoint=null;return;}
+ const [nx,ny]=norm(dx,dy),speed=Math.min(185,Math.sqrt(Math.max(0,d-35)*380)*.62);
+ S.vx+=(nx*speed-S.vx)*Math.min(1,dt*1.9);S.vy+=(ny*speed-S.vy)*Math.min(1,dt*1.9);
+}
+function v14Price(region,kind){const m=S.regionalMarkets[region];if(!m||!OREDEF[kind])return {bid:1,ask:2};
+ const base={moon:8,neon:19,dust:44,void:105,diam:140}[kind];
+ const stock=Math.max(0,Number(m.stock[kind])||0), scarcity=clamp((70-stock)/120,-.35,.7);
+ const mult=region===S.system?1:1.03;
+ const mid=Math.round(base*(1+scarcity)*mult);
+ return {bid:Math.max(1,Math.floor(mid*.80)),ask:Math.max(2,Math.ceil(mid*1.20)),stock};}
+function v14RegionalTrade(kind,side){if(!dockedStation||S.rift?.inside)return toast('Dock at a station to trade');
+ const region=S.system,p=v14Price(region,kind),m=S.regionalMarkets[region];if(!p||!KINDS.includes(kind))return;
+ if(side==='buy'){if(p.stock<1)return toast('Regional warehouse is out of stock');if(S.credits<p.ask)return toast('Need '+p.ask+' SC');if(cargoCount()>=cargoCap())return toast('Cargo hold full');
+  S.credits-=p.ask;m.stock[kind]--;S.ore[kind]++;}
+ else {if(S.ore[kind]<1)return toast('No '+OREDEF[kind].name+' aboard');S.ore[kind]--;S.credits+=p.bid;m.stock[kind]=Math.min(300,m.stock[kind]+1);}
+ m.bulletin.push({id:'regional-'+Date.now(),kind,quantity:side==='buy'?-1:1,at:Date.now(),text:side+' 1 '+OREDEF[kind].name});m.bulletin=m.bulletin.slice(-18);
+ log('Regional exchange: '+side+' 1 '+OREDEF[kind].name+' at '+(side==='buy'?p.ask:p.bid)+' SC');save();renderUI(true);
+}
+function v14ConvoyOffers(){const home=S.system,d=V14_REGIONS[home],dest=SYSTEMS[home].links;
+ const destinations=[dest.north,dest.east,dest.south,dest.west].filter((id,i,a)=>id!==home&&a.indexOf(id)===i);
+ return destinations.slice(0,4).map((to,i)=>{const k=i%2===0?d.surplus:(to==='umbra'?'dust':'moon');
+   const qty=Math.max(2,Math.min(5,2+i));const tariff=8+i*6;
+   const reward=45+qty*12+Math.round((V14_REGIONS[to]?.risk||1)*12)+tariff;
+   return {from:home,to,kind:k,qty,tariff,reward,risk:V14_REGIONS[to]?.risk||1};});}
+function v14AcceptConvoy(to,kind,qty){if(!dockedStation)return toast('Dock at a station first');
+ if(S.convoyContracts.some(c=>c.status==='active'))return toast('Finish the active shipment before taking another');
+ const offer=v14ConvoyOffers().find(c=>c.to===to&&c.kind===kind&&c.qty===qty);if(!offer)return toast('Contract unavailable');
+ const m=S.regionalMarkets[S.system];if(m.budget<offer.reward)return toast('Concord logistics budget exhausted');
+ if(S.ore[kind]<qty)return toast('Load '+qty+' '+OREDEF[kind].name+' ore first');
+ if(S.credits<offer.tariff)return toast('Need '+offer.tariff+' SC for the convoy tariff');
+ S.ore[kind]-=qty;S.credits-=offer.tariff;m.budget-=offer.reward;
+ const id='shipment-'+S.system+'-'+Date.now()+'-'+Math.floor(Math.random()*100000);
+ S.convoyContracts.push({...offer,id,acceptedAt:Date.now(),deadline:Date.now()+60*60*1000,status:'active'});
+ log('Cargo sealed for '+V14_REGIONS[to].name+'. Delivered ore is locked in the mission manifest.');
+ toast('Convoy contract accepted');save();renderUI(true);
+}
+function v14CheckDelivery(){if(!dockedStation||S.rift?.inside)return;
+ const c=S.convoyContracts.find(c=>c.status==='active');if(!c)return;
+ if(Date.now()>c.deadline){c.status='expired';S.regionalMarkets[c.from].budget+=c.reward;log('Logistics manifest expired. Sealed cargo was lost.');save();return;}
+ if(S.system!==c.to||S.convoyCompleted.includes(c.id))return;
+ c.status='delivered';S.convoyCompleted.push(c.id);S.convoyCompleted=S.convoyCompleted.slice(-90);
+ S.regionalMarkets[c.to].stock[c.kind]=Math.min(300,S.regionalMarkets[c.to].stock[c.kind]+c.qty);
+ S.regionalMarkets[c.to].bulletin.push({id:c.id,kind:c.kind,quantity:c.qty,at:Date.now(),text:'Convoy arrived: '+c.qty+' '+OREDEF[c.kind].name});
+ S.credits+=c.reward;if(S.faction)S.factionReputation[S.faction]=(S.factionReputation[S.faction]||0)+4;
+ toast('Convoy delivered: +'+c.reward+' SC');log('Delivery verified at '+V14_REGIONS[c.to].name+'. '+c.reward+' SC paid once.');
+ save();renderUI(true);
+}
+function v14CancelConvoy(){if(!dockedStation)return toast('Dock to cancel');const c=S.convoyContracts.find(c=>c.status==='active');if(!c)return;
+ if(S.system!==c.from)return toast('Cancellation requires the origin system');
+ if(cargoCount()+c.qty>cargoCap())return toast('Free cargo space before canceling');
+ c.status='cancelled';S.ore[c.kind]+=c.qty;S.regionalMarkets[c.from].budget+=c.reward;
+ log('Contract cancelled. Sealed raw ore returned. Tariff is not refunded.');save();renderUI(true);
+}
+let v14NpcConvoys=[];
+function v14SpawnConvoys(){const rand=v14Random(v14Seed(S.system+'-convoys'));
+ v14NpcConvoys=[0,1,2].map((i)=>({x:WORLD.w*(.26+i*.21),y:WORLD.h*(.25+i*.23),startX:WORLD.w*(.26+i*.21),startY:WORLD.h*(.25+i*.23),phase:rand()*Math.PI*2,kind:KINDS[i],cargo:3+i*2}));}
+function v14ConvoyTick(dt){for(const c of v14NpcConvoys){c.phase+=dt*.047; c.x=clamp(c.startX+Math.cos(c.phase)*1800,100,WORLD.w-100);c.y=clamp(c.startY+Math.sin(c.phase)*970,100,WORLD.h-100);}}
+function v14RegionalSimulation(now=Date.now()){
+ // Every 5 local minutes a limited NPC delivery moves stock from a rich region to a needy one.
+ const epoch=Math.floor(now/(5*60*1000));if(!Number.isFinite(S.lastNpcEpoch)){S.lastNpcEpoch=epoch;return;}
+ if(epoch<=S.lastNpcEpoch)return;
+ const ticks=Math.min(3,epoch-S.lastNpcEpoch);S.lastNpcEpoch=epoch;
+ for(let i=0;i<ticks;i++){
+  const keys=Object.keys(V14_REGIONS),source=keys[(epoch-i)%keys.length],kind=V14_REGIONS[source].surplus;
+  const target=keys.find(k=>k!==source&&V14_REGIONS[k].shortage===kind)||keys[((epoch-i)+1)%keys.length];
+  const a=S.regionalMarkets[source],b=S.regionalMarkets[target];const move=Math.min(3,a.stock[kind]);
+  if(move>0){a.stock[kind]-=move;b.stock[kind]=Math.min(300,b.stock[kind]+move);
+   b.bulletin.push({id:'npc-'+epoch+'-'+i,kind,quantity:move,at:now,text:'NPC convoy delivered '+move+' '+OREDEF[kind].name+' from '+V14_REGIONS[source].name});b.bulletin=b.bulletin.slice(-18);}
+ }
+}
+function v14SkinCanOwn(skin){if(!skin||S.cosmetics.ownedSkinIds.includes(skin.id))return false;
+ if(skin.faction!=='all'&&S.faction!==skin.faction)return false;
+ if(skin.id==='survivor'&&S.riftRuns.filter(r=>r.result==='extracted').length<3)return false;
+ if(S.credits<skin.price)return false;
+ return Object.keys(S.cosmetics.serials).length<50;}
+function v14AcquireSkin(id){if(!dockedStation)return toast('Dock at a shipyard first');const skin=V14_SKINS.find(s=>s.id===id);if(!skin)return;
+ if(!v14SkinCanOwn(skin))return toast('Not eligible or already acquired');
+ // A locally generated serial, NOT a global NFT issuance counter or verifiable global cap.
+ const serial=1+S.cosmetics.ownedSkinIds.filter(k=>k===id).length;
+ if(serial>skin.cap)return toast('Local collection cap reached');
+ S.credits-=skin.price;S.cosmetics.ownedSkinIds.push(id);S.cosmetics.serials[id]=serial;
+ log('Cosmetic '+skin.name+' acquired locally. Not an NFT or global mint.');save();renderUI(true);
+}
+function v14EquipSkin(id){if(!dockedStation)return toast('Dock to equip cosmetics');
+ if(id!=='none'&&!S.cosmetics.ownedSkinIds.includes(id))return toast('Acquire this cosmetic first');
+ S.cosmetics.equippedByHull[S.shipId]=id==='none'?null:id;
+ log(id==='none'?'Stock appearance restored.':'Equipped '+V14_SKINS.find(s=>s.id===id)?.name+'.');save();renderUI(true);
+}
+function v14SkinPalette(previewId=null){const id=previewId||S.cosmetics.equippedByHull[S.shipId],skin=V14_SKINS.find(k=>k.id===id);
+ const base=FACTIONS[S.faction]||FACTIONS.solar;
+ const palette={solar:['#dbedf6','#d6b66f','#72d7ff'],crimson:['#4b3441','#ed667a','#ff954f'],verdant:['#628472','#7edab0','#98f4c1'],void:['#44445c','#b59cff','#b8a8ff']}[base.id]||['#deeafb','#83dfff','#75dcff'];
+ const custom=!!S.customPaintEnabled||(S.ship?.hull&&S.ship.hull!=='#d9e8ff')||(S.ship?.accent&&S.ship.accent!=='#71e8ff');
+ return {hull:skin?.primary||(custom?v14FittedHue(S.ship.hull):palette[0]),trim:skin?.trim||(custom?v14FittedHue(S.ship.accent):palette[1]),trail:skin?.trail||palette[2]};
+}
+function v14FittedHue(value){return typeof value==='string'&&/^#[\da-f]{6}$/i.test(value)?value:'#a0d8ee';}
+function v14DrawFactionHull(g,x,y,angle=0,scale=1,preview=null){const f=S.faction||'solar',p=v14SkinPalette(preview);
+ const sp=activeShip(),wing=Math.min(34,Math.max(18,sp.wing||21));
+ g.save();g.translate(x,y);g.rotate(angle);g.scale(scale,scale);
+ const engineGlow=p.trail;
+ if(S.settings.quality!=='low'){g.shadowColor=engineGlow;g.shadowBlur=S.settings.quality==='high'?22:11;}
+ const thrust=!!(pressed.w||autopilot||S.rift?.waypoint);
+ if(thrust){const flame=g.createLinearGradient(-19,0,-53,0);flame.addColorStop(0,'#f5fcff');flame.addColorStop(.38,engineGlow);flame.addColorStop(1,'#17234500');g.fillStyle=flame;g.beginPath();g.moveTo(-18,-6);g.lineTo(-48-Math.random()*8,0);g.lineTo(-18,6);g.fill();}
+ const fill=g.createLinearGradient(-22,-wing,30,wing*.7);fill.addColorStop(0,'#111825');fill.addColorStop(.42,p.hull);fill.addColorStop(1,'#203144');
+ g.fillStyle=fill;g.strokeStyle=p.trim;g.lineWidth=2;
+ g.beginPath();
+ if(f==='solar'){g.moveTo(29,0);g.lineTo(10,-9);g.lineTo(-8,-wing);g.lineTo(-21,-wing+4);g.lineTo(-12,-6);g.lineTo(-21,0);g.lineTo(-12,6);g.lineTo(-21,wing-4);g.lineTo(-8,wing);g.lineTo(10,9);}
+ else if(f==='crimson'){g.moveTo(36,0);g.lineTo(9,-7);g.lineTo(-17,-wing+3);g.lineTo(-8,-5);g.lineTo(-28,-9);g.lineTo(-20,1);g.lineTo(-7,5);g.lineTo(-11,wing-4);g.lineTo(8,13);}
+ else if(f==='verdant'){g.moveTo(25,0);g.lineTo(13,-10);g.lineTo(-3,-10);g.lineTo(-4,-wing);g.lineTo(-25,-wing);g.lineTo(-25,-7);g.lineTo(-32,-7);g.lineTo(-32,7);g.lineTo(-25,7);g.lineTo(-25,wing);g.lineTo(-4,wing);g.lineTo(-3,10);g.lineTo(13,10);}
+ else{g.moveTo(36,0);g.bezierCurveTo(7,-8,2,-wing,-23,-wing+3);g.lineTo(-11,-7);g.lineTo(-18,0);g.lineTo(-11,7);g.lineTo(-23,wing-3);g.bezierCurveTo(2,wing,7,8,36,0);}
+ g.closePath();g.fill();g.stroke();
+ g.shadowBlur=0;g.strokeStyle='rgba(15,28,43,.85)';g.lineWidth=1.4;
+ g.beginPath();g.moveTo(10,-7);g.lineTo(-5,0);g.lineTo(10,7);g.moveTo(-14,-4);g.lineTo(10,-4);g.moveTo(-14,4);g.lineTo(10,4);g.stroke();
+ if(f==='verdant'){g.fillStyle='#c4bb82';g.fillRect(-23,-wing+5,10,6);g.fillRect(-23,wing-11,10,6);}
+ if(f==='solar'){g.fillStyle=p.trim;g.fillRect(-13,-wing+2,15,2.7);g.fillRect(-13,wing-5,15,2.7);}
+ if(f==='crimson'){g.strokeStyle='#f09781';g.beginPath();g.moveTo(-10,-wing+4);g.lineTo(-4,-wing+12);g.moveTo(-4,wing-9);g.lineTo(7,wing-4);g.stroke();}
+ g.shadowColor=p.trim;g.shadowBlur=5;g.fillStyle=f==='void'?'#bcafff':'#8adfff';g.beginPath();g.ellipse(13,0,f==='void'?12:8,4,0,0,Math.PI*2);g.fill();
+ g.restore();
+}
+function v14DrawShipPreview(){const e=$('v14ShipPreview');if(!e||!e.getContext)return;const g=e.getContext('2d');if(!g)return;
+ const w=e.width,h=e.height;g.clearRect(0,0,w,h);const bg=g.createLinearGradient(0,0,w,h);bg.addColorStop(0,'#0b1834');bg.addColorStop(1,'#14112d');g.fillStyle=bg;g.fillRect(0,0,w,h);
+ g.strokeStyle='#37526a';g.beginPath();g.ellipse(w/2,h/2,95,42,0,0,7);g.stroke();
+ v14DrawFactionHull(g,w/2,h/2,0,2.5,v14SkinPreview);
+ g.fillStyle='#a2c8df';g.font='12px system-ui';g.textAlign='center';g.fillText((FACTIONS[S.faction]?.name||'Independent')+' ship silhouette · '+activeShip().name,w/2,h-12);
+}
+function v14StoryScan(){if(S.storyStep===0&&S.system==='orion'){
+ S.storyStep=1;S.storyMoonStart=S.stats.mined||0;
+ if(!S.loreFound.includes('navigator-echo'))S.loreFound.push('navigator-echo');
+ log('ARCHIVE: A broken relay has answered your scanner. Recover four units of ore to restore its transmitter.');
+ S.credits+=25;toast('Lore signal recovered: +25 SC');save();
+}}
+function v14StoryTick(){if(S.storyStep===1&&(S.stats.mined||0)-(S.storyMoonStart||0)>=4){S.storyStep=2;log('The Broken Relay: ore recovered. Dock at Orion Port or Concord Exchange to repair the transmitter.');save();}}
+function v14StoryRepair(){if(!dockedStation||S.storyStep!==2)return toast('Return to a station with the relay parts');
+ if(S.ore.moon<2||S.credits<10)return toast('Relay repair needs 2 Moonstone and 10 SC');
+ S.ore.moon-=2;S.credits-=10;S.storyStep=3;S.loreFound.push('silent-anchors');
+ log('RELAY: Twelve regular pulses. A thirteenth pulse is hidden under the noise. Ask a faction archivist.');save();renderUI(true);
+}
+function v14StoryContact(){if(!dockedStation||S.storyStep!==3)return toast('Dock and repair the relay first');S.storyStep=4;
+ const f=S.faction||'solar';log((FACTIONS[f]?.name||'Concord')+' analyst: The next Bell may reveal the source of the thirteenth pulse.');save();renderUI(true);
+}
+function v14StoryLabel(){return [
+ 'Scan in Orion Belt to locate a damaged Navigator relay',
+ 'Mine four raw ore units to collect relay repair parts',
+ 'Dock and repair the relay (2 Moonstone + 10 SC)',
+ 'Consult the faction archive at a station',
+ 'Extract successfully from one Bell to hear the hidden recording',
+ 'Chapter Zero complete — replay the archived recordings'
+ ][S.storyStep]||'Concord Archives';}
+function v14Controls(phase){const b=v14BellClock(),inside=!!S.rift?.inside;
+ $('v14BellButton').textContent=inside?'HEART '+v14Time(b.timeLeft):(b.active?'BELL OPEN '+v14Time(b.timeLeft):'BELL '+v14Time(b.timeLeft));
+ $('v14BellButton').classList.toggle('v14-live',b.active);
+ $('v14BellBadge').textContent=inside?'THE HEART CHAMBER':b.phase==='muster'?'MUSTER · '+v14Time(b.timeLeft):b.active?'RIFT OPEN · '+v14Time(b.timeLeft):'NEXT BELL · '+v14Time(b.timeLeft);
+ $('v14BellPhase').textContent= b.phase.toUpperCase();
+ $('v14BellClock').textContent=v14Time(b.timeLeft);
+ $('v14BellDate').textContent='Next opening: '+b.nextLocal+' local · every even UTC hour';
+ $('v14BellDetails').textContent=inside?'One-way rescue is always available. Extract at the blue beacon to keep your cargo. The last three minutes are unstable.':
+ 'The Twelve Bells expose the Heart Chamber for 12 minutes, every two hours. Travel to Orion Belt, then approach the Concord Rift Anchor in the Disputed Rift. Solo NPC encounters; no live PvP.';
+ $('v14BellEntry').disabled=!v14CanEnter();
+ $('v14BellEntry').classList.toggle('hidden',inside);
+ $('v14BellExit').classList.toggle('hidden',!inside);
+ $('v14BellRoute').classList.toggle('hidden',inside);
+ $('v14BellExit').disabled=inside&&Math.hypot(S.x-V14_EXTRACT.x,S.y-V14_EXTRACT.y)>155;
+ $('v14RiftCount').textContent=(S.rift?.oreTaken||0)+' / 14 raw ore recovered this Bell';
+ $('v14RiftResult').textContent=S.riftRuns.slice(-1)[0]?'Last Bell: '+S.riftRuns.at(-1).result.toUpperCase()+' · '+S.riftRuns.at(-1).ore+' ore':'No Rift expeditions completed yet';
+}
+function v14OpenDrawer(){const d=$('v14BellDrawer');const opening=!d.classList.contains('open');
+ document.querySelectorAll('.drawer').forEach(e=>e.classList.remove('open'));
+ if(opening)d.classList.add('open');v14Controls();}
+function v14Showcase(){const selected=V14_SKINS.find(x=>x.id===v14SkinPreview)||V14_SKINS[0];
+ const box=$('v14SkinRows');box.innerHTML=V14_SKINS.map(s=>{
+ const own=S.cosmetics.ownedSkinIds.includes(s.id),active=S.cosmetics.equippedByHull[S.shipId]===s.id,
+       eligible=s.faction==='all'||s.faction===S.faction;
+ return '<div class="v14-skin-row"><div><b>'+s.name+'</b><small>'+s.desc+' · '+s.cap+' edition designs planned · '+(eligible?'faction eligible':'other-faction preview')+' · cosmetic only</small></div><div class="v14-actions"><button data-v14-preview="'+s.id+'">Preview</button>'+
+  (own?'<button data-v14-equip="'+s.id+'" '+(active?'disabled':'')+'>'+(active?'Equipped':'Equip')+'</button>':'<button data-v14-acquire="'+s.id+'" '+(!v14SkinCanOwn(s)?'disabled':'')+'>Acquire '+s.price+' SC</button>')+'</div></div>';
+ }).join('')+'<p class="v14-disclaimer">These are local cosmetic collectibles. Edition counts describe future collections, not globally verified scarcity. No NFTs have been minted, sold, or connected to wallets.</p>';
+ $('v14SkinDescription').textContent='Preview: '+selected.name+' · '+selected.desc;
+ $('v14SkinNone').disabled=!S.cosmetics.equippedByHull[S.shipId];
+ v14DrawShipPreview();
+}
+function v14RenderLogistics(){const station=S.system,d=V14_REGIONS[station],reg=S.regionalMarkets[station];
+ $('v14LogisticsHeader').textContent='Dockside cargo exchange · '+d.name+' · '+(reg.budget||0)+' SC logistics budget';
+ $('v14LogisticsTabs').innerHTML='<button data-v14-logistics="exchange" class="'+(v14ShowLogistics==='exchange'?'v14-selected':'')+'">Regional ore exchange</button><button data-v14-logistics="contracts" class="'+(v14ShowLogistics==='contracts'?'v14-selected':'')+'">Convoy contracts</button><button data-v14-logistics="bulletins" class="'+(v14ShowLogistics==='bulletins'?'v14-selected':'')+'">Supply bulletins</button>';
+ const body=$('v14LogisticsBody');
+ if(v14ShowLogistics==='exchange'){
+  body.innerHTML=KINDS.map(k=>{const p=v14Price(station,k);return '<div class="rowItem"><div><strong>'+OREDEF[k].name+'</strong><small>Warehouse '+p.stock+' · regional bid '+p.bid+' SC · ask '+p.ask+' SC · spreads and stock apply</small></div><div class="v14-actions"><button data-v14-regional="sell" data-v14-kind="'+k+'">Sell 1</button><button data-v14-regional="buy" data-v14-kind="'+k+'">Buy 1</button></div></div>';}).join('');
+ }else if(v14ShowLogistics==='contracts'){
+  const active=S.convoyContracts.find(c=>c.status==='active');
+  body.innerHTML=(active?'<div class="v14-contract"><b>ACTIVE · '+V14_REGIONS[active.from].name+' → '+V14_REGIONS[active.to].name+'</b><small>Sealed '+active.qty+' '+OREDEF[active.kind].name+' ore · '+active.reward+' SC on delivery. Dock in the destination system. No reward for returning to origin.</small><button data-v14-cancel="1">Cancel at origin</button></div>':'')+
+  v14ConvoyOffers().map(o=>'<div class="v14-contract"><b>'+V14_REGIONS[o.from].name+' → '+V14_REGIONS[o.to].name+'</b><small>'+o.qty+' '+OREDEF[o.kind].name+' ore · Risk '+o.risk.toFixed(1)+' · '+o.reward+' SC reward · '+o.tariff+' SC departure tariff</small><button data-v14-convoy="'+o.to+'" data-v14-kind="'+o.kind+'" data-v14-qty="'+o.qty+'" '+(active?'disabled':'')+'>Accept shipment</button></div>').join('');
+ }else{
+  const lines=reg.bulletin.slice(-10).reverse();
+  body.innerHTML='<p class="v14-disclaimer">Only completed NPC or pilot deliveries change regional supply. Quotes are derived from stock, not randomized every render.</p>'+
+   (lines.length?lines.map(b=>'<div class="v14-bulletin">'+new Date(b.at).toLocaleTimeString()+' · '+b.text+'</div>').join(''):'<p class="v14-disclaimer">No deliveries recorded yet.</p>');
+ }
+}
+function v14RenderArchive(){const lines=V14_ARCHIVE.filter(x=>S.loreFound.includes(x.id));
+ $('v14LoreStep').textContent='CHAPTER ZERO · '+v14StoryLabel();
+ $('v14LoreRows').innerHTML=lines.map(l=>'<details><summary>'+l.name+'</summary><p>'+l.text+'</p></details>').join('');
+ $('v14StoryRepair').classList.toggle('hidden',S.storyStep!==2);
+ $('v14StoryContact').classList.toggle('hidden',S.storyStep!==3);
+}
+function v14RenderUI(){if(S.rift?.inside){$('stationModal').classList.remove('open');}
+ v14Showcase();v14RenderLogistics();v14RenderArchive();
+ $('v14Quality').value=S.settings.quality;
+ $('v14ReducedMotion').checked=S.settings.reducedMotion;
+ v14Controls();}
+function v14HUDUpdate(){const now=performance.now();if(now-v14LastHud<300)return;v14LastHud=now;
+ const b=v14BellClock();const inside=!!S.rift?.inside;
+ $('v14BellButton').textContent=inside?'HEART '+v14Time(b.timeLeft):b.active?'BELL OPEN '+v14Time(b.timeLeft):'BELL '+v14Time(b.timeLeft);
+ $('v14BellButton').classList.toggle('v14-live',b.active);
+ $('v14BellBadge').textContent=inside?'HEART CHAMBER · '+v14Time(b.timeLeft):'BELL '+v14Time(b.timeLeft);
+ if($('v14BellDrawer').classList.contains('open'))v14Controls();
+}
+function v14GameplayTick(dt){v14HUDUpdate();
+ if(S.rift?.inside){v14RiftAutopilot(dt);v14RiftUpdate(dt);return true;}
+ v14StoryTick();v14RegionalSimulation();v14ConvoyTick(dt);
+ if(dockedStation)v14CheckDelivery();
+ return false;
+}
+function v14VisualBackdrop(g,w,h,t){const quality=S.settings.quality==='auto'?'medium':S.settings.quality;
+ if(quality==='low')return;
+ const rng=v14Random(v14Seed(S.system+'-nebula'));
+ const count=quality==='high'?5:3;
+ for(let i=0;i<count;i++){
+  const x=w*(.15+.66*rng()),y=h*(.18+.62*rng()),radius=Math.max(w,h)*(.22+.2*rng());
+  const color=['rgba(78,102,170,0.17)','rgba(125,71,172,0.12)','rgba(31,130,151,0.11)'][i%3];
+  const glow=g.createRadialGradient(x+Math.sin(t*.012+i)*15,y,5,x,y,radius);
+  glow.addColorStop(0,color);glow.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=glow;g.fillRect(x-radius,y-radius,radius*2,radius*2);
+ }
+}
+function v14WorldOverlay(){const [x,y]=worldToScreen(V14_RIFT_PORTAL.x,V14_RIFT_PORTAL.y);const w=innerWidth,h=innerHeight;
+ const b=v14BellClock(),t=performance.now()/1000;
+ if(S.system==='orion'&&x>-180&&x<w+180&&y>-180&&y<h+180){ctx.save();ctx.translate(x,y);
+   ctx.strokeStyle=b.active?'#ffe89a':'#c09aff';ctx.lineWidth=4;ctx.shadowColor=b.active?'#ffdb87':'#996fff';ctx.shadowBlur=b.active?27:8;
+   for(let i=0;i<4;i++){ctx.rotate(.11+t*.0015);ctx.beginPath();ctx.ellipse(0,0,58+i*13,48+i*7,0,0,Math.PI*2);ctx.stroke();}
+   ctx.fillStyle=b.active?'#fff1c5':'#8e75bf';ctx.beginPath();ctx.arc(0,0,15+5*Math.sin(t*2),0,Math.PI*2);ctx.fill();
+   ctx.restore();ctx.textAlign='center';ctx.fillStyle='#f8e7c2';ctx.font='bold 13px system-ui';ctx.fillText('EIDON RIFT ANCHOR',x,y-105);
+ }
+ for(const c of v14NpcConvoys){const [cx,cy]=worldToScreen(c.x,c.y);if(cx<-70||cx>w+70||cy<-70||cy>h+70)continue;
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(c.phase+Math.PI/2);ctx.fillStyle='#879da7';ctx.strokeStyle='#90e7c5';ctx.lineWidth=2;
+  ctx.fillRect(-26,-8,52,16);ctx.strokeRect(-26,-8,52,16);ctx.fillStyle='#e7b680';ctx.fillRect(-18,-12,12,4);ctx.fillRect(5,8,12,4);
+  ctx.fillStyle='#69dcfc';ctx.beginPath();ctx.arc(-22,0,5,0,Math.PI*2);ctx.fill();ctx.restore();}
+}
+function v14AsteroidSurface(g,a){if(S.settings.quality==='low')return;
+ const r=a.r||18;g.strokeStyle='rgba(8,17,29,.55)';g.lineWidth=1.3;
+ g.beginPath();g.moveTo(-r*.72,-r*.12);g.lineTo(-r*.2,-r*.34);g.lineTo(r*.05,-r*.03);g.lineTo(r*.55,-r*.18);
+ g.moveTo(-r*.31,r*.22);g.lineTo(r*.1,r*.16);g.lineTo(r*.48,r*.65);g.stroke();
+ g.strokeStyle=OREDEF[a.kind].color;g.lineWidth=1.8;g.beginPath();g.moveTo(-r*.25,-r*.15);g.lineTo(-r*.05,r*.18);g.lineTo(r*.18,r*.08);g.stroke();
+}
+function v14RiftDraw(){const w=innerWidth,h=innerHeight,t=performance.now()/1000;
+ ctx.clearRect(0,0,w,h);const sky=ctx.createRadialGradient(w*.5,h*.5,25,w*.5,h*.5,w*.75);sky.addColorStop(0,'#252049');sky.addColorStop(.6,'#131333');sky.addColorStop(1,'#030612');ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
+ const view=(x,y)=>[x-S.x+w/2,y-S.y+h/2];
+ for(let i=0;i<165;i++){let xx=((i*137.73-S.x*.1)%w+w)%w,yy=((i*71.12-S.y*.1)%h+h)%h;ctx.fillStyle=i%11?'#778ec1':'#c0daed';ctx.fillRect(xx,yy,i%9?1.1:2,i%9?1.1:2);}
+ for(let i=0;i<8;i++){ctx.strokeStyle='rgba(166,127,232,.09)';ctx.lineWidth=12;
+ const [cx,cy]=view(2100,1400);ctx.beginPath();ctx.ellipse(cx,cy,420+i*140,200+i*86,t*.01,0,Math.PI*2);ctx.stroke();}
+ const beacon=view(V14_EXTRACT.x,V14_EXTRACT.y);ctx.save();ctx.translate(beacon[0],beacon[1]);ctx.strokeStyle='#71e6ff';ctx.shadowColor='#66dfff';ctx.shadowBlur=22;ctx.lineWidth=5;
+ ctx.beginPath();ctx.arc(0,0,55+4*Math.sin(t*3),0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(-26,0);ctx.lineTo(26,0);ctx.moveTo(0,-26);ctx.lineTo(0,26);ctx.stroke();ctx.restore();
+ ctx.fillStyle='#9be9fc';ctx.font='bold 12px system-ui';ctx.textAlign='center';ctx.fillText('EXTRACTION BEACON',beacon[0],beacon[1]-68);
+ for(const a of S.rift.deposits){if(!a.ore)continue;const [x,y]=view(a.x,a.y);if(x<-60||x>w+60||y<-60||y>h+60)continue;
+  ctx.save();ctx.translate(x,y);ctx.rotate(t*.06+a.x*.002);ctx.shadowColor=OREDEF[a.kind].color;ctx.shadowBlur=12;
+  ctx.fillStyle='#233451';ctx.strokeStyle=OREDEF[a.kind].color;ctx.lineWidth=2;ctx.beginPath();
+  for(let i=0;i<7;i++){const q=i*Math.PI*2/7,r=a.radius*(i%2?.78:1);i?ctx.lineTo(Math.cos(q)*r,Math.sin(q)*r):ctx.moveTo(Math.cos(q)*r,Math.sin(q)*r);}ctx.closePath();ctx.fill();ctx.stroke();v14AsteroidSurface(ctx,a);ctx.restore();}
+ if(S.rift.guardianHp>0){const [x,y]=view(3180,1320);ctx.save();ctx.translate(x,y);ctx.rotate(S.settings.reducedMotion?0:t*.15);ctx.fillStyle='#392849';ctx.strokeStyle='#f7a5eb';ctx.lineWidth=4;ctx.shadowColor='#e67dff';ctx.shadowBlur=20;ctx.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,r=i%2?65:115;i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
+  ctx.fillStyle='#ffcbf8';ctx.textAlign='center';ctx.fillText('HEART GUARDIAN · '+Math.ceil(S.rift.guardianHp/450*100)+'%',x,y-130);}
+ for(const q of v14RiftBullets){const [x,y]=view(q.x,q.y);ctx.fillStyle=q.color;ctx.fillRect(x-3,y-3,6,6);}
+ for(const q of v14RiftHazards){const [x,y]=view(q.x,q.y);ctx.shadowColor='#f9a7c3';ctx.shadowBlur=12;ctx.fillStyle='#ff9cbb';ctx.beginPath();ctx.arc(x,y,8,0,7);ctx.fill();ctx.shadowBlur=0;}
+ v14DrawFactionHull(ctx,w/2,h/2,S.angle,1.15);
+ const b=v14BellClock();ctx.fillStyle='rgba(4,12,30,.82)';ctx.fillRect(w/2-150,75,300,46);
+ ctx.textAlign='center';ctx.font='bold 13px system-ui';ctx.fillStyle=b.phase==='collapsing'?'#ff9fa6':'#b5edff';ctx.fillText('THE TWELVE BELLS · '+v14Time(b.timeLeft),w/2,103);
+ ctx.font='12px system-ui';ctx.fillStyle='#eff5ff';ctx.fillText('Ore: '+S.rift.oreTaken+'/14 · Find seams, dodge the guardian, return to beacon',w/2,h-100);
+}
+v14Init();v14SpawnConvoys();factionInit();
+function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Chamber",tier:"EVENT"}:currentZone();$('systemTag').textContent=SYSTEMS[S.system].name;$('factionTag').textContent=S.faction?FACTIONS[S.faction].name:'Unaligned';$('factionTag').style.color=S.faction?FACTIONS[S.faction].color:'#dceafa'; $('zoneTag').textContent=zone.name+' · '+zone.tier; $('dockTag').textContent=dockedStation?('Dock: '+dockedStation.name):'Dock: no'; $('hostileTag').textContent=drones.filter(d=>Math.hypot(d.x-S.x,d.y-S.y)<700).length+' hostiles'; $('coordsTag').textContent='X '+Math.round(S.x)+' • Y '+Math.round(S.y); $('topCredits').innerHTML=S.credits+' <small>SC</small>'; $('hpText').textContent=Math.round(100*S.hp/S.maxHp)+'%'; $('energyText').textContent=Math.round(S.energy)+'%'; $('cargoText').textContent=cargoCount()+' / '+cargoCap(); $('speedText').textContent=Math.round(Math.hypot(S.vx,S.vy)); $('xpText').textContent=S.xp; $('gunText').textContent=GUNS[S.equipped.gun].name.replace(' Blaster','').replace(' Cannon','');$('damageBonusText').textContent='+'+damagePercent()+'%';$('combatReadout').textContent=activeShip().name+' · '+actualDamage()+' DMG / hit · '+gunDps()+' DPS · Mk-'+gunLevel(); $('assistBtnState').textContent=S.settings.assist?'ON':'OFF'; $('hpBar').style.width=(100*S.hp/S.maxHp)+'%'; $('energyBar').style.width=S.energy+'%'; $('cargoBar').style.width=(100*cargoCount()/cargoCap())+'%'; $('stationBtn').disabled=!dockedStation; $('stationPrompt').classList.toggle('hidden', !!dockedStation); $('stationSubtitle').textContent=dockedStation?('Docked at '+dockedStation.name):'Dock first'; $('stationTitle').textContent=dockedStation?(dockedStation.name+' • Ship console'):'Station services'; if(!dockedStation)$('stationModal').classList.remove('open'); $('toggleSound').setAttribute('aria-pressed',String(S.settings.sound)); $('toggleSound').title=S.settings.sound?'Mute audio':'Enable audio';
+ if(!includePanels)return;renderGates();extRenderUI();renderFactionUI();v14RenderUI();
  $('walletGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small>$${OREDEF[k].ticker}</small><b style="color:${OREDEF[k].color}">${S.tokens[k]}</b><small>${k==='moon'||k==='neon'?'Controlled flow':'Rare reserve'}</small></div>`).join(''); $('oreGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small style="color:${OREDEF[k].color}">${OREDEF[k].name}</small><b>${S.ore[k]}</b><small>${OREDEF[k].oreForToken} ore → ${OREDEF[k].tokenOut} $${OREDEF[k].ticker}</small></div>`).join('');
  $('zoneList').innerHTML=ZONES.slice(1).map(z=>`<div class="zone-card" style="border-left-color:${z.color}"><b>${z.name} · ${z.tier}</b><br>${z.desc}</div>`).join('');$('marketList').innerHTML=KINDS.map(k=>`<div class="rowItem"><div><strong style="color:${OREDEF[k].color}">${OREDEF[k].name}</strong><small>Buy ${OREDEF[k].buy} · Sell ${OREDEF[k].sell} · Refine ${OREDEF[k].oreForToken} ore + ${Math.max(0,OREDEF[k].fee-(S.equipped.utility==='autorefiner'?1:0))} fee → ${OREDEF[k].tokenOut} $${OREDEF[k].ticker}</small></div><div class="inlineBtns"><button data-buy="${k}">Buy</button><button data-sell="${k}">Sell</button><button data-refine="${k}">Refine</button></div></div>`).join('');
  const upDefs=[{id:'thrusters',name:'Thrusters',lv:S.upgrades.thrusters,desc:'Acceleration and top speed. No zone locks.',cost:(()=>{const l=S.upgrades.thrusters; if(l>=5) return null; return {credits:120*l,tokens:{neon:l}}})()},{id:'mining',name:'Mining rig',lv:S.upgrades.mining,desc:'Mine faster; high-tier enemies are still dangerous.',cost:(()=>{const l=S.upgrades.mining; if(l>=5) return null; if(l<3) return {credits:120*l,tokens:{neon:1+l}}; if(l===3) return {credits:120*l,tokens:{dust:2}}; return {credits:120*l,tokens:{diam:1}}})()},{id:'cargo',name:'Cargo frame',lv:S.upgrades.cargo,desc:'Increase cargo capacity.',cost:(()=>{const l=S.upgrades.cargo; if(l>=5) return null; if(l<3) return {credits:120*l,tokens:{moon:1+l}}; if(l===3) return {credits:120*l,tokens:{neon:2}}; return {credits:120*l,tokens:{dust:2}}})()}];
@@ -1175,12 +1683,12 @@ function renderUI(includePanels=true){const zone=currentZone();$('systemTag').te
  $('shipList').innerHTML=Object.entries(SHIPS).filter(([id,ship])=>shipFilter==='all'||(ship.role||'premium')===shipFilter).map(([id,ship])=>`<div class="rowItem"><div><strong>${ship.name}${id===S.shipId?' · ACTIVE':''}</strong><small>${ship.desc}</small><div class="ship-stats"><span>Hull ${ship.hull}</span><span>Speed ${Math.round(ship.speed*100)}%</span><span>Thrust ${Math.round(ship.accel*100)}%</span><span>DMG +${Math.round(ship.damageBonus*100)}%</span><span>Cargo ${ship.cargo>=0?'+':''}${ship.cargo}</span></div><small>${S.ownedShips[id]?'Owned · Ready for launch':costText(ship.cost)}</small></div><div class="inlineBtns"><button ${id===S.shipId?'disabled':''} ${S.ownedShips[id]?`data-equip-ship="${id}"`:`data-buy-ship="${id}"`}>${id===S.shipId?'Piloting':S.ownedShips[id]?'Deploy':'Purchase'}</button></div></div>`).join('');
  $('equipList').innerHTML=`<div class="rowItem"><div><strong>Primary weapons</strong><small>Equip a crafted weapon.</small></div><div></div></div>${Object.entries(GUNS).filter(([k])=>S.crafted.guns[k]).map(([k,v])=>`<div class="rowItem"><div><strong>${v.name}</strong><small>${v.desc}</small></div><div><button ${S.equipped.gun===k?'disabled':''} data-equip-cat="guns" data-equip="${k}">${S.equipped.gun===k?'Equipped':'Equip'}</button></div></div>`).join('')}<div class="rowItem"><div><strong>Utilities</strong><small>Equip one utility module.</small></div><div></div></div>${Object.entries(UTILS).filter(([k])=>S.crafted.utils[k]).map(([k,v])=>`<div class="rowItem"><div><strong>${v.name}</strong><small>${v.desc}</small></div><div><button ${S.equipped.utility===k?'disabled':''} data-equip-cat="utils" data-equip="${k}">${S.equipped.utility===k?'Equipped':'Equip'}</button></div></div>`).join('')}`;
  }
-function update(dt){clock+=dt;updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt)}
+function update(dt){clock+=dt;if(v14GameplayTick(dt))return;updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt)}
 let lastPersist=performance.now();function loop(ts){const dt=Math.min(.05,(ts-lastTime)/1000); lastTime=ts; update(dt); draw(); if((ts|0)%260<17) renderUI(false); if(ts-lastPersist>4000){lastPersist=ts;save();} requestAnimationFrame(loop)}
 function toggleDrawer(id){const d=$(id),opening=!d.classList.contains('open');document.querySelectorAll('.drawer').forEach(el=>el.classList.remove('open')); if(opening)d.classList.add('open');for(const [btn,panel] of Object.entries({toggleWallet:'walletDrawer',toggleCargo:'cargoDrawer',toggleMap:'mapDrawer',toggleGates:'gatesDrawer',toggleFaction:'factionDrawer'}))$(btn).setAttribute('aria-expanded',String($(panel).classList.contains('open')));}
-addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='m')mineNearest();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
+addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
 addEventListener('keyup',e=>{pressed[e.key]=false; pressed[e.key.toLowerCase()]=false});
-canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const wx=S.x+(e.clientX-innerWidth/2), wy=S.y+(e.clientY-innerHeight/2); if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
+canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const wx=S.x+(e.clientX-innerWidth/2), wy=S.y+(e.clientY-innerHeight/2);if(S.rift?.inside){v14RiftClick(wx,wy);return;} if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
 $('toggleWallet').onclick=()=>toggleDrawer('walletDrawer'); $('toggleCargo').onclick=()=>toggleDrawer('cargoDrawer'); $('toggleMap').onclick=()=>toggleDrawer('mapDrawer'); $('toggleGates').onclick=()=>{renderGates();toggleDrawer('gatesDrawer')};$('toggleFaction').onclick=()=>{renderFactionUI();toggleDrawer('factionDrawer')}; $('gateList').addEventListener('click',e=>{const b=e.target.closest('[data-gate]');if(b){routeGate(b.dataset.gate);$('gatesDrawer').classList.remove('open');}}); $('toggleLog').onclick=()=>{const hidden=$('quickLog').classList.toggle('hidden');$('toggleLog').setAttribute('aria-expanded',String(!hidden));}; $('toggleSound').onclick=()=>{S.settings.sound=!S.settings.sound; renderUI(); save(); toast(S.settings.sound?'Sound on':'Sound off')};
 $('stationBtn').onclick=()=>{if(dockedStation){renderUI();$('stationModal').classList.add('open');} else toast('Dock first')}; $('closeStationBtn').onclick=()=>$('stationModal').classList.remove('open'); $('mineNearestBtn').onclick=mineNearest; $('portBtn').onclick=()=>routeToStation('port'); $('assistBtn').onclick=()=>{S.settings.assist=!S.settings.assist; renderUI(); save()}; $('resetBtn').onclick=()=>{if(confirm('Delete the local test pilot save and its demo assets? The next new save will receive a fresh test grant.')){localStorage.removeItem('tokenverse-deep-space-v10');localStorage.removeItem('tokenverse-fullscreen-v08'); localStorage.removeItem('tokenverse-fullscreen-v07'); localStorage.removeItem('tokenverse-simplified-v06'); localStorage.removeItem('tokenverse-pages-v1'); location.reload()}}; $('resetInLedger').onclick=()=>$('resetBtn').click();
 $('shipFilter').addEventListener('change',e=>{shipFilter=e.target.value;renderUI(true);});
@@ -1204,12 +1712,33 @@ $('stationModal').addEventListener('click',e=>{
  if(b.dataset.gunMod)extEnhanceWeaponMod(b.dataset.gunMod);
 });
 
+
+$('v14BellButton').onclick=v14OpenDrawer;
+$('v14BellRoute').onclick=v14RouteRift;
+$('v14BellEntry').onclick=v14EnterRift;
+$('v14BellExit').onclick=v14TryExtract;
+$('v14Quality').addEventListener('change',e=>{S.settings.quality=e.target.value;save();toast('Quality: '+e.target.value);});
+$('v14ReducedMotion').addEventListener('change',e=>{S.settings.reducedMotion=!!e.target.checked;save();});
+$('v14SkinNone').onclick=()=>v14EquipSkin('none');
+$('v14StoryRepair').onclick=v14StoryRepair;
+$('v14StoryContact').onclick=v14StoryContact;
+$('stationModal').addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.v14Preview){v14SkinPreview=b.dataset.v14Preview;v14Showcase();}
+ if(b.dataset.v14Acquire)v14AcquireSkin(b.dataset.v14Acquire);
+ if(b.dataset.v14Equip)v14EquipSkin(b.dataset.v14Equip);
+ if(b.dataset.v14Logistics){v14ShowLogistics=b.dataset.v14Logistics;v14RenderLogistics();}
+ if(b.dataset.v14Regional)v14RegionalTrade(b.dataset.v14Kind,b.dataset.v14Regional);
+ if(b.dataset.v14Convoy)v14AcceptConvoy(b.dataset.v14Convoy,b.dataset.v14Kind,Number(b.dataset.v14Qty));
+ if(b.dataset.v14Cancel)v14CancelConvoy();
+});
+
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab)); $('repairShipBtn').onclick=repairShip; $('stationModal').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b) return; if(b.dataset.buy) buyOre(b.dataset.buy); if(b.dataset.sell) sellOre(b.dataset.sell); if(b.dataset.refine) doRefine(b.dataset.refine); if(b.dataset.upgrade) upgradeSys(b.dataset.upgrade);if(b.dataset.upgradeGun)upgradeGun(b.dataset.upgradeGun);if(b.dataset.buyShip)buyShip(b.dataset.buyShip);if(b.dataset.equipShip)equipShip(b.dataset.equipShip); if(b.dataset.craft) craft(b.dataset.craftCat,b.dataset.craft); if(b.dataset.equip) equip(b.dataset.equipCat,b.dataset.equip)}); $('savePaint').onclick=()=>{S.ship.hull=$('hullColor').value; S.ship.accent=$('accentColor').value; save(); toast('Paint saved')};
 $('factionDrawer').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.factionJoin)factionJoin(b.dataset.factionJoin);if(b.hasAttribute('data-faction-claim'))factionClaimMission();});
 $('factionSelectModal').addEventListener('click',e=>{const b=e.target.closest('[data-faction-join]');if(b)factionJoin(b.dataset.factionJoin);});
 $('factionHomeBtn').onclick=factionHomeRoute;
 $('hullColor').value=S.ship.hull; $('accentColor').value=S.ship.accent;
-renderLog();renderUI();setTab('market');save();log('Deep Space v0.10 online · 10× galaxy · no locked regions · +20% weapon upgrades.');log('LOCAL TEST PILOT: 50,000 SC and 50 of every ore and token, one-time grant.');requestAnimationFrame(loop);
+renderLog();renderUI();setTab('market');save();log('The Twelve Bells v0.14: Heart Chamber, regional logistics and faction ship cultures online.');log('SOLO TEST MODE: local SC and resource balances have no cash value.');requestAnimationFrame(loop);
 })();
 </script>
 </body>
