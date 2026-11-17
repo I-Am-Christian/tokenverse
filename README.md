@@ -1,3 +1,13 @@
+# Tokenverse v0.12 — Frontier Industries
+
+**Play the browser game:** https://i-am-christian.github.io/tokenverse/
+
+This update adds blueprint research, two more craftable weapons, weapon modifiers, modular outposts, scanning, mining and combat drones, five alien mothership bosses, and a simulated material-token exchange with limit orders. It keeps the fullscreen game, 36 ships, and five linked star systems. [Read the release notes](FRONTIER_INDUSTRIES_V012.md).
+
+**GitHub Pages mode is local single-player.** Material tokens and SC are simulated game balances, not real crypto. The browser version cannot run a real multiplayer exchange or provide withdrawals.
+
+---
+
 # Tokenverse v0.11 — Fleet & Gateways
 
 **Play in the browser:** https://i-am-christian.github.io/tokenverse/
