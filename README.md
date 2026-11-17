@@ -1,3 +1,13 @@
+## Tokenverse Pilot Command — v0.9
+
+**Play in your browser:** https://i-am-christian.github.io/tokenverse/
+
+The GitHub Pages build has a new fullscreen, spacecraft-inspired pilot cockpit with compact telemetry, holographic instrument buttons, hidden ledger/cargo/navigation/comms menus, and a dock-only upgrade, crafting and ship customisation console. Mouse click-to-move and its visible destination marker are retained. See [release notes](PILOT_COMMAND_RELEASE_NOTES.md).
+
+**Current scope:** This browser-hosted build is single-player, uses local browser saves and simulated material tokens. Shared multiplayer, PvP with other humans, and real cryptocurrency remain unconnected to GitHub Pages.
+
+---
+
 ## Tokenverse v0.5 — Galactic Expansion
 
 Play: https://i-am-christian.github.io/tokenverse/
