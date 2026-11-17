@@ -1,3 +1,15 @@
+## Tokenverse v0.10 — Deep Space Expansion
+
+**Play:** https://i-am-christian.github.io/tokenverse/
+
+The browser game is now 10× larger by area (24,000 × 14,400), all regions are accessible, and manual movement cancels mouse-navigation autopilot. Distant regions contain denser high-value ore and stronger tiered enemies. At stations, pilots can enhance gun damage (+20% per level), fabricate seven weapons, and buy or deploy six ship classes with distinct statistics. The local test pilot receives a one-time grant of at least 50,000 simulated JUNK, 50 of each ore and 50 of each material token, plus test cargo capacity.
+
+Read the [full release notes](DEEP_SPACE_RELEASE_NOTES.md).
+
+**Note:** GitHub Pages still hosts a solo browser test sector, not synchronized PvP multiplayer or real cryptocurrency. Real assets and withdrawals are not enabled.
+
+---
+
 ## Tokenverse Pilot Command — v0.9
 
 **Play in your browser:** https://i-am-christian.github.io/tokenverse/
