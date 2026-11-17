@@ -21,12 +21,12 @@ const $ = id => {
   throw new Error('Unknown element ' + id);
 };
 const drawFactionRadar = () => { state.factionOverlayPainted = true; };
-const helpers = new Function('
+const helpers = new Function('$','S','STATIONS','ZONES','GATES','WORLD','performance','drawFactionRadar',
   implementation + '\nreturn {hudRadarBounds, drawNavigationChart};'
 )(
   $, {x:900,y:900,system:'orion',outposts:[]},
   [{x:900,y:900,kind:'port'}],
-  [{x1:0,y1:0,x2:24000,y2:14400,color:'#6fe8ff'}],
+  [{x1:0,y1:0,x2:48000,y2:28800,color:'#6fe8ff'}],
   [{x:24000,y:180,color:'#9fdfff'}],
   {w:48000,h:28800}, {now: () => 2000}, drawFactionRadar
 );
