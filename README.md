@@ -1,3 +1,13 @@
+# Tokenverse v0.11 — Fleet & Gateways
+
+**Play in the browser:** https://i-am-christian.github.io/tokenverse/
+
+The newest GitHub Pages release features safer obstacle-aware flight, four star gates, five connected systems, 30 additional ships, Scrap Credits for repairs, and slower controlled mining. The large v0.10 galaxy and advanced weapon systems remain. [Read v0.11 release notes](GATEWAYS_AND_FLEET_V011.md).
+
+**Note:** Browser mode is still solo. No real cryptocurrency or cash withdrawals are available.
+
+---
+
 ## Tokenverse v0.10 — Deep Space Expansion
 
 **Play:** https://i-am-christian.github.io/tokenverse/
