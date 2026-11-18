@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#050b19" />
-<title>Tokenverse v0.14 — The Twelve Bells</title>
+<title>Warp Coin v0.15 — Pioneer Systems</title>
 <style>
 
 :root{color-scheme:dark;--ink:#040a18;--glass:rgba(5,15,35,.72);--panel:rgba(7,19,42,.92);--stroke:rgba(99,171,215,.25);--text:#e9f6ff;--muted:#7e9db4;--ice:#6de8f2;--mint:#70f4cd;--violet:#9684ff;--amber:#ffca7a;--danger:#ff788d;font-family:Inter, 'Segoe UI',system-ui,sans-serif}
@@ -127,6 +127,36 @@
 .v14-archive-label{font-size:12px;line-height:1.45;color:#def3ff}
 @media(max-width:850px){#v14BellBadge{display:none}#v14BellButton{padding:8px 10px;font-size:10px}.v14-skin-row{display:block}.v14-skin-row .v14-actions{justify-content:flex-start;margin-top:8px}}
 @media(max-height:650px){#v14BellDrawer .v14-clock{font-size:24px}}
+/* Warp Coin v0.15: compact galactic trading board and personal colony */
+.warp-drawer{width:min(440px,91vw);max-height:min(72vh,690px);overflow:auto;padding:18px 17px}
+.warp-drawer h3{font-size:11px;margin:15px 0 9px;text-transform:uppercase;letter-spacing:1.2px;color:#d5faff}
+.warp-drawer button{font-size:10px;border:1px solid rgba(123,209,229,.39);border-radius:4px;background:rgba(22,63,90,.72);padding:7px 9px;color:#e3f8ff;font-weight:700;cursor:pointer}
+.warp-drawer button:hover{border-color:#9af3ff;background:rgba(38,91,126,.87)}
+.warp-drawer button:disabled{opacity:.3}
+.warp-lede,.warp-drawer small{font-size:10px;line-height:1.6;color:#9dc2d7}
+.warp-lede{margin:7px 0 12px}
+.warp-menu-icon{display:inline-block;width:17px;text-align:center;color:#8de7ff;font-size:16px}
+.warp-field{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11px;color:#b7d9e8;margin:7px 0}
+.warp-field input{background:#081c32;color:#e9f9ff;border:1px solid #2a5877;border-radius:4px;min-width:0;max-width:175px;padding:7px;font-size:11px}
+.warp-field input[type=color]{width:44px;height:33px;padding:2px}
+.warp-module,.warp-planetrow,.warp-warehouse{display:flex;align-items:center;justify-content:space-between;gap:7px;padding:9px 0;border-bottom:1px solid rgba(105,170,220,.14)}
+.warp-module>div:first-child{display:flex;flex-direction:column;flex:1;gap:3px}
+.warp-module b,.warp-warehouse b{font-size:11px}
+.warp-module small{display:block}
+.warp-planetrow>div{display:flex;flex:1;flex-direction:column;gap:2px;min-width:0}
+.warp-planetrow input{background:rgba(12,40,65,.7);color:#effaff;padding:5px 6px;border:1px solid #305774;border-radius:3px;min-width:0;width:100%;font-size:11px}
+.warp-orb{display:block;width:17px;height:17px;border-radius:50%;box-shadow:0 0 12px currentColor;flex:none}
+.warp-warehouse span{font-size:12px;font-variant-numeric:tabular-nums;margin-left:auto}
+.warp-focus{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0}.warp-focus button.warp-current{border-color:#6ff5cb;background:#1b716d}
+.warp-metricline{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.warp-metricline>div{display:flex;flex-direction:column;gap:6px;padding:10px;background:rgba(21,59,85,.62);border:1px solid #25466a}
+.warp-metricline b{font-size:17px;color:#e9fbff}
+.warp-table-scroll{overflow-x:auto;border:1px solid rgba(105,172,219,.23);border-radius:5px;margin:10px 0}
+.warp-economy-table{border-collapse:collapse;width:100%;min-width:480px;font-size:9px}
+.warp-economy-table th,.warp-economy-table td{padding:7px 5px;border-bottom:1px solid rgba(119,179,213,.12);text-align:center;white-space:nowrap}
+.warp-economy-table th:first-child{text-align:left}.warp-economy-table thead{color:#8bd8f3;background:#101f39}
+.warp-economy-table td b{color:#83f4d9}.warp-economy-table small{display:block;font-size:8px}
+@media(max-width:680px){.warp-drawer{max-height:60vh}.warp-module{gap:4px}.warp-drawer h3{margin-top:10px}.warp-planetrow button{padding:6px 5px}}
 </style>
 </head>
 <body>
@@ -136,7 +166,7 @@
   <div id="topBar" class="hud">
     <div id="brand">
       <div class="brand-mark"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true"><circle cx="16" cy="16" r="4" fill="#6fe8f2"/><ellipse cx="16" cy="16" rx="15" ry="6" stroke="#6fe8f2" fill="none" stroke-width="1.2" transform="rotate(-37 16 16)"/><path d="M7 26 25 6" stroke="#fff" stroke-width="1.1"/></svg></div>
-      <div class="brand-copy"><div class="logo">TOKEN<span>VERSE</span></div><div class="sub">Pilot command · The Twelve Bells 0.14</div></div>
+      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Pioneer Systems 0.15</div></div>
     </div>
     <div id="topCenter"><span class="sector-signal"><i class="signal-dot"></i>Solo sector</span><i class="sector-divider"></i><span id="systemTag" class="pill">Orion Belt</span><span id="factionTag" class="pill">Choose faction</span><button id="v14BellButton" class="pill" aria-label="Open the Twelve Bells event console">BELL · COUNTDOWN</button><span id="v14BellBadge" class="pill" aria-hidden="true">NEXT BELL</span><span id="zoneTag" class="pill">Frontier</span><i class="sector-divider"></i><span id="dockTag" class="pill">In flight</span><span id="hostileTag" class="pill">0 hostiles</span><span id="coordsTag" class="pill">X 0 • Y 0</span></div>
     <div id="topRight"><div class="top-credit"><div class="credit-caption">Credit balance</div><div id="topCredits">0 <small>SC</small></div></div></div>
@@ -166,7 +196,7 @@
     </div>
     <div id="walletDrawer" class="hud drawer"><h3>Asset ledger <span class="test-pill">LOCAL TEST</span></h3><div id="walletGrid" class="grid2"></div><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px"><span style="font-size:10px;color:var(--muted)">SIMULATED ASSETS · NO CASH VALUE</span><button id="resetInLedger" class="dock-action" style="min-width:0;height:30px;font-size:9px">Reset pilot</button></div></div>
     <div id="cargoDrawer" class="hud drawer"><h3 >Cargo manifest</h3><div id="oreGrid" class="grid2"></div></div>
-    <div id="mapDrawer" class="hud drawer"><h3>Galactic chart · 48k × 28.8k</h3>
+    <div id="mapDrawer" class="hud drawer"><h3>Galactic chart · 96k × 57.6k</h3>
 <canvas id="navigationChart" width="320" height="192" role="img" aria-label="Galaxy chart with current ship position, gates and stations"></canvas>
 <div class="map-hint">Four faction home territories are separated by neutral corridors. Colored markers show home bases and gates; white marker is your ship.</div>
 <div class="notice" style="margin-bottom:10px">All sectors are open. Danger increases with enemy tier, not invisible barriers.</div><div id="zoneList" class="zone-list"></div></div>
@@ -294,19 +324,19 @@ const $=id=>document.getElementById(id);
 const KINDS=['moon','neon','dust','void','diam'];
 const OREDEF={moon:{name:'Moonstone',ticker:'MOON',color:'#8ec3ff',oreForToken:4,tokenOut:2,fee:3,buy:18,sell:7},neon:{name:'Neonite',ticker:'NEON',color:'#6df4dc',oreForToken:3,tokenOut:1,fee:5,buy:34,sell:16},dust:{name:'Stardust',ticker:'DUST',color:'#ffd479',oreForToken:2,tokenOut:1,fee:8,buy:80,sell:39},void:{name:'Void crystal',ticker:'VOID',color:'#be9dff',oreForToken:1,tokenOut:1,fee:25,buy:200,sell:100},diam:{name:'Diamond ore',ticker:'DIAM',color:'#7cf5ff',oreForToken:2,tokenOut:1,fee:40,buy:250,sell:120}};
 const ZONES=[
- {name:'Neutral Safe Zone',x1:0,y1:0,x2:2400,y2:2400,color:'#81dcff',tier:'SAFE',danger:0,desc:'Protected neutral starter spaceport.'},
- {name:'Free Outer Reaches',x1:0,y1:0,x2:48000,y2:28800,color:'#7287bf',tier:'T3–6',danger:3,desc:'Unclaimed corridors and outer wilderness.'},
- {name:'Solar Union Dominion',x1:2300,y1:1800,x2:21100,y2:12400,color:'#68d6ff',tier:'T1–3',danger:1,desc:'Shielded factories, Moonstone and Neonite.',faction:'solar'},
- {name:'Crimson Marauder Marches',x1:26900,y1:1800,x2:45700,y2:12400,color:'#ff797e',tier:'T2–4',danger:2,desc:'Warlord patrols and lucrative battle salvage.',faction:'crimson'},
- {name:'Verdant Accord Commons',x1:2300,y1:16400,x2:21100,y2:27000,color:'#79efb0',tier:'T1–3',danger:1,desc:'Abundant mineral belts and refinery outposts.',faction:'verdant'},
- {name:'Void Scholar Enclave',x1:26900,y1:16400,x2:45700,y2:27000,color:'#bd9cff',tier:'T3–5',danger:3,desc:'Ancient relics, Void Crystals and anomalies.',faction:'void'},
- {name:'The Disputed Rift',x1:21200,y1:9200,x2:26800,y2:19500,color:'#f3bf70',tier:'T6–8',danger:6,desc:'Neutral contested heartland with dense diamond ore.',contested:true}
+ {name:'Neutral Safe Zone',x1:0,y1:0,x2:4800,y2:4800,color:'#81dcff',tier:'SAFE',danger:0,desc:'Protected neutral starter spaceport.'},
+ {name:'Free Outer Reaches',x1:0,y1:0,x2:96000,y2:57600,color:'#7287bf',tier:'T3–6',danger:3,desc:'Unclaimed corridors and outer wilderness.'},
+ {name:'Solar Union Dominion',x1:4600,y1:3600,x2:42200,y2:24800,color:'#68d6ff',tier:'T1–3',danger:1,desc:'Shielded factories, Moonstone and Neonite.',faction:'solar'},
+ {name:'Crimson Marauder Marches',x1:53800,y1:3600,x2:91400,y2:24800,color:'#ff797e',tier:'T2–4',danger:2,desc:'Warlord patrols and lucrative battle salvage.',faction:'crimson'},
+ {name:'Verdant Accord Commons',x1:4600,y1:32800,x2:42200,y2:54000,color:'#79efb0',tier:'T1–3',danger:1,desc:'Abundant mineral belts and refinery outposts.',faction:'verdant'},
+ {name:'Void Scholar Enclave',x1:53800,y1:32800,x2:91400,y2:54000,color:'#bd9cff',tier:'T3–5',danger:3,desc:'Ancient relics, Void Crystals and anomalies.',faction:'void'},
+ {name:'The Disputed Rift',x1:42400,y1:18400,x2:53600,y2:39000,color:'#f3bf70',tier:'T6–8',danger:6,desc:'Neutral contested heartland with dense diamond ore.',contested:true}
 ];
 const FACTIONS={
- solar:{id:'solar',name:'Solar Union',baseName:'Solar Citadel',symbol:'✦',color:'#68d6ff',region:'Northwest',specialty:'Fortification & industry',bonus:'10% less damage',description:'Engineers who defend trade routes and heavily armored space stations.',home:{x:9000,y:6600},area:{x1:2300,y1:1800,x2:21100,y2:12400}},
- crimson:{id:'crimson',name:'Crimson Marauders',baseName:'Redline Bastion',symbol:'◆',color:'#ff797e',region:'Northeast',specialty:'Combat & raiding',bonus:'8% more weapon damage',description:'Independent captains competing for glory and control of salvage-rich sectors.',home:{x:38900,y:6600},area:{x1:26900,y1:1800,x2:45700,y2:12400}},
- verdant:{id:'verdant',name:'Verdant Accord',baseName:'Verdant Anchorage',symbol:'❖',color:'#79efb0',region:'Southwest',specialty:'Mining & trade',bonus:'10% faster mining',description:'Collective miners and merchants who supply the galaxy with essential ore.',home:{x:9000,y:22500},area:{x1:2300,y1:16400,x2:21100,y2:27000}},
- void:{id:'void',name:'Void Scholars',baseName:'Void Archive',symbol:'◇',color:'#bd9cff',region:'Southeast',specialty:'Research & exploration',bonus:'15% larger scan radius',description:'Explorers who seek hidden anomalies, alien technology and blueprint fragments.',home:{x:38900,y:22500},area:{x1:26900,y1:16400,x2:45700,y2:27000}}
+ solar:{id:'solar',name:'Solar Union',baseName:'Solar Citadel',symbol:'✦',color:'#68d6ff',region:'Northwest',specialty:'Fortification & industry',bonus:'10% less damage',description:'Engineers who defend trade routes and heavily armored space stations.',home:{x:18000,y:13200},area:{x1:4600,y1:3600,x2:42200,y2:24800}},
+ crimson:{id:'crimson',name:'Crimson Marauders',baseName:'Redline Bastion',symbol:'◆',color:'#ff797e',region:'Northeast',specialty:'Combat & raiding',bonus:'8% more weapon damage',description:'Independent captains competing for glory and control of salvage-rich sectors.',home:{x:77800,y:13200},area:{x1:53800,y1:3600,x2:91400,y2:24800}},
+ verdant:{id:'verdant',name:'Verdant Accord',baseName:'Verdant Anchorage',symbol:'❖',color:'#79efb0',region:'Southwest',specialty:'Mining & trade',bonus:'10% faster mining',description:'Collective miners and merchants who supply the galaxy with essential ore.',home:{x:18000,y:45000},area:{x1:4600,y1:32800,x2:42200,y2:54000}},
+ void:{id:'void',name:'Void Scholars',baseName:'Void Archive',symbol:'◇',color:'#bd9cff',region:'Southeast',specialty:'Research & exploration',bonus:'15% larger scan radius',description:'Explorers who seek hidden anomalies, alien technology and blueprint fragments.',home:{x:77800,y:45000},area:{x1:53800,y1:32800,x2:91400,y2:54000}}
 };
 const FACTION_MISSIONS={
  solar:{stat:'mined',title:'Union Supply Run',description:'Mine 12 units of raw ore for the union yards.',goal:12,credits:180,rep:14},
@@ -314,17 +344,18 @@ const FACTION_MISSIONS={
  verdant:{stat:'refined',title:'Accord Refinery Quota',description:'Refine 3 batches of ore into material tokens.',goal:3,credits:190,rep:13},
  void:{stat:'scans',title:'Archive Reconnaissance',description:'Complete 3 scanner pulses and document the signals.',goal:3,credits:210,rep:14}
 };
-const WORLD={w:48000,h:28800,port:{x:900,y:900},safeRadius:700};
+const WORLD={w:96000,h:57600,port:{x:900,y:900},safeRadius:700};
 const SYSTEMS={orion:{name:"Orion Belt",tier:1,ore:"moon",color:"#6fdcff",links:{north:"borealis",east:"helios",south:"forge",west:"umbra"}},borealis:{name:"Borealis Drift",tier:2,ore:"neon",color:"#85dcff",req:{mining:2},links:{north:"orion",east:"helios",south:"orion",west:"umbra"}},helios:{name:"Helios Reach",tier:2,ore:"dust",color:"#ffd17c",req:{thrusters:2},links:{north:"borealis",east:"orion",south:"forge",west:"orion"}},forge:{name:"Titan Foundry",tier:3,ore:"void",color:"#ff9a86",req:{mining:3},links:{north:"orion",east:"helios",south:"orion",west:"umbra"}},umbra:{name:"Umbra Exclusion",tier:3,ore:"diam",color:"#bb9cff",req:{mining:3,thrusters:2},links:{north:"borealis",east:"orion",south:"forge",west:"orion"}}};
+SYSTEMS.homestead={name:'Pioneer System',tier:1,ore:'moon',color:'#76eedf',links:{north:'orion',east:'orion',south:'orion',west:'orion'}};
 const GATES=[{id:"north",name:"Northern Gate",x:WORLD.w/2,y:185,color:"#8fdaff"},{id:"east",name:"Eastern Gate",x:WORLD.w-185,y:WORLD.h/2,color:"#f3cb8c"},{id:"south",name:"Southern Gate",x:WORLD.w/2,y:WORLD.h-185,color:"#ffa9b2"},{id:"west",name:"Western Gate",x:185,y:WORLD.h/2,color:"#ae9aff"}];
 const STATIONS=[
 {id:'port',name:'Orion Port',x:900,y:900,kind:'port'},
-{id:'frontier',name:'Frontier Depot',x:4350,y:3520,kind:'relay'},
-{id:'ember',name:'Ember Relay',x:9400,y:3420,kind:'relay'},
-{id:'rift',name:'Rift Anchorage',x:12400,y:10200,kind:'relay'},
-{id:'diamond',name:'Diamond Watch',x:20200,y:4300,kind:'relay'},
-{id:'outer',name:'Outer Haven',x:3900,y:11900,kind:'relay'},
- {id:'concord',name:'Concord Exchange',x:24000,y:14400,kind:'hub'},
+{id:'frontier',name:'Frontier Depot',x:8700,y:7040,kind:'relay'},
+{id:'ember',name:'Ember Relay',x:18800,y:6840,kind:'relay'},
+{id:'rift',name:'Rift Anchorage',x:24800,y:20400,kind:'relay'},
+{id:'diamond',name:'Diamond Watch',x:40400,y:8600,kind:'relay'},
+{id:'outer',name:'Outer Haven',x:7800,y:23800,kind:'relay'},
+ {id:'concord',name:'Concord Exchange',x:48000,y:28800,kind:'hub'},
  ...Object.values(FACTIONS).map(f=>({id:'base_'+f.id,name:f.baseName,x:f.home.x,y:f.home.y,kind:'faction',faction:f.id}))
 ];
 const GUNS={pulse:{name:'Pulse Blaster',desc:'Balanced starter blaster.',crafted:true,cost:null,fireRate:.26,damage:14,speed:640,color:'#79dfff'},scatter:{name:'Scatter Cannon',desc:'Three-shot spread.',crafted:false,cost:{ore:{moon:18,neon:8},tokens:{moon:2}},fireRate:.52,damage:9,speed:560,pellets:3,spread:.26,color:'#ffd27a'},rail:{name:'Railgun',desc:'Fast accurate shot.',crafted:false,cost:{ore:{neon:16,dust:7},tokens:{neon:3,dust:2}},fireRate:.62,damage:28,speed:880,color:'#71ffe0'},plasma:{name:'Plasma Lance',desc:'Heavy plasma bolt.',crafted:false,cost:{ore:{dust:12,void:4},tokens:{dust:3,void:1}},fireRate:.7,damage:42,speed:500,color:'#c498ff'},diamond:{name:'Diamond Repeater',desc:'Rapid endgame gun.',crafted:false,cost:{ore:{diam:10,void:3},tokens:{diam:2,void:1}},fireRate:.17,damage:13,speed:760,color:'#78f6ff'},arc:{name:'Arc Emitter',desc:'Fast ion bolts with high accuracy.',crafted:false,cost:{ore:{neon:20,dust:10},tokens:{neon:4,dust:2}},fireRate:.21,damage:18,speed:780,color:'#84ffe8'},siege:{name:'Nova Cannon',desc:'Slow-firing siege blast.',crafted:false,cost:{ore:{diam:16,void:9},tokens:{diam:5,void:3}},fireRate:.95,damage:85,speed:440,color:'#f6a9ff'}};
@@ -363,33 +394,45 @@ function save(){localStorage.setItem('tokenverse-deep-space-v10',JSON.stringify(
 function log(msg){logs.unshift({t:new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),msg:msg.replace(/[<>]/g,'')}); logs=logs.slice(0,22); renderLog();}
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._tt);toast._tt=setTimeout(()=>t.classList.remove('show'),1600)}
 function cargoCap(){return 20+S.upgrades.cargo*10+(S.equipped.utility==='cargorig'?10:0)+SHIPS[S.shipId].cargo+(S.testHoldBonus||0)} function cargoCount(){return KINDS.reduce((n,k)=>n+S.ore[k],0)}
-function currentZone(pos=S){
+function currentZone(pos=S){if(S.system==='homestead')return {name:S.colony?.name||'Private Colony',tier:'SAFE',danger:0,color:'#72e9db'};
  if(Math.hypot(pos.x-WORLD.port.x,pos.y-WORLD.port.y)<WORLD.safeRadius)return ZONES[0];
  for(const f of Object.values(FACTIONS))if(Math.hypot(pos.x-f.home.x,pos.y-f.home.y)<1050){const z=ZONES.find(z=>z.faction===f.id);return {...z,tier:'SAFE',danger:0};}
- if(Math.hypot(pos.x-24000,pos.y-14400)<850)return {name:'Concord Neutral Exchange',color:'#9ee6ff',tier:'SAFE',danger:0};
+ if(Math.hypot(pos.x-48000,pos.y-28800)<850)return {name:'Concord Neutral Exchange',color:'#9ee6ff',tier:'SAFE',danger:0};
  for(let i=ZONES.length-1;i>=2;i--){const z=ZONES[i];if(pos.x>=z.x1&&pos.x<=z.x2&&pos.y>=z.y1&&pos.y<=z.y2)return z;}
  return ZONES[1];
 }
 function canEnter(z){return true} // No locked zones: difficulty is determined by the enemies you encounter.
-function currentStation(){for(const st of STATIONS){if(Math.hypot(S.x-st.x,S.y-st.y)>=150)continue;if(st.kind==='faction'&&st.faction!==S.faction)return null;return st.id==='port'?{...st,name:S.system==='orion'?'Orion Port':SYSTEMS[S.system].name+' Port'}:st;}return S.outposts?.find(o=>o.system===S.system&&Math.hypot(S.x-o.x,S.y-o.y)<140)||null}
+function currentStation(){if(S.system==='homestead'){const st=warpColonyStation();return Math.hypot(S.x-st.x,S.y-st.y)<155?st:null;}for(const st of STATIONS){if(Math.hypot(S.x-st.x,S.y-st.y)>=150)continue;if(st.kind==='faction'&&st.faction!==S.faction)return null;return st.id==='port'?{...st,name:S.system==='orion'?'Orion Port':SYSTEMS[S.system].name+' Port'}:st;}return S.outposts?.find(o=>o.system===S.system&&Math.hypot(S.x-o.x,S.y-o.y)<140)||null}
 function canDock(st){return st && Math.hypot(S.vx,S.vy)<65}
 function spend(cost){if(cost.credits&&S.credits<cost.credits) return false; for(const k of KINDS){if(cost.ore&&(cost.ore[k]||0)>S.ore[k]) return false; if(cost.tokens&&(cost.tokens[k]||0)>S.tokens[k]) return false;} if(cost.credits) S.credits-=cost.credits; for(const k of KINDS){if(cost.ore&&cost.ore[k]) S.ore[k]-=cost.ore[k]; if(cost.tokens&&cost.tokens[k]){S.tokens[k]-=cost.tokens[k];S.recycledVault[k]=(S.recycledVault[k]||0)+cost.tokens[k];}} return true}
 function costText(cost){const p=[]; if(cost.credits) p.push(cost.credits+' SC'); if(cost.ore) for(const k of KINDS) if(cost.ore[k]) p.push(cost.ore[k]+' '+OREDEF[k].name+' ore'); if(cost.tokens) for(const k of KINDS) if(cost.tokens[k]) p.push(cost.tokens[k]+' $'+OREDEF[k].ticker); return p.join(' · ')}
 function spawnWorld(){
  const rand=(a,b)=>a+Math.random()*(b-a);
  asteroids=[]; drones=[]; bullets=[]; particles=[];
+ if(S.system==='homestead'){
+  // The player-owned system is a peaceful instanced map, saved locally.
+  for(let i=0;i<190;i++){
+   const angle=Math.random()*Math.PI*2,radius=1600+Math.random()*7900;
+   const x=WORLD.w/2+Math.cos(angle)*radius,y=WORLD.h/2+Math.sin(angle)*radius*.8;
+   const dist=Math.hypot(x-(WORLD.w/2+8200),y-WORLD.h/2);
+   if(dist<550)continue;
+   const kinds=['moon','moon','neon','dust'];const kind=kinds[i%4];
+   asteroids.push({id:i+1,x,y,kind,r:13+Math.random()*15,ore:1+Math.floor(Math.random()*3),rot:Math.random()*7});
+  }
+  factionPatrols=[];return;
+ }
  function addAsteroid(x,y,kind,boost=0){if(factionSafeAt(x,y)||GATES.some(g=>Math.hypot(x-g.x,y-g.y)<240))return;asteroids.push({id:asteroids.length+1,x,y,kind,r:12+Math.random()*18,ore:1+Math.floor(Math.random()*(boost>=4?4:3)),rot:Math.random()*7});}
  function material(z,r){if(S.system==='orion'&&z.contested)return r<.08?'dust':r<.38?'void':'diam';if(S.system==='orion'&&z.faction==='solar')return r<.60?'moon':r<.86?'neon':r<.97?'dust':'void';if(S.system==='orion'&&z.faction==='crimson')return r<.15?'moon':r<.40?'neon':r<.76?'dust':r<.94?'void':'diam';if(S.system==='orion'&&z.faction==='verdant')return r<.50?'moon':r<.87?'neon':r<.99?'dust':'void';if(S.system==='orion'&&z.faction==='void')return r<.1?'moon':r<.23?'neon':r<.54?'dust':r<.94?'void':'diam';if(S.system==='borealis')return r<.1?'moon':r<.64?'neon':r<.9?'dust':'void';if(S.system==='helios')return r<.1?'neon':r<.81?'dust':'void';if(S.system==='forge')return r<.12?'neon':r<.45?'dust':r<.94?'void':'diam';if(S.system==='umbra')return r<.09?'dust':r<.37?'void':'diam';if(z.name==='Frontier')return r<.59?'moon':r<.86?'neon':r<.98?'dust':'void';if(z.name==='Ember Expanse')return r<.13?'moon':r<.53?'neon':r<.91?'dust':'void';if(z.name==='Abyssal Rift')return r<.05?'moon':r<.18?'neon':r<.57?'dust':r<.93?'void':'diam';if(z.name==='Diamond Exclusion')return r<.10?'dust':r<.35?'void':'diam';return r<.35?'moon':r<.65?'neon':r<.87?'dust':r<.97?'void':'diam';}
  // Baseline universe coverage (10x the previous playable map area).
- for(let i=0;i<1220;i++){const x=rand(90,WORLD.w-90),y=rand(90,WORLD.h-90);const z=currentZone({x,y});addAsteroid(x,y,material(z,Math.random()),z.danger);}
+ for(let i=0;i<1900;i++){const x=rand(90,WORLD.w-90),y=rand(90,WORLD.h-90);const z=currentZone({x,y});addAsteroid(x,y,material(z,Math.random()),z.danger);}
  // Higher-tier nebulae have meaningfully denser resources.
- for(const [idx,num] of [[2,390],[3,430],[4,420],[5,430],[6,710]]){const z=ZONES[idx];for(let i=0;i<num;i++){const x=rand(z.x1+80,z.x2-80),y=rand(z.y1+80,z.y2-80);if(currentZone({x,y}).name!==z.name)continue;addAsteroid(x,y,material(z,Math.random()),z.danger+1);}}
+ for(const [idx,num] of [[2,640],[3,670],[4,650],[5,680],[6,850]]){const z=ZONES[idx];for(let i=0;i<num;i++){const x=rand(z.x1+80,z.x2-80),y=rand(z.y1+80,z.y2-80);if(currentZone({x,y}).name!==z.name)continue;addAsteroid(x,y,material(z,Math.random()),z.danger+1);}}
  for(const f of Object.values(FACTIONS))for(let j=0;j<14;j++){
    const a=j*Math.PI/7,rad=1450+(j%4)*115,x=f.home.x+Math.cos(a)*rad,y=f.home.y+Math.sin(a)*rad;
    if(!asteroids.some(b=>Math.hypot(x-b.x,y-b.y)<100))addAsteroid(x,y,f.id==='void'?(j%4===0?'void':'dust'):f.id==='crimson'?(j%4===0?'dust':'neon'):f.id==='verdant'?(j%4===0?'neon':'moon'):'moon',1);
  }
  for(let i=0;i<10;i++){const a=i*Math.PI/5+.19,rad=WORLD.safeRadius+190+(i%3)*35;const x=clamp(WORLD.port.x+Math.cos(a)*rad,90,WORLD.w-90),y=clamp(WORLD.port.y+Math.sin(a)*rad,90,WORLD.h-90);if(!asteroids.some(b=>Math.hypot(x-b.x,y-b.y)<90))asteroids.push({id:40000+i,x,y,kind:i%5===0?'neon':'moon',r:16+i%3,ore:1+i%2,rot:a});}
- if(S.system!=='orion')for(let n=0;n<1100;n++){const x=rand(110,WORLD.w-110),y=rand(110,WORLD.h-110);addAsteroid(x,y,material(currentZone({x,y}),Math.random()),SYSTEMS[S.system].tier+1);}
+ if(S.system!=='orion')for(let n=0;n<1550;n++){const x=rand(110,WORLD.w-110),y=rand(110,WORLD.h-110);addAsteroid(x,y,material(currentZone({x,y}),Math.random()),SYSTEMS[S.system].tier+1);}
  function addDrone(x,y,tier,region){if(factionSafeAt(x,y)||Object.values(FACTIONS).some(f=>Math.hypot(x-f.home.x,y-f.home.y)<1450)||GATES.some(g=>Math.hypot(x-g.x,y-g.y)<260))return;const hp=42+tier*26;drones.push({id:Math.random().toString(36).slice(2),x,y,vx:0,vy:0,angle:0,hp,maxHp:hp,tier,region,cooldown:.4+Math.random()*.8});}
  for(const [idx,num,minTier,maxTier] of [[2,20,1,3],[3,23,2,4],[4,22,1,4],[5,28,3,5],[6,55,5,8],[1,24,3,6]]){const z=ZONES[idx];for(let i=0;i<num;i++){let x=rand(z.x1+200,z.x2-200),y=rand(z.y1+200,z.y2-200);if(idx===1&&S.system==='orion'&&currentZone({x,y}).name!==ZONES[1].name){continue;}const tier=Math.floor(rand(minTier,maxTier+1));addDrone(x,y,tier,idx);}}
  spawnFactionPatrols();
@@ -413,7 +456,7 @@ function spawnParticles(x,y,color,n=6,power=90){for(let i=0;i<n;i++){const a=Mat
 function takeDamage(n){n=Math.max(1,Math.round(n*(S.faction==='solar'?.90:1)));S.hp-=n; shake=Math.max(shake,n*0.45); spawnParticles(S.x,S.y,'#ff8ba0',8,110); sfx.hit(); if(S.hp<=0){S.hp=S.maxHp; const home=FACTIONS[S.faction]?.home||WORLD.port;S.x=home.x+110;S.y=home.y+10;S.vx=S.vy=0; S.credits=Math.max(0,S.credits-80); log('Ship destroyed! Emergency tug recovered you at Orion Port.'); toast('Ship destroyed')}}
 // Obstacle-aware eight-direction A* routing. The ship never uses a straight-line
 // waypoint that intersects an expanded asteroid collision circle.
-const NAV_SIZE=170, NAV_COLS=Math.ceil(WORLD.w/NAV_SIZE),NAV_ROWS=Math.ceil(WORLD.h/NAV_SIZE);
+const NAV_SIZE=360, NAV_COLS=Math.ceil(WORLD.w/NAV_SIZE),NAV_ROWS=Math.ceil(WORLD.h/NAV_SIZE);
 function segmentClear(ax,ay,bx,by,exclude=null,pad=66){
  const dx=bx-ax,dy=by-ay,length=dx*dx+dy*dy||1;
  if(S.system==='orion'){
@@ -504,7 +547,7 @@ function setAutopilot(type,x,y,target=null){
 }
 function gateDestination(dir){const sys=SYSTEMS[S.system]||SYSTEMS.orion;return SYSTEMS[sys.links[dir]];}
 function gateUnlocked(dest){const req=dest.req||{};return (!req.mining||S.upgrades.mining>=req.mining)&&(!req.thrusters||S.upgrades.thrusters>=req.thrusters);}
-function routeGate(dir){
+function routeGate(dir){if(S.system==='homestead')return toast('Use My System to return to the public galaxy.');
  const gate=GATES.find(g=>g.id===dir);if(!gate)return;
  const target=gateDestination(dir);
  if(!gateUnlocked(target)){toast('Upgrade first: '+target.name);log('Gate locked: '+target.name+' requires '+Object.entries(target.req).map(([k,v])=>k+' Mk-'+v).join(' and ')+'.');return;}
@@ -523,14 +566,14 @@ function useGate(gate){if(S.rift?.inside)return;
  log('Gate transit complete. Arrived in '+SYSTEMS[S.system].name+'.');toast('Welcome to '+SYSTEMS[S.system].name);
  renderUI(true);save();
 }
-function updateGates(){
+function updateGates(){if(S.system==='homestead')return;
  if(performance.now()<portalCooldown)return;
  for(const gate of GATES){
   if(Math.hypot(S.x-gate.x,S.y-gate.y)<95&&Math.hypot(S.vx,S.vy)<92){useGate(gate);return;}
  }
 }
 
-function renderGates(){const sys=SYSTEMS[S.system]||SYSTEMS.orion;$('gateList').innerHTML=GATES.map(g=>{const dest=SYSTEMS[sys.links[g.id]],ok=gateUnlocked(dest);return '<div class="gate-entry"><div><strong style="color:'+g.color+'">'+g.name+' · '+dest.name+'</strong><small>Tier '+dest.tier+' · '+(ok?'Route available':'Requires '+Object.entries(dest.req||{}).map(([k,v])=>k+' Mk-'+v).join(' + '))+'</small></div><button data-gate="'+g.id+'" '+(ok?'':'disabled')+'>Plot route</button></div>';}).join('');}
+function renderGates(){if(S.system==='homestead'){$('gateList').innerHTML='<div class="notice">Your private star has no public gates. Use My System to return.</div>';return;}const sys=SYSTEMS[S.system]||SYSTEMS.orion;$('gateList').innerHTML=GATES.map(g=>{const dest=SYSTEMS[sys.links[g.id]],ok=gateUnlocked(dest);return '<div class="gate-entry"><div><strong style="color:'+g.color+'">'+g.name+' · '+dest.name+'</strong><small>Tier '+dest.tier+' · '+(ok?'Route available':'Requires '+Object.entries(dest.req||{}).map(([k,v])=>k+' Mk-'+v).join(' + '))+'</small></div><button data-gate="'+g.id+'" '+(ok?'':'disabled')+'>Plot route</button></div>';}).join('');}
 function mineNearest(){if(S.rift?.inside)return toast('Mine the glowing Heart seams while inside the Rift');
  if(cargoCount()>=cargoCap())return toast('Hold full; return to port and sell ore.');
  const choices=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-S.x,a.y-S.y)-Math.hypot(b.x-S.x,b.y-S.y));
@@ -540,7 +583,7 @@ function mineNearest(){if(S.rift?.inside)return toast('Mine the glowing Heart se
  }
  toast('No reachable mining deposits nearby.');
 }
-function routeToStation(id){if(S.rift?.inside)return toast('Extract from the Heart Chamber first');const st=STATIONS.find(s=>s.id===id);if(st?.kind==='faction'&&st.faction!==S.faction){toast('Enemy faction bases deny docking.');return;}if(st&&setAutopilot('dock',st.x,st.y,st))toast('Safe course plotted: '+(id==='port'?SYSTEMS[S.system].name+' Spaceport':st.name));}
+function routeToStation(id){if(S.system==='homestead'){const st=warpColonyStation();if(setAutopilot('dock',st.x,st.y,st))toast('Autopilot to your headquarters');return;}if(S.rift?.inside)return toast('Extract from the Heart Chamber first');const st=STATIONS.find(s=>s.id===id);if(st?.kind==='faction'&&st.faction!==S.faction){toast('Enemy faction bases deny docking.');return;}if(st&&setAutopilot('dock',st.x,st.y,st))toast('Safe course plotted: '+(id==='port'?SYSTEMS[S.system].name+' Spaceport':st.name));}
 function routeZone(name){const z=ZONES.find(z=>z.name.includes(name));if(z){if(!canEnter(z))return toast('Upgrade first to enter '+z.name);setAutopilot('point',(z.x1+z.x2)/2,(z.y1+z.y2)/2);}}
 
 
@@ -667,7 +710,7 @@ function hudRadarBounds(w,h){
   if(x<minX)return null;
   return{x,y:105,w:size,h:size};
 }
-function drawTacticalRadar(g,mm){
+function drawTacticalRadar(g,mm){if(typeof warpRadar==='function'&&warpRadar(g,mm))return;
   const {x,y,w,h}=mm;
   g.save();
   g.fillStyle='rgba(4,13,34,.90)';
@@ -717,11 +760,11 @@ function drawNavigationChart(){
 
 function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=innerHeight,t=performance.now()/1000; ctx.clearRect(0,0,w,h); const bg=ctx.createRadialGradient(w*.72,h*.22,40,w*.52,h*.5,Math.max(w,h)); bg.addColorStop(0,'#2a2660'); bg.addColorStop(.46,'#0c1c49'); bg.addColorStop(1,'#020714'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h); v14VisualBackdrop(ctx,w,h,t);ctx.save(); if(shake>0){ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake); shake*=.82}
  for(let i=0;i<240;i++){const sx=((i*129.13-S.x*.11)%w+w)%w, sy=((i*77.33-S.y*.11)%h+h)%h; ctx.fillStyle=i%9===0?'#c7f7ff':i%4===0?'#93baf8':'#5870a8'; const rr=i%9===0?1.8:1; ctx.beginPath(); ctx.arc(sx,sy,rr,0,7); ctx.fill()}
- for(const z of ZONES.slice(1)){const [x1,y1]=worldToScreen(z.x1,z.y1), [x2,y2]=worldToScreen(z.x2,z.y2); ctx.fillStyle=z.color+'10'; ctx.strokeStyle=z.color+'35'; ctx.lineWidth=1; ctx.fillRect(x1,y1,x2-x1,y2-y1); ctx.strokeRect(x1,y1,x2-x1,y2-y1)}
+ if(S.system!=='homestead')for(const z of ZONES.slice(1)){const [x1,y1]=worldToScreen(z.x1,z.y1), [x2,y2]=worldToScreen(z.x2,z.y2); ctx.fillStyle=z.color+'10'; ctx.strokeStyle=z.color+'35'; ctx.lineWidth=1; ctx.fillRect(x1,y1,x2-x1,y2-y1); ctx.strokeRect(x1,y1,x2-x1,y2-y1)}
  const [px,py]=worldToScreen(WORLD.port.x,WORLD.port.y); ctx.strokeStyle='#59dfff55'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(px,py,WORLD.safeRadius,0,7); ctx.stroke();
- for(const gate of GATES){const [x,y]=worldToScreen(gate.x,gate.y);if(x<-120||x>w+120||y<-120||y>h+120)continue;ctx.save();ctx.translate(x,y);ctx.rotate(t*.24);ctx.shadowColor=gate.color;ctx.shadowBlur=24;ctx.strokeStyle=gate.color;ctx.lineWidth=6;ctx.beginPath();ctx.ellipse(0,0,53,32,0,0,7);ctx.stroke();ctx.strokeStyle='#dcefff';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,0,34,20,-t*.4,0,7);ctx.stroke();ctx.fillStyle=gate.color;ctx.beginPath();ctx.arc(0,0,8,0,7);ctx.fill();ctx.restore();ctx.textAlign='center';ctx.font='bold 12px system-ui';ctx.fillStyle='#d4f3ff';ctx.fillText(SYSTEMS[SYSTEMS[S.system].links[gate.id]].name,x,y+66);} 
+ for(const gate of (S.system==='homestead'?[]:GATES)){const [x,y]=worldToScreen(gate.x,gate.y);if(x<-120||x>w+120||y<-120||y>h+120)continue;ctx.save();ctx.translate(x,y);ctx.rotate(t*.24);ctx.shadowColor=gate.color;ctx.shadowBlur=24;ctx.strokeStyle=gate.color;ctx.lineWidth=6;ctx.beginPath();ctx.ellipse(0,0,53,32,0,0,7);ctx.stroke();ctx.strokeStyle='#dcefff';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,0,34,20,-t*.4,0,7);ctx.stroke();ctx.fillStyle=gate.color;ctx.beginPath();ctx.arc(0,0,8,0,7);ctx.fill();ctx.restore();ctx.textAlign='center';ctx.font='bold 12px system-ui';ctx.fillStyle='#d4f3ff';ctx.fillText(SYSTEMS[SYSTEMS[S.system].links[gate.id]].name,x,y+66);} 
  if(autopilot){const pts=[{x:S.x,y:S.y},...autopilot.path.slice(autopilot.step)];ctx.save();ctx.setLineDash([8,12]);ctx.strokeStyle='#79e6ff75';ctx.lineWidth=2;ctx.beginPath();pts.forEach((pt,i)=>{const [x,y]=worldToScreen(pt.x,pt.y);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.restore();}
- drawFactionWorld();v14WorldOverlay();for(const st of STATIONS){const [x,y]=worldToScreen(st.x,st.y); if(x<-100||x>w+100||y<-100||y>h+100) continue; ctx.save(); ctx.translate(x,y); ctx.shadowColor=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#64dfff':'#b89cff'; ctx.shadowBlur=18; ctx.fillStyle=st.kind==='port'?'#153b71':'#302360'; ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#72efff':'#c6aeff'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,st.kind==='port'?28:18,0,7); ctx.fill(); ctx.stroke(); ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#8ef6ff':'#d4c2ff'; ctx.lineWidth=4; ctx.beginPath(); ctx.ellipse(0,0,42,10,t*.4,0,7); ctx.stroke(); ctx.restore();}
+ if(S.system!=='homestead'){drawFactionWorld();v14WorldOverlay();}else warpDrawSpace();for(const st of (S.system==='homestead'?[]:STATIONS)){const [x,y]=worldToScreen(st.x,st.y); if(x<-100||x>w+100||y<-100||y>h+100) continue; ctx.save(); ctx.translate(x,y); ctx.shadowColor=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#64dfff':'#b89cff'; ctx.shadowBlur=18; ctx.fillStyle=st.kind==='port'?'#153b71':'#302360'; ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#72efff':'#c6aeff'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,st.kind==='port'?28:18,0,7); ctx.fill(); ctx.stroke(); ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#8ef6ff':'#d4c2ff'; ctx.lineWidth=4; ctx.beginPath(); ctx.ellipse(0,0,42,10,t*.4,0,7); ctx.stroke(); ctx.restore();}
  for(const a of asteroids){if(a.ore<=0) continue; const [x,y]=worldToScreen(a.x,a.y); if(x<-70||x>w+70||y<-70||y>h+70) continue; ctx.save(); ctx.translate(x,y); ctx.rotate(a.rot+t*.06); const col=OREDEF[a.kind].color; ctx.shadowColor=col; ctx.shadowBlur=a.kind==='diam'?24:10; const gr=ctx.createRadialGradient(-a.r*.3,-a.r*.4,2,0,0,a.r*1.5); gr.addColorStop(0,'#ffffff'); gr.addColorStop(.2,col); gr.addColorStop(1,'#111a36'); ctx.fillStyle=gr; ctx.beginPath(); for(let i=0;i<7;i++){const aa=i*Math.PI*2/7, rr=a.r*(i%2?0.82:1), xx=Math.cos(aa)*rr, yy=Math.sin(aa)*rr; i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)} ctx.closePath(); ctx.fill(); v14AsteroidSurface(ctx,a); if(miningTarget===a||autopilot?.target===a){ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(0,0,a.r+8,0,7); ctx.stroke()} ctx.restore()}
  for(const d of drones){const [x,y]=worldToScreen(d.x,d.y); if(x<-60||x>w+60||y<-60||y>h+60) continue; ctx.save(); ctx.translate(x,y); ctx.rotate(d.angle); ctx.shadowColor=d.tier>2?'#ff9fe8':'#ff94a8'; ctx.shadowBlur=10; ctx.fillStyle=d.tier>2?'#702f79':'#66243c'; ctx.strokeStyle=d.tier>2?'#ffc5fb':'#ffb4c3'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(16,0); ctx.lineTo(0,-12); ctx.lineTo(-15,0); ctx.lineTo(0,12); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore(); ctx.fillStyle='#ffd5de'; ctx.fillRect(x-16,y-24,32,4); ctx.fillStyle='#ff4f77'; ctx.fillRect(x-16,y-24,32*(d.hp/d.maxHp),4)}
  for(const b of bullets){const [x,y]=worldToScreen(b.x,b.y); ctx.strokeStyle=b.color; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x-b.vx*.02,y-b.vy*.02); ctx.stroke()}
@@ -735,11 +778,11 @@ function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=in
  * Browser-only: no online trading or actual cryptocurrency.
  */
 const EXT_BOSSES={
- orion:{name:'Aegis Harvester',x:24000,y:10700,tier:1,hp:780,color:'#f78da9'},
- borealis:{name:'Glacial Devourer',x:34000,y:10400,tier:2,hp:1120,color:'#8ce7ff'},
- helios:{name:'Solar Tyrant',x:15000,y:21300,tier:2,hp:1230,color:'#ffc078'},
- forge:{name:'Iron Leviathan',x:33000,y:24500,tier:3,hp:1600,color:'#f0a68d'},
- umbra:{name:'Void Sovereign',x:24000,y:21100,tier:4,hp:2050,color:'#c49aff'}
+ orion:{name:'Aegis Harvester',x:48000,y:21400,tier:1,hp:780,color:'#f78da9'},
+ borealis:{name:'Glacial Devourer',x:68000,y:20800,tier:2,hp:1120,color:'#8ce7ff'},
+ helios:{name:'Solar Tyrant',x:30000,y:42600,tier:2,hp:1230,color:'#ffc078'},
+ forge:{name:'Iron Leviathan',x:66000,y:49000,tier:3,hp:1600,color:'#f0a68d'},
+ umbra:{name:'Void Sovereign',x:48000,y:42200,tier:4,hp:2050,color:'#c49aff'}
 };
 const EXT_MODS={
  capacitor:{name:'Rapid Capacitor',detail:'Fires 18% faster. +1 energy per shot.',cost:{credits:210,ore:{neon:6,dust:2}}},
@@ -794,11 +837,12 @@ function extSitePoint(i){
  const shift={orion:0,borealis:1,helios:2,forge:3,umbra:4}[S.system]||0;
  const wave=Math.sin((i+1+shift*3)*92.157)*9993.73;
  const frac=x=>x-Math.floor(x);
- let x=1900+frac(wave)*44400,y=1500+frac(wave*1.735)*25800;
+ let x=3800+frac(wave)*88800,y=3000+frac(wave*1.735)*51600;
  if(factionSafeAt(x,y)){x=Math.min(WORLD.w-1000,x+2500);y=Math.min(WORLD.h-1000,y+1800);}
  return {id:S.system+'-signal-'+i,x,y,kind:i%3===0?'anomaly':i%3===1?'cache':'wreck',collected:!!S.explored[S.system+'-signal-'+i]};
 }
 function spawnExpansionWorld(){
+ if(S.system==='homestead'){extBoss=null;extSites=[];extVisibleSignals=[];extScanWave=0;extBossClock=0;return;}
  extBoss=extBossPrototype();extSites=Array.from({length:18},(_,i)=>extSitePoint(i));extVisibleSignals=[];extScanWave=0;extBossClock=0;
 }
 function extScan(){
@@ -1021,7 +1065,7 @@ function factionTerritoryAt(x,y){
  return null;
 }
 function factionBaseById(id){return STATIONS.find(st=>st.id==='base_'+id);}
-function factionSafeAt(x,y){
+function factionSafeAt(x,y){if(S.system==='homestead')return true;
  if(Math.hypot(x-WORLD.port.x,y-WORLD.port.y)<WORLD.safeRadius+50)return true;
  for(const st of STATIONS){if(st.kind==='faction'||st.kind==='hub'){
    if(Math.hypot(x-st.x,y-st.y)<(st.kind==='hub'?850:1050))return true;
@@ -1116,7 +1160,7 @@ function factionInit(){
  if(!S.factionMissionStart)S.factionMissionStart=factionStatsSnapshot();
  renderFactionUI();
 }
-function updateFactionPatrols(dt){
+function updateFactionPatrols(dt){if(S.system==='homestead')return;
  if(!S.faction)return;
  const t=performance.now()*.00013;
  for(const p of factionPatrols){
@@ -1220,7 +1264,7 @@ function factionStationLabel(st){
 // The functions in this extension live inside the original game closure.
 const V14_VERSION=14, V14_CYCLE=2*60*60*1000, V14_OPEN=12*60*1000,
       V14_MUSTER=20*60*1000, V14_COLLAPSE=3*60*1000;
-const V14_RIFT_PORTAL={x:24000,y:13300},V14_RIFT_SIZE={w:4200,h:2800},
+const V14_RIFT_PORTAL={x:48000,y:26600},V14_RIFT_SIZE={w:4200,h:2800},
       V14_EXTRACT={x:420,y:1380};
 const V14_SKINS=[
  {id:'founders',name:'Founders Fleet',faction:'all',cap:500,price:420,primary:'#d0e7fb',trim:'#64c8ff',trail:'#7bf4ff',desc:'Recovered ceramic armor from the first Concord expeditions.'},
@@ -1579,7 +1623,12 @@ function v14Showcase(){const selected=V14_SKINS.find(x=>x.id===v14SkinPreview)||
  $('v14SkinNone').disabled=!S.cosmetics.equippedByHull[S.shipId];
  v14DrawShipPreview();
 }
-function v14RenderLogistics(){const station=S.system,d=V14_REGIONS[station],reg=S.regionalMarkets[station];
+function v14RenderLogistics(){if(S.system==='homestead'){
+  $('v14LogisticsHeader').textContent='Pioneer Warehouse · Private System';
+  $('v14LogisticsTabs').innerHTML='<small>Personal cargo storage is managed in My System. Use public stations to trade with the galactic economy.</small>';
+  $('v14LogisticsBody').innerHTML='<p class="v14-disclaimer">Warp back to Orion Belt or another public system for trading and convoy contracts.</p>';
+  return;
+ }const station=S.system,d=V14_REGIONS[station],reg=S.regionalMarkets[station];
  $('v14LogisticsHeader').textContent='Dockside cargo exchange · '+d.name+' · '+(reg.budget||0)+' SC logistics budget';
  $('v14LogisticsTabs').innerHTML='<button data-v14-logistics="exchange" class="'+(v14ShowLogistics==='exchange'?'v14-selected':'')+'">Regional ore exchange</button><button data-v14-logistics="contracts" class="'+(v14ShowLogistics==='contracts'?'v14-selected':'')+'">Convoy contracts</button><button data-v14-logistics="bulletins" class="'+(v14ShowLogistics==='bulletins'?'v14-selected':'')+'">Supply bulletins</button>';
  const body=$('v14LogisticsBody');
@@ -1671,9 +1720,204 @@ function v14RiftDraw(){const w=innerWidth,h=innerHeight,t=performance.now()/1000
  ctx.textAlign='center';ctx.font='bold 13px system-ui';ctx.fillStyle=b.phase==='collapsing'?'#ff9fa6':'#b5edff';ctx.fillText('THE TWELVE BELLS · '+v14Time(b.timeLeft),w/2,103);
  ctx.font='12px system-ui';ctx.fillStyle='#eff5ff';ctx.fillText('Ore: '+S.rift.oreTaken+'/14 · Find seams, dodge the guardian, return to beacon',w/2,h-100);
 }
-v14Init();v14SpawnConvoys();factionInit();
+/* WARP COIN v0.15 - Private Colony and Galactic Economy. Purely local gameplay. */
+const WARP_HUB={x:WORLD.w/2+800,y:WORLD.h/2};
+const WARP_STAR={x:WORLD.w/2,y:WORLD.h/2};
+const WARP_COLONY_MODS={
+ solar:{name:'Solar Array',desc:'Powers mining and industry. One array supports two extractor levels.',max:5,cost:130,ore:{moon:4}},
+ extractor:{name:'Orbital Extractors',desc:'Produces raw ore from planetary seams every 90 seconds, using SC for upkeep.',max:5,cost:175,ore:{moon:5,neon:2}},
+ storage:{name:'Cargo Silos',desc:'Increase colony warehouse capacity by 25 ore per tier.',max:5,cost:115,ore:{moon:5}},
+ refinery:{name:'Refinery Wing',desc:'Industrial shipyard module and visual station expansion.',max:3,cost:225,ore:{moon:5,neon:5}},
+ trade:{name:'Merchant Docks',desc:'Add cargo berths and improve the station skyline.',max:3,cost:180,ore:{neon:4,dust:1}},
+ defense:{name:'Defense Turrets',desc:'Add visible station defense batteries to your headquarters.',max:4,cost:160,ore:{moon:5,neon:3}},
+ habitat:{name:'Habitat Ring',desc:'Expand your settlement with orbiting civilian habitats.',max:3,cost:140,ore:{moon:5}}
+};
+const WARP_PLANET_STYLES=[
+ {name:'Azure Ocean',hue:'#4aafff',kind:'moon'},
+ {name:'Copper Desert',hue:'#e5aa6b',kind:'neon'},
+ {name:'Emerald Forest',hue:'#75db9e',kind:'moon'},
+ {name:'Amethyst Ice',hue:'#bd95f9',kind:'dust'},
+ {name:'Obsidian Wastes',hue:'#7f8bba',kind:'void'},
+ {name:'Glacial Crystal',hue:'#9de9f4',kind:'neon'}
+];
+function warpSafeText(value,max=30){return String(value??'').replace(/[<>\x00-\x1f]/g,'').trim().slice(0,max);}
+function warpHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function warpModuleCost(id){const def=WARP_COLONY_MODS[id],level=S.colony.modules[id]||0;if(!def||level>=def.max)return null;const factor=level+1;return {credits:def.cost*factor,ore:Object.fromEntries(Object.entries(def.ore).map(([k,v])=>[k,v*factor]))};}
+function warpCreateColony(){return {owned:false,name:'Pioneer Anchorage',star:'Eidon’s Echo',accent:'#62deff',modules:{solar:1,extractor:0,storage:0,refinery:0,trade:0,defense:0,habitat:0},planets:[
+ {name:'Aurelia',style:0},{name:'Vesper',style:1},{name:'Verdantia',style:2},{name:'Noctis',style:3}],stored:{moon:0,neon:0,dust:0,void:0,diam:0},focus:'moon',lastTick:Date.now(),mined:0,spent:0,visits:0,returnTo:null};}
+function warpInit(){
+ // Older versions used the original 48k x 28.8k coordinate space. Scale exactly once.
+ if(S.worldScaleVersion!==2){
+  if(!S.rift?.inside){S.x=clamp((Number(S.x)||900)*2,30,WORLD.w-30);S.y=clamp((Number(S.y)||900)*2,30,WORLD.h-30);}
+  else if(S.rift.returnTo){S.rift.returnTo.x*=2;S.rift.returnTo.y*=2;}
+  if(Array.isArray(S.outposts))for(const p of S.outposts){p.x*=2;p.y*=2;}
+  S.worldScaleVersion=2;
+ }
+ const original=warpCreateColony(),c=S.colony&&typeof S.colony==='object'?S.colony:{};
+ S.colony={...original,...c,modules:{...original.modules,...(c.modules||{})},stored:{...original.stored,...(c.stored||{})},planets:Array.isArray(c.planets)&&c.planets.length===4?c.planets:original.planets};
+ S.colony.name=warpSafeText(S.colony.name,32)||original.name;
+ S.colony.star=warpSafeText(S.colony.star,32)||original.star;
+ if(!/^#[0-9a-f]{6}$/i.test(S.colony.accent))S.colony.accent=original.accent;
+ for(const [key,def] of Object.entries(WARP_COLONY_MODS))S.colony.modules[key]=clamp(Math.floor(Number(S.colony.modules[key])||0),0,def.max);
+ S.colony.modules.solar=Math.max(1,S.colony.modules.solar);
+ for(const k of KINDS)S.colony.stored[k]=clamp(Math.floor(Number(S.colony.stored[k])||0),0,100000);
+ if(!KINDS.includes(S.colony.focus)||S.colony.focus==='diam')S.colony.focus='moon';
+ S.colony.lastTick=Number.isFinite(+S.colony.lastTick)?Math.min(Date.now(),+S.colony.lastTick):Date.now();
+ S.saveVersion=15;
+ if(S.system==='homestead'){S.colony.owned=true;spawnWorld();spawnExpansionWorld();}
+}
+function warpColonyStation(){return {id:'pioneer_hq',name:S.colony.name,x:WARP_HUB.x,y:WARP_HUB.y,kind:'colony'};}
+function warpClaim(){if(S.colony.owned)return;S.colony.owned=true;S.colony.lastTick=Date.now();log('Pioneer Charter approved. Your private solar system is now available.');toast('Personal solar system established!');save();warpRender();}
+function warpHomeWarp(){
+ if(S.rift?.inside)return toast('Extract from the Heart Chamber before warping.');
+ if(!S.colony.owned)return toast('Claim your Pioneer Charter first.');
+ if(S.system==='homestead')return warpLeave();
+ S.colony.returnTo={system:S.system,x:S.x,y:S.y,angle:S.angle};
+ S.system='homestead';S.x=WARP_HUB.x+100;S.y=WARP_HUB.y;S.vx=S.vy=0;S.angle=0;
+ autopilot=null;miningTarget=null;dockedStation=null;portalCooldown=performance.now()+3000;
+ S.colony.visits++;spawnWorld();spawnExpansionWorld();v14SpawnConvoys();
+ $('stationModal').classList.remove('open');toast('Warp arrival: '+S.colony.star);log('Arrived in your private solar system.');save();renderUI(true);
+}
+function warpLeave(){
+ if(S.system!=='homestead')return;
+ const back=S.colony.returnTo||{system:'orion',x:WORLD.port.x+130,y:WORLD.port.y,angle:0};
+ S.system=SYSTEMS[back.system]&&back.system!=='homestead'?back.system:'orion';S.x=clamp(back.x,30,WORLD.w-30);S.y=clamp(back.y,30,WORLD.h-30);
+ S.angle=back.angle||0;S.vx=S.vy=0;autopilot=null;miningTarget=null;dockedStation=null;portalCooldown=performance.now()+3000;
+ spawnWorld();spawnExpansionWorld();v14SpawnConvoys();toast('Returned to '+SYSTEMS[S.system].name);save();renderUI(true);
+}
+function warpStoreCap(){return 24+(S.colony.modules.storage||0)*25;}
+function warpStoredCount(){return KINDS.reduce((n,k)=>n+(S.colony.stored[k]||0),0);}
+function warpProduction(now=Date.now()){
+ if(!S.colony.owned)return 0;
+ const c=S.colony;const elapsed=Math.max(0,now-c.lastTick);const cycles=Math.min(240,Math.floor(elapsed/90000));
+ if(!cycles)return 0;
+ c.lastTick+=cycles*90000;
+ // No extraction without a powered extractor, warehouse space, and actual SC operating costs.
+ const extract=Math.min(c.modules.extractor,2*c.modules.solar),cost=1+extract;
+ if(!extract||!['moon','neon','dust','void'].includes(c.focus))return 0;
+ let output=0;
+ for(let i=0;i<cycles;i++){
+  if(warpStoredCount()>=warpStoreCap()||S.credits<cost)break;
+  const amount=Math.min(extract,warpStoreCap()-warpStoredCount());
+  if(!amount)break;
+  S.credits-=cost;c.spent+=cost;c.stored[c.focus]+=amount;c.mined+=amount;output+=amount;
+ }
+ if(output)save();
+ return output;
+}
+function warpUpgrade(id){if(!S.colony.owned)return toast('Claim a system first');const cost=warpModuleCost(id);if(!cost)return toast('Maximum level reached');
+ if(!spend(cost))return toast('Requires '+costText(cost));S.colony.modules[id]++;
+ log(WARP_COLONY_MODS[id].name+' upgraded to Mk-'+S.colony.modules[id]);save();warpRender();renderUI(true);
+}
+function warpRename(){const name=warpSafeText($('warpBaseName').value,32),star=warpSafeText($('warpStarName').value,32),color=$('warpBaseColor').value;
+ if(name)S.colony.name=name;if(star)S.colony.star=star;if(/^#[0-9a-f]{6}$/i.test(color))S.colony.accent=color;
+ toast('Base and solar system customized');save();warpRender();renderUI(true);
+}
+function warpPlanetChange(index,change){if(!Number.isInteger(index)||index<0||index>=4||!S.colony.owned)return;
+ const p=S.colony.planets[index];if(change==='style')p.style=((Math.floor(Number(p.style)||0)+1)%WARP_PLANET_STYLES.length);
+ else p.name=warpSafeText($('warpPlanetName'+index).value,26)||p.name;
+ save();warpRender();}
+function warpFocus(kind){if(!['moon','neon','dust','void'].includes(kind))return;
+ if(kind==='void'&&S.colony.modules.extractor<3)return toast('Void extraction requires Extractor Mk-3');
+ if(kind==='dust'&&S.colony.modules.extractor<2)return toast('Stardust extraction requires Extractor Mk-2');
+ if(S.colony.focus!==kind){const fee=25;if(S.credits<fee)return toast('Recalibration costs 25 SC');S.credits-=fee;S.colony.focus=kind;log('Colony extractors recalibrated to '+OREDEF[kind].name+'.');}
+ save();warpRender();}
+function warpLoad(kind){if(S.system!=='homestead'||!dockedStation||dockedStation.id!=='pioneer_hq')return toast('Dock at your colony HQ to transfer ore');
+ if(!KINDS.includes(kind)||!S.colony.stored[kind])return toast('Nothing to transfer');
+ const qty=Math.min(5,S.colony.stored[kind],cargoCap()-cargoCount());if(qty<=0)return toast('Ship cargo hold is full');
+ S.colony.stored[kind]-=qty;S.ore[kind]+=qty;toast('Loaded '+qty+' '+OREDEF[kind].name);save();renderUI(true);
+}
+function warpDeposit(kind){if(S.system!=='homestead'||!dockedStation||dockedStation.id!=='pioneer_hq')return toast('Dock at your colony HQ to store ore');
+ if(!KINDS.includes(kind))return;
+ const qty=Math.min(5,S.ore[kind]||0,warpStoreCap()-warpStoredCount());if(qty<=0)return toast('Not enough ore or warehouse full');
+ S.colony.stored[kind]+=qty;S.ore[kind]-=qty;save();renderUI(true);
+}
+function warpPanelText(){const c=S.colony;
+ const enter=c.owned?'<button id="warpTravelBtn">'+(S.system==='homestead'?'Return to galaxy':'Warp to my system')+'</button>':
+ '<button id="warpClaimBtn">Claim free Pioneer Charter</button>';
+ const info='<p class="warp-lede">'+(c.owned?'A persistent solar system in this browser save. Expand the orbital economy, rename your star and terraform planetary appearances.':'Establish a private solar system at no SC cost. You can mine and build there after claiming the charter.')+'</p>';
+ if(!c.owned)return info+enter;
+ const modules=Object.entries(WARP_COLONY_MODS).map(([id,d])=>{const lv=c.modules[id]||0,cost=warpModuleCost(id);
+ return '<div class="warp-module"><div><b>'+d.name+' · Mk-'+lv+'</b><small>'+d.desc+'</small><small>'+(cost?costText(cost):'Maximum tier reached')+'</small></div><button data-warp-upgrade="'+id+'" '+(!cost?'disabled':'')+'>Upgrade</button></div>';}).join('');
+ const planets=c.planets.map((p,i)=>{const style=WARP_PLANET_STYLES[p.style%WARP_PLANET_STYLES.length]||WARP_PLANET_STYLES[0];return '<div class="warp-planetrow"><span style="background:'+style.hue+'" class="warp-orb"></span><div><input id="warpPlanetName'+i+'" maxlength="26" value="'+warpHtml(p.name)+'" aria-label="Planet '+(i+1)+' name"><small>'+style.name+'</small></div><button data-warp-planet="'+i+'" data-warp-action="name">Save</button><button data-warp-planet="'+i+'" data-warp-action="style">Terrain</button></div>';}).join('');
+ const stock=KINDS.map(k=>'<div class="warp-warehouse"><b style="color:'+OREDEF[k].color+'">'+OREDEF[k].name+'</b> <span>'+c.stored[k]+'</span><button data-warp-load="'+k+'">Load 5</button><button data-warp-deposit="'+k+'">Store 5</button></div>').join('');
+ return info+enter+
+ '<h3>My Star & Headquarters</h3><label class="warp-field">HQ name<input id="warpBaseName" maxlength="32" value="'+warpHtml(c.name)+'"></label><label class="warp-field">Star name<input id="warpStarName" maxlength="32" value="'+warpHtml(c.star)+'"></label><label class="warp-field">Station accent<input id="warpBaseColor" type="color" value="'+c.accent+'"></label><button id="warpRenameBtn">Save customization</button>'+
+ '<h3>Planetary atlas · 4 worlds</h3>'+planets+
+ '<h3>Colony industry</h3><p class="warp-lede">Output: '+Math.min(c.modules.extractor,2*c.modules.solar)+' ore per 90 seconds. Operation costs '+(1+Math.min(c.modules.extractor,2*c.modules.solar))+' SC per cycle. Storage '+warpStoredCount()+' / '+warpStoreCap()+'. Up to six hours of offline production can accrue, limited by your SC and capacity.</p>'+
+ '<div class="warp-focus">'+['moon','neon','dust','void'].map(k=>'<button data-warp-focus="'+k+'" '+(c.focus===k?'class="warp-current"':'')+'>'+OREDEF[k].name+'</button>').join('')+'</div><small class="warp-lede">Changing extractors’ mineral focus costs 25 SC. Stardust needs Mk-2, Void Mk-3.</small>'+modules+
+ '<h3>Colony warehouse</h3><p class="warp-lede">Dock at your headquarters to load or deposit raw ore. Use the Galactic Exchange to trade it.</p>'+stock;
+}
+function warpRender(){const panel=$('warpColonyContent');if(panel)panel.innerHTML=warpPanelText();}
+function warpTradeTable(){const header=['orion','borealis','helios','forge','umbra'];
+ const rows=KINDS.map(k=>{
+  const quote=header.map(h=>{const p=v14Price(h,k);return p?'<td><b>'+p.bid+'</b> / '+p.ask+'<small>'+p.stock+' stock</small></td>':'<td>—</td>';}).join('');
+  return '<tr><th>'+OREDEF[k].ticker+'</th>'+quote+'</tr>';
+ }).join('');
+ return '<table class="warp-economy-table"><thead><tr><th>Ore</th>'+header.map(h=>'<th>'+V14_REGIONS[h].name.replace(' ','<br>')+'</th>').join('')+'</tr></thead><tbody>'+rows+'</tbody></table>';
+}
+function warpRenderEconomy(){const box=$('warpEconomyContent');if(!box)return;
+ const owned=S.colony?.owned;const baseCost=owned?Object.values(S.colony.modules).reduce((n,k)=>n+k*135,0):0;
+ const netWorth=Math.round(S.credits+KINDS.reduce((n,k)=>n+(S.ore[k]||0)*(v14Price('orion',k)?.bid||0)+(S.colony?.stored[k]||0)*(v14Price('orion',k)?.bid||0),0)+baseCost);
+ const local=S.system==='homestead'?'orion':S.system;
+ const lines=KINDS.map(k=>{const p=v14Price(local,k);return '<div class="warp-module"><div><b>'+OREDEF[k].name+'</b><small>Bid '+p.bid+' SC · Ask '+p.ask+' SC · '+p.stock+' in warehouse</small></div><div><button data-warp-market="sell" data-kind="'+k+'">Sell 1</button> <button data-warp-market="buy" data-kind="'+k+'">Buy 1</button></div></div>';}).join('');
+ box.innerHTML='<div class="warp-metricline"><div><small>PILOT ESTIMATED ASSETS</small><b>'+netWorth+' SC</b></div><div><small>CASH BALANCE</small><b>'+S.credits+' SC</b></div></div><p class="warp-lede">Indicative asset value uses Orion raw-ore bids; ships and token balances are not included. These are simulation values, not tradable securities or real-world money.</p><h3>Galactic Supply Board</h3><p class="warp-lede">Each quote is buy / sell SC per raw ore. Prices reflect local inventories, NPC shipments, and convoy deliveries.</p><div class="warp-table-scroll">'+warpTradeTable()+'</div><h3>Local Warehouse · '+V14_REGIONS[local].name+'</h3><p class="warp-lede">Regional trading requires docking at a public station. Your personal colony has warehouse transfers instead.</p>'+lines+'<h3>Trade strategy</h3><p class="warp-lede">Mine where deposits are plentiful. Carry ore through gates to shortage regions. Watch the bid/ask spread, fuel time, convoy fees, and limited SC buying budgets. Your colony’s miners operate at a cost, never minting SC or crypto.</p>';
+}
+function warpPlanetPoint(p,i,t){const r=[1800,3150,4850,6800][i],speed=[.025,.017,.012,.009][i],a=.7+i*1.1+t*speed;return {x:WARP_STAR.x+Math.cos(a)*r,y:WARP_STAR.y+Math.sin(a)*r*.72,r};}
+function warpDrawSpace(){if(S.system!=='homestead')return;
+ const t=performance.now()/1000,w=innerWidth,h=innerHeight;
+ const [sx,sy]=worldToScreen(WARP_STAR.x,WARP_STAR.y);
+ ctx.save();
+ if(sx>-500&&sx<w+500&&sy>-500&&sy<h+500){const glow=ctx.createRadialGradient(sx,sy,15,sx,sy,490);glow.addColorStop(0,'rgba(255,242,178,.9)');glow.addColorStop(.16,'rgba(250,180,99,.28)');glow.addColorStop(1,'rgba(250,130,83,0)');ctx.fillStyle=glow;ctx.fillRect(sx-500,sy-500,1000,1000);
+ ctx.shadowColor='#fff0a5';ctx.shadowBlur=42;ctx.fillStyle='#fff0c1';ctx.beginPath();ctx.arc(sx,sy,75,0,7);ctx.fill();ctx.shadowBlur=0;
+ ctx.fillStyle='#ffedba';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText(S.colony.star,sx,sy-95);}
+ S.colony.planets.forEach((p,i)=>{
+ const radius=[1800,3150,4850,6800][i];if(sx>-radius-130&&sx<w+radius+130&&sy>-radius-130&&sy<h+radius+130){ctx.strokeStyle='rgba(125,185,233,.17)';ctx.lineWidth=1.3;ctx.beginPath();ctx.ellipse(sx,sy,radius,radius*.72,0,0,7);ctx.stroke();}
+ const pos=warpPlanetPoint(p,i,t);const [x,y]=worldToScreen(pos.x,pos.y);if(x<-120||x>w+120||y<-120||y>h+120)return;
+ const d=WARP_PLANET_STYLES[p.style%WARP_PLANET_STYLES.length]||WARP_PLANET_STYLES[0];const r=[24,31,38,29][i];
+ const g=ctx.createRadialGradient(x-r*.4,y-r*.4,3,x,y,r*1.3);g.addColorStop(0,'#f0f5ff');g.addColorStop(.3,d.hue);g.addColorStop(1,'#10172c');ctx.fillStyle=g;ctx.shadowColor=d.hue;ctx.shadowBlur=9;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.shadowBlur=0;
+ ctx.font='bold 12px system-ui';ctx.textAlign='center';ctx.fillStyle='#dff4ff';ctx.fillText(p.name,x,y-r-15);
+ });
+ const [hx,hy]=worldToScreen(WARP_HUB.x,WARP_HUB.y);if(hx>-190&&hx<w+190&&hy>-190&&hy<h+190){const c=S.colony;ctx.save();ctx.translate(hx,hy);ctx.shadowColor=c.accent;ctx.shadowBlur=20;
+ ctx.fillStyle='#1d3851';ctx.strokeStyle=c.accent;ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,36,0,7);ctx.fill();ctx.stroke();ctx.shadowBlur=0;
+ for(let j=0;j<3+c.modules.storage+c.modules.trade;j++){const a=j*Math.PI*2/(3+c.modules.storage+c.modules.trade);ctx.save();ctx.rotate(a);ctx.strokeStyle=c.accent;ctx.fillStyle='#40536d';ctx.fillRect(37,-8,17+c.modules.habitat*4,16);ctx.strokeRect(37,-8,17+c.modules.habitat*4,16);ctx.restore();}
+ for(let i=0;i<c.modules.solar;i++){ctx.fillStyle='#72bfff';ctx.fillRect(-45+i*13,50,9,20);}
+ ctx.restore();ctx.fillStyle='#cbf8ff';ctx.textAlign='center';ctx.font='bold 12px system-ui';ctx.fillText(c.name,hx,hy-62);}
+ ctx.restore();
+}
+function warpRadar(g,mm){if(S.system!=='homestead')return false;
+ const {x,y,w,h}=mm;g.save();g.fillStyle='rgba(4,13,34,.92)';g.fillRect(x,y,w,h);g.strokeStyle='#80c5ed';g.strokeRect(x,y,w,h);
+ const p=(xx,yy)=>[x+xx/WORLD.w*w,y+yy/WORLD.h*h],mid=p(WARP_STAR.x,WARP_STAR.y);g.fillStyle='#ffe3a1';g.beginPath();g.arc(mid[0],mid[1],4,0,7);g.fill();
+ for(let i=0;i<4;i++){const pos=warpPlanetPoint(S.colony.planets[i],i,performance.now()/1000);const [px,py]=p(pos.x,pos.y);g.fillStyle=WARP_PLANET_STYLES[S.colony.planets[i].style%WARP_PLANET_STYLES.length].hue;g.fillRect(px-2,py-2,4,4);}
+ const [hx,hy]=p(WARP_HUB.x,WARP_HUB.y);g.fillStyle='#70f1ce';g.fillRect(hx-3,hy-3,6,6);const [px,py]=p(S.x,S.y);g.strokeStyle='#fff';g.beginPath();g.arc(px,py,4,0,7);g.stroke();g.restore();return true;
+}
+function warpTick(dt){if(S.colony?.owned){const out=warpProduction();if(out>0&&S.system==='homestead'&&$('warpColonyDrawer').classList.contains('open'))warpRender();}}
+function warpRenderIfOpen(){if($('warpColonyDrawer').classList.contains('open'))warpRender();if($('warpEconomyDrawer').classList.contains('open'))warpRenderEconomy();}
+function warpInitializeUI(){
+ const area=$('drawerArea');if(!area)return;
+ const menu=$('drawerToggles');const button=document.createElement('button');button.className='console-btn';button.id='toggleWarpColony';button.setAttribute('aria-label','Personal solar system and base');button.setAttribute('aria-expanded','false');button.innerHTML='<span class="warp-menu-icon">✦</span><span>My System</span>';
+ if(menu.insertBefore)menu.insertBefore(button,$('toggleLog'));else menu.appendChild(button);
+ const eco=document.createElement('button');eco.className='console-btn';eco.id='toggleWarpEconomy';eco.setAttribute('aria-label','Galactic economy and trading');eco.setAttribute('aria-expanded','false');eco.innerHTML='<span class="warp-menu-icon">◆</span><span>Economy</span>';if(menu.insertBefore)menu.insertBefore(eco,button);else menu.appendChild(eco);
+ const ep=document.createElement('div');ep.id='warpEconomyDrawer';ep.className='hud drawer warp-drawer';ep.innerHTML='<h3>Galactic Exchange <span class="test-pill">LOCAL ECONOMY</span></h3><div id="warpEconomyContent"></div>';
+ const cp=document.createElement('div');cp.id='warpColonyDrawer';cp.className='hud drawer warp-drawer';cp.innerHTML='<h3>My Solar System <span class="test-pill">LOCAL SAVE</span></h3><div id="warpColonyContent"></div>';
+ area.appendChild(ep);area.appendChild(cp);
+ function open(panel,btn){const open=!panel.classList.contains('open');document.querySelectorAll('.drawer').forEach(d=>d.classList.remove('open'));document.querySelectorAll('.console-btn[aria-expanded]')?.forEach(b=>b.setAttribute('aria-expanded','false'));if(open){panel.classList.add('open');btn.setAttribute('aria-expanded','true');}}
+ button.onclick=()=>{warpRender();open(cp,button);};eco.onclick=()=>{warpRenderEconomy();open(ep,eco);};
+ cp.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.id==='warpClaimBtn')warpClaim();else if(b.id==='warpTravelBtn')warpHomeWarp();else if(b.id==='warpRenameBtn')warpRename();else if(b.dataset.warpUpgrade)warpUpgrade(b.dataset.warpUpgrade);
+ else if(b.dataset.warpPlanet!==undefined)warpPlanetChange(Number(b.dataset.warpPlanet),b.dataset.warpAction);
+ else if(b.dataset.warpFocus)warpFocus(b.dataset.warpFocus);else if(b.dataset.warpLoad)warpLoad(b.dataset.warpLoad);else if(b.dataset.warpDeposit)warpDeposit(b.dataset.warpDeposit);
+ });
+ ep.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!b.dataset.warpMarket)return;
+ if(S.system==='homestead')return toast('Warp to a public exchange to trade.');
+ if(!dockedStation)return toast('Dock at a station before trading.');
+ v14RegionalTrade(b.dataset.kind,b.dataset.warpMarket);warpRenderEconomy();});
+ const chart=$('mapDrawer');if(chart){const p=document.createElement('p');p.className='warp-lede';p.textContent='Map: 96k × 57.6k per public system. Your own colony is accessed from My System.';if(chart.insertBefore&&chart.querySelector)chart.insertBefore(p,chart.querySelector('canvas'));else chart.appendChild(p);}
+ warpRender();warpRenderEconomy();
+}
+v14Init();v14SpawnConvoys();warpInit();factionInit();warpInitializeUI();
 function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Chamber",tier:"EVENT"}:currentZone();$('systemTag').textContent=SYSTEMS[S.system].name;$('factionTag').textContent=S.faction?FACTIONS[S.faction].name:'Unaligned';$('factionTag').style.color=S.faction?FACTIONS[S.faction].color:'#dceafa'; $('zoneTag').textContent=zone.name+' · '+zone.tier; $('dockTag').textContent=dockedStation?('Dock: '+dockedStation.name):'Dock: no'; $('hostileTag').textContent=drones.filter(d=>Math.hypot(d.x-S.x,d.y-S.y)<700).length+' hostiles'; $('coordsTag').textContent='X '+Math.round(S.x)+' • Y '+Math.round(S.y); $('topCredits').innerHTML=S.credits+' <small>SC</small>'; $('hpText').textContent=Math.round(100*S.hp/S.maxHp)+'%'; $('energyText').textContent=Math.round(S.energy)+'%'; $('cargoText').textContent=cargoCount()+' / '+cargoCap(); $('speedText').textContent=Math.round(Math.hypot(S.vx,S.vy)); $('xpText').textContent=S.xp; $('gunText').textContent=GUNS[S.equipped.gun].name.replace(' Blaster','').replace(' Cannon','');$('damageBonusText').textContent='+'+damagePercent()+'%';$('combatReadout').textContent=activeShip().name+' · '+actualDamage()+' DMG / hit · '+gunDps()+' DPS · Mk-'+gunLevel(); $('assistBtnState').textContent=S.settings.assist?'ON':'OFF'; $('hpBar').style.width=(100*S.hp/S.maxHp)+'%'; $('energyBar').style.width=S.energy+'%'; $('cargoBar').style.width=(100*cargoCount()/cargoCap())+'%'; $('stationBtn').disabled=!dockedStation; $('stationPrompt').classList.toggle('hidden', !!dockedStation); $('stationSubtitle').textContent=dockedStation?('Docked at '+dockedStation.name):'Dock first'; $('stationTitle').textContent=dockedStation?(dockedStation.name+' • Ship console'):'Station services'; if(!dockedStation)$('stationModal').classList.remove('open'); $('toggleSound').setAttribute('aria-pressed',String(S.settings.sound)); $('toggleSound').title=S.settings.sound?'Mute audio':'Enable audio';
- if(!includePanels)return;renderGates();extRenderUI();renderFactionUI();v14RenderUI();
+ if(!includePanels)return;renderGates();extRenderUI();renderFactionUI();v14RenderUI();warpRenderIfOpen();
  $('walletGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small>$${OREDEF[k].ticker}</small><b style="color:${OREDEF[k].color}">${S.tokens[k]}</b><small>${k==='moon'||k==='neon'?'Controlled flow':'Rare reserve'}</small></div>`).join(''); $('oreGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small style="color:${OREDEF[k].color}">${OREDEF[k].name}</small><b>${S.ore[k]}</b><small>${OREDEF[k].oreForToken} ore → ${OREDEF[k].tokenOut} $${OREDEF[k].ticker}</small></div>`).join('');
  $('zoneList').innerHTML=ZONES.slice(1).map(z=>`<div class="zone-card" style="border-left-color:${z.color}"><b>${z.name} · ${z.tier}</b><br>${z.desc}</div>`).join('');$('marketList').innerHTML=KINDS.map(k=>`<div class="rowItem"><div><strong style="color:${OREDEF[k].color}">${OREDEF[k].name}</strong><small>Buy ${OREDEF[k].buy} · Sell ${OREDEF[k].sell} · Refine ${OREDEF[k].oreForToken} ore + ${Math.max(0,OREDEF[k].fee-(S.equipped.utility==='autorefiner'?1:0))} fee → ${OREDEF[k].tokenOut} $${OREDEF[k].ticker}</small></div><div class="inlineBtns"><button data-buy="${k}">Buy</button><button data-sell="${k}">Sell</button><button data-refine="${k}">Refine</button></div></div>`).join('');
  const upDefs=[{id:'thrusters',name:'Thrusters',lv:S.upgrades.thrusters,desc:'Acceleration and top speed. No zone locks.',cost:(()=>{const l=S.upgrades.thrusters; if(l>=5) return null; return {credits:120*l,tokens:{neon:l}}})()},{id:'mining',name:'Mining rig',lv:S.upgrades.mining,desc:'Mine faster; high-tier enemies are still dangerous.',cost:(()=>{const l=S.upgrades.mining; if(l>=5) return null; if(l<3) return {credits:120*l,tokens:{neon:1+l}}; if(l===3) return {credits:120*l,tokens:{dust:2}}; return {credits:120*l,tokens:{diam:1}}})()},{id:'cargo',name:'Cargo frame',lv:S.upgrades.cargo,desc:'Increase cargo capacity.',cost:(()=>{const l=S.upgrades.cargo; if(l>=5) return null; if(l<3) return {credits:120*l,tokens:{moon:1+l}}; if(l===3) return {credits:120*l,tokens:{neon:2}}; return {credits:120*l,tokens:{dust:2}}})()}];
@@ -1683,7 +1927,7 @@ function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Cha
  $('shipList').innerHTML=Object.entries(SHIPS).filter(([id,ship])=>shipFilter==='all'||(ship.role||'premium')===shipFilter).map(([id,ship])=>`<div class="rowItem"><div><strong>${ship.name}${id===S.shipId?' · ACTIVE':''}</strong><small>${ship.desc}</small><div class="ship-stats"><span>Hull ${ship.hull}</span><span>Speed ${Math.round(ship.speed*100)}%</span><span>Thrust ${Math.round(ship.accel*100)}%</span><span>DMG +${Math.round(ship.damageBonus*100)}%</span><span>Cargo ${ship.cargo>=0?'+':''}${ship.cargo}</span></div><small>${S.ownedShips[id]?'Owned · Ready for launch':costText(ship.cost)}</small></div><div class="inlineBtns"><button ${id===S.shipId?'disabled':''} ${S.ownedShips[id]?`data-equip-ship="${id}"`:`data-buy-ship="${id}"`}>${id===S.shipId?'Piloting':S.ownedShips[id]?'Deploy':'Purchase'}</button></div></div>`).join('');
  $('equipList').innerHTML=`<div class="rowItem"><div><strong>Primary weapons</strong><small>Equip a crafted weapon.</small></div><div></div></div>${Object.entries(GUNS).filter(([k])=>S.crafted.guns[k]).map(([k,v])=>`<div class="rowItem"><div><strong>${v.name}</strong><small>${v.desc}</small></div><div><button ${S.equipped.gun===k?'disabled':''} data-equip-cat="guns" data-equip="${k}">${S.equipped.gun===k?'Equipped':'Equip'}</button></div></div>`).join('')}<div class="rowItem"><div><strong>Utilities</strong><small>Equip one utility module.</small></div><div></div></div>${Object.entries(UTILS).filter(([k])=>S.crafted.utils[k]).map(([k,v])=>`<div class="rowItem"><div><strong>${v.name}</strong><small>${v.desc}</small></div><div><button ${S.equipped.utility===k?'disabled':''} data-equip-cat="utils" data-equip="${k}">${S.equipped.utility===k?'Equipped':'Equip'}</button></div></div>`).join('')}`;
  }
-function update(dt){clock+=dt;if(v14GameplayTick(dt))return;updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt)}
+function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt))return;updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt)}
 let lastPersist=performance.now();function loop(ts){const dt=Math.min(.05,(ts-lastTime)/1000); lastTime=ts; update(dt); draw(); if((ts|0)%260<17) renderUI(false); if(ts-lastPersist>4000){lastPersist=ts;save();} requestAnimationFrame(loop)}
 function toggleDrawer(id){const d=$(id),opening=!d.classList.contains('open');document.querySelectorAll('.drawer').forEach(el=>el.classList.remove('open')); if(opening)d.classList.add('open');for(const [btn,panel] of Object.entries({toggleWallet:'walletDrawer',toggleCargo:'cargoDrawer',toggleMap:'mapDrawer',toggleGates:'gatesDrawer',toggleFaction:'factionDrawer'}))$(btn).setAttribute('aria-expanded',String($(panel).classList.contains('open')));}
 addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
@@ -1738,7 +1982,7 @@ $('factionDrawer').addEventListener('click',e=>{const b=e.target.closest('button
 $('factionSelectModal').addEventListener('click',e=>{const b=e.target.closest('[data-faction-join]');if(b)factionJoin(b.dataset.factionJoin);});
 $('factionHomeBtn').onclick=factionHomeRoute;
 $('hullColor').value=S.ship.hull; $('accentColor').value=S.ship.accent;
-renderLog();renderUI();setTab('market');save();log('The Twelve Bells v0.14: Heart Chamber, regional logistics and faction ship cultures online.');log('SOLO TEST MODE: local SC and resource balances have no cash value.');requestAnimationFrame(loop);
+renderLog();renderUI();setTab('market');save();log('Warp Coin v0.15 online · 96k × 57.6k galactic maps · private pioneer systems and economy.');requestAnimationFrame(loop);
 })();
 </script>
 </body>

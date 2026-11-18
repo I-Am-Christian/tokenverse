@@ -1,8 +1,8 @@
 {
-  "name": "tokenverse",
-  "version": "0.14.0",
+  "name": "warp-coin",
+  "version": "0.15.0",
   "private": true,
-  "description": "Tokenverse browser game and multiplayer server prototype",
+  "description": "Warp Coin browser space mining game and local simulated economy",
   "type": "module",
   "scripts": {
     "start": "node server.js",

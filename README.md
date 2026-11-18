@@ -1,3 +1,15 @@
+# Warp Coin v0.15 — Pioneer Systems
+
+**Play now:** https://i-am-christian.github.io/tokenverse/
+
+**Warp Coin** is a faction-based solo browser space game with a simulated mining economy, ship combat, trading, and the Eidon Rift. v0.15 expands the five public systems to **96,000 × 57,600 units each** and introduces a **free personal solar system** with a star, four configurable planets, a dockable/upgradeable base, bounded ore production, and local warehouse trading. Open the **My System** and **Economy** console buttons to explore the new gameplay. [Full release notes](WARP_COIN_V015.md).
+
+The former **Tokenverse** repository slug and GitHub Pages URL are intentionally preserved to keep existing players' bookmarks and local saved games. The game and npm package are now branded Warp Coin. A future verified domain/repository rename can be done separately.
+
+**Simulation only:** Scrap Credits, material tokens, regional stock, cosmetic editions, and asset valuations have no real cash value. There is no verified real-money exchange, NFT mint, shared multiplayer account, email login, or live chat on GitHub Pages. All progress is browser-local.
+
+---
+
 # Tokenverse v0.14 — The Twelve Bells
 
 **Play in your browser:** https://i-am-christian.github.io/tokenverse/

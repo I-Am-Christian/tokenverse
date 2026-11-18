@@ -26,9 +26,9 @@ const helpers = new Function('$','S','STATIONS','ZONES','GATES','WORLD','perform
 )(
   $, {x:900,y:900,system:'orion',outposts:[]},
   [{x:900,y:900,kind:'port'}],
-  [{x1:0,y1:0,x2:48000,y2:28800,color:'#6fe8ff'}],
-  [{x:24000,y:180,color:'#9fdfff'}],
-  {w:48000,h:28800}, {now: () => 2000}, drawFactionRadar
+  [{x1:0,y1:0,x2:96000,y2:57600,color:'#6fe8ff'}],
+  [{x:48000,y:180,color:'#9fdfff'}],
+  {w:96000,h:57600}, {now: () => 2000}, drawFactionRadar
 );
 
 test('HUD minimap stays entirely left of the right control rail', () => {
