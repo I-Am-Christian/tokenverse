@@ -1,14 +1,15 @@
-# Warp Coin v0.15 — Pioneer Systems
+# Warp Coin v0.16 — The Outer Meridian
 
-**Play now:** https://i-am-christian.github.io/tokenverse/
+**Play the updated game:** https://i-am-christian.github.io/tokenverse/
 
-**Warp Coin** is a faction-based solo browser space game with a simulated mining economy, ship combat, trading, and the Eidon Rift. v0.15 expands the five public systems to **96,000 × 57,600 units each** and introduces a **free personal solar system** with a star, four configurable planets, a dockable/upgradeable base, bounded ore production, and local warehouse trading. Open the **My System** and **Economy** console buttons to explore the new gameplay. [Full release notes](WARP_COIN_V015.md).
+The five public maps are now **192,000 × 115,200 units each**, with four neutral Outer Meridian trade stations, outer mining belts, dangerous drone encounters and a larger interactive navigation chart. Use **Navigation** to plot a route or dock at a station and jump to a Meridian hub for **85 SC**.
 
-The former **Tokenverse** repository slug and GitHub Pages URL are intentionally preserved to keep existing players' bookmarks and local saved games. The game and npm package are now branded Warp Coin. A future verified domain/repository rename can be done separately.
+Custom player-owned solar systems, four factions, Eidon lore, twelve daily Rift events, ships, production facilities and local economy are retained. Save migration from v0.15 runs exactly once. [Release notes](WARP_COIN_V016.md) · [Separate Supabase setup guide](WARP_COIN_SUPABASE_SETUP.md).
 
-**Simulation only:** Scrap Credits, material tokens, regional stock, cosmetic editions, and asset valuations have no real cash value. There is no verified real-money exchange, NFT mint, shared multiplayer account, email login, or live chat on GitHub Pages. All progress is browser-local.
+**Important:** All gameplay and balances remain local and simulated. Supabase email accounts, chat, real-money deposits, and shared multiplayer have not yet been activated. The connected **Hello Earth DB** is unrelated and remains unchanged.
 
 ---
+
 
 # Tokenverse v0.14 — The Twelve Bells
 

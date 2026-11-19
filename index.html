@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#050b19" />
-<title>Warp Coin v0.15 — Pioneer Systems</title>
+<title>Warp Coin v0.16 — The Outer Meridian</title>
 <style>
 
 :root{color-scheme:dark;--ink:#040a18;--glass:rgba(5,15,35,.72);--panel:rgba(7,19,42,.92);--stroke:rgba(99,171,215,.25);--text:#e9f6ff;--muted:#7e9db4;--ice:#6de8f2;--mint:#70f4cd;--violet:#9684ff;--amber:#ffca7a;--danger:#ff788d;font-family:Inter, 'Segoe UI',system-ui,sans-serif}
@@ -59,7 +59,7 @@
 #bossInfo,#scanInfo{color:#b9daf0;font-size:12px}
 @media(max-width:640px){#stationModal .tabs{max-height:112px}#stationModal .tabs .tab{font-size:10px;padding:7px 9px}#scanBtn,#deployStationBtn,#droneToggleBtn{min-width:0;font-size:11px}}
 /* Keep the navigation chart legible without adding another always-on panel. */
-#navigationChart{display:block;width:100%;height:auto;aspect-ratio:5/3;background:#061125;border:1px solid rgba(121,216,255,.25);border-radius:6px;margin:0 0 12px}
+#mapDrawer{width:min(470px,90vw)}#warp16FrontierList .gate-entry{grid-template-columns:minmax(0,1fr);gap:8px}#warp16FrontierList .inlineBtns{display:flex;flex-wrap:wrap;gap:6px}#warp16FrontierList .inlineBtns button{flex:1;font-size:10px}#navigationChart{display:block;width:100%;height:auto;aspect-ratio:5/3;background:#061125;border:1px solid rgba(121,216,255,.25);border-radius:6px;margin:0 0 12px}
 #mapDrawer .map-hint{line-height:1.5;font-size:11px;color:#9fcadd;margin:0 0 12px}
 /* Tokenverse faction selection and single-drawer UI: flight viewport is unchanged */
 .faction-card{--faction-accent:#8dd8ff;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;background:linear-gradient(110deg,color-mix(in srgb,var(--faction-accent) 12%,#081832),#07152b);border:1px solid color-mix(in srgb,var(--faction-accent) 45%,#18314a);border-left:3px solid var(--faction-accent);padding:11px;border-radius:8px}
@@ -166,7 +166,7 @@
   <div id="topBar" class="hud">
     <div id="brand">
       <div class="brand-mark"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true"><circle cx="16" cy="16" r="4" fill="#6fe8f2"/><ellipse cx="16" cy="16" rx="15" ry="6" stroke="#6fe8f2" fill="none" stroke-width="1.2" transform="rotate(-37 16 16)"/><path d="M7 26 25 6" stroke="#fff" stroke-width="1.1"/></svg></div>
-      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Pioneer Systems 0.15</div></div>
+      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Outer Meridian 0.16</div></div>
     </div>
     <div id="topCenter"><span class="sector-signal"><i class="signal-dot"></i>Solo sector</span><i class="sector-divider"></i><span id="systemTag" class="pill">Orion Belt</span><span id="factionTag" class="pill">Choose faction</span><button id="v14BellButton" class="pill" aria-label="Open the Twelve Bells event console">BELL · COUNTDOWN</button><span id="v14BellBadge" class="pill" aria-hidden="true">NEXT BELL</span><span id="zoneTag" class="pill">Frontier</span><i class="sector-divider"></i><span id="dockTag" class="pill">In flight</span><span id="hostileTag" class="pill">0 hostiles</span><span id="coordsTag" class="pill">X 0 • Y 0</span></div>
     <div id="topRight"><div class="top-credit"><div class="credit-caption">Credit balance</div><div id="topCredits">0 <small>SC</small></div></div></div>
@@ -196,10 +196,10 @@
     </div>
     <div id="walletDrawer" class="hud drawer"><h3>Asset ledger <span class="test-pill">LOCAL TEST</span></h3><div id="walletGrid" class="grid2"></div><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px"><span style="font-size:10px;color:var(--muted)">SIMULATED ASSETS · NO CASH VALUE</span><button id="resetInLedger" class="dock-action" style="min-width:0;height:30px;font-size:9px">Reset pilot</button></div></div>
     <div id="cargoDrawer" class="hud drawer"><h3 >Cargo manifest</h3><div id="oreGrid" class="grid2"></div></div>
-    <div id="mapDrawer" class="hud drawer"><h3>Galactic chart · 96k × 57.6k</h3>
-<canvas id="navigationChart" width="320" height="192" role="img" aria-label="Galaxy chart with current ship position, gates and stations"></canvas>
+    <div id="mapDrawer" class="hud drawer"><h3>Galactic chart · 192k × 115.2k</h3>
+<canvas id="navigationChart" width="440" height="264" role="img" aria-label="Galaxy chart with current ship position, gates and stations"></canvas>
 <div class="map-hint">Four faction home territories are separated by neutral corridors. Colored markers show home bases and gates; white marker is your ship.</div>
-<div class="notice" style="margin-bottom:10px">All sectors are open. Danger increases with enemy tier, not invisible barriers.</div><div id="zoneList" class="zone-list"></div></div>
+<div class="notice" style="margin-bottom:10px">All sectors are open. Danger increases with enemy tier, not invisible barriers.</div><div id="zoneList" class="zone-list"></div><h3 style="margin-top:15px">Outer Meridian transit network</h3><p class="map-hint">Plot a route or dock at any station and jump directly to an outer relay for 85 SC. Transit is simulated.</p><div id="warp16FrontierList" class="gate-list"></div></div>
     <div id="gatesDrawer" class="hud drawer"><h3>Interstellar Jump Gates</h3><div class="notice">North, east, south and west gates lead to four other star systems. Plot a safe route, brake, and cross the portal.</div><div id="gateList" class="gate-list"></div></div><div id="factionDrawer" class="hud drawer" aria-label="Faction management">
 <h3>Faction territories</h3>
 <div id="factionDrawIntro"></div>
@@ -324,19 +324,19 @@ const $=id=>document.getElementById(id);
 const KINDS=['moon','neon','dust','void','diam'];
 const OREDEF={moon:{name:'Moonstone',ticker:'MOON',color:'#8ec3ff',oreForToken:4,tokenOut:2,fee:3,buy:18,sell:7},neon:{name:'Neonite',ticker:'NEON',color:'#6df4dc',oreForToken:3,tokenOut:1,fee:5,buy:34,sell:16},dust:{name:'Stardust',ticker:'DUST',color:'#ffd479',oreForToken:2,tokenOut:1,fee:8,buy:80,sell:39},void:{name:'Void crystal',ticker:'VOID',color:'#be9dff',oreForToken:1,tokenOut:1,fee:25,buy:200,sell:100},diam:{name:'Diamond ore',ticker:'DIAM',color:'#7cf5ff',oreForToken:2,tokenOut:1,fee:40,buy:250,sell:120}};
 const ZONES=[
- {name:'Neutral Safe Zone',x1:0,y1:0,x2:4800,y2:4800,color:'#81dcff',tier:'SAFE',danger:0,desc:'Protected neutral starter spaceport.'},
- {name:'Free Outer Reaches',x1:0,y1:0,x2:96000,y2:57600,color:'#7287bf',tier:'T3–6',danger:3,desc:'Unclaimed corridors and outer wilderness.'},
- {name:'Solar Union Dominion',x1:4600,y1:3600,x2:42200,y2:24800,color:'#68d6ff',tier:'T1–3',danger:1,desc:'Shielded factories, Moonstone and Neonite.',faction:'solar'},
- {name:'Crimson Marauder Marches',x1:53800,y1:3600,x2:91400,y2:24800,color:'#ff797e',tier:'T2–4',danger:2,desc:'Warlord patrols and lucrative battle salvage.',faction:'crimson'},
- {name:'Verdant Accord Commons',x1:4600,y1:32800,x2:42200,y2:54000,color:'#79efb0',tier:'T1–3',danger:1,desc:'Abundant mineral belts and refinery outposts.',faction:'verdant'},
- {name:'Void Scholar Enclave',x1:53800,y1:32800,x2:91400,y2:54000,color:'#bd9cff',tier:'T3–5',danger:3,desc:'Ancient relics, Void Crystals and anomalies.',faction:'void'},
- {name:'The Disputed Rift',x1:42400,y1:18400,x2:53600,y2:39000,color:'#f3bf70',tier:'T6–8',danger:6,desc:'Neutral contested heartland with dense diamond ore.',contested:true}
+ {name:'Neutral Safe Zone',x1:0,y1:0,x2:9600,y2:9600,color:'#81dcff',tier:'SAFE',danger:0,desc:'Protected neutral starter spaceport.'},
+ {name:'Free Outer Reaches',x1:0,y1:0,x2:192000,y2:115200,color:'#7287bf',tier:'T3–6',danger:3,desc:'Unclaimed corridors and outer wilderness.'},
+ {name:'Solar Union Dominion',x1:9200,y1:7200,x2:84400,y2:49600,color:'#68d6ff',tier:'T1–3',danger:1,desc:'Shielded factories, Moonstone and Neonite.',faction:'solar'},
+ {name:'Crimson Marauder Marches',x1:107600,y1:7200,x2:182800,y2:49600,color:'#ff797e',tier:'T2–4',danger:2,desc:'Warlord patrols and lucrative battle salvage.',faction:'crimson'},
+ {name:'Verdant Accord Commons',x1:9200,y1:65600,x2:84400,y2:108000,color:'#79efb0',tier:'T1–3',danger:1,desc:'Abundant mineral belts and refinery outposts.',faction:'verdant'},
+ {name:'Void Scholar Enclave',x1:107600,y1:65600,x2:182800,y2:108000,color:'#bd9cff',tier:'T3–5',danger:3,desc:'Ancient relics, Void Crystals and anomalies.',faction:'void'},
+ {name:'The Disputed Rift',x1:84800,y1:36800,x2:107200,y2:78000,color:'#f3bf70',tier:'T6–8',danger:6,desc:'Neutral contested heartland with dense diamond ore.',contested:true}
 ];
 const FACTIONS={
- solar:{id:'solar',name:'Solar Union',baseName:'Solar Citadel',symbol:'✦',color:'#68d6ff',region:'Northwest',specialty:'Fortification & industry',bonus:'10% less damage',description:'Engineers who defend trade routes and heavily armored space stations.',home:{x:18000,y:13200},area:{x1:4600,y1:3600,x2:42200,y2:24800}},
- crimson:{id:'crimson',name:'Crimson Marauders',baseName:'Redline Bastion',symbol:'◆',color:'#ff797e',region:'Northeast',specialty:'Combat & raiding',bonus:'8% more weapon damage',description:'Independent captains competing for glory and control of salvage-rich sectors.',home:{x:77800,y:13200},area:{x1:53800,y1:3600,x2:91400,y2:24800}},
- verdant:{id:'verdant',name:'Verdant Accord',baseName:'Verdant Anchorage',symbol:'❖',color:'#79efb0',region:'Southwest',specialty:'Mining & trade',bonus:'10% faster mining',description:'Collective miners and merchants who supply the galaxy with essential ore.',home:{x:18000,y:45000},area:{x1:4600,y1:32800,x2:42200,y2:54000}},
- void:{id:'void',name:'Void Scholars',baseName:'Void Archive',symbol:'◇',color:'#bd9cff',region:'Southeast',specialty:'Research & exploration',bonus:'15% larger scan radius',description:'Explorers who seek hidden anomalies, alien technology and blueprint fragments.',home:{x:77800,y:45000},area:{x1:53800,y1:32800,x2:91400,y2:54000}}
+ solar:{id:'solar',name:'Solar Union',baseName:'Solar Citadel',symbol:'✦',color:'#68d6ff',region:'Northwest',specialty:'Fortification & industry',bonus:'10% less damage',description:'Engineers who defend trade routes and heavily armored space stations.',home:{x:36000,y:26400},area:{x1:9200,y1:7200,x2:84400,y2:49600}},
+ crimson:{id:'crimson',name:'Crimson Marauders',baseName:'Redline Bastion',symbol:'◆',color:'#ff797e',region:'Northeast',specialty:'Combat & raiding',bonus:'8% more weapon damage',description:'Independent captains competing for glory and control of salvage-rich sectors.',home:{x:155600,y:26400},area:{x1:107600,y1:7200,x2:182800,y2:49600}},
+ verdant:{id:'verdant',name:'Verdant Accord',baseName:'Verdant Anchorage',symbol:'❖',color:'#79efb0',region:'Southwest',specialty:'Mining & trade',bonus:'10% faster mining',description:'Collective miners and merchants who supply the galaxy with essential ore.',home:{x:36000,y:90000},area:{x1:9200,y1:65600,x2:84400,y2:108000}},
+ void:{id:'void',name:'Void Scholars',baseName:'Void Archive',symbol:'◇',color:'#bd9cff',region:'Southeast',specialty:'Research & exploration',bonus:'15% larger scan radius',description:'Explorers who seek hidden anomalies, alien technology and blueprint fragments.',home:{x:155600,y:90000},area:{x1:107600,y1:65600,x2:182800,y2:108000}}
 };
 const FACTION_MISSIONS={
  solar:{stat:'mined',title:'Union Supply Run',description:'Mine 12 units of raw ore for the union yards.',goal:12,credits:180,rep:14},
@@ -344,20 +344,28 @@ const FACTION_MISSIONS={
  verdant:{stat:'refined',title:'Accord Refinery Quota',description:'Refine 3 batches of ore into material tokens.',goal:3,credits:190,rep:13},
  void:{stat:'scans',title:'Archive Reconnaissance',description:'Complete 3 scanner pulses and document the signals.',goal:3,credits:210,rep:14}
 };
-const WORLD={w:96000,h:57600,port:{x:900,y:900},safeRadius:700};
+const WORLD={w:192000,h:115200,port:{x:900,y:900},safeRadius:700};
 const SYSTEMS={orion:{name:"Orion Belt",tier:1,ore:"moon",color:"#6fdcff",links:{north:"borealis",east:"helios",south:"forge",west:"umbra"}},borealis:{name:"Borealis Drift",tier:2,ore:"neon",color:"#85dcff",req:{mining:2},links:{north:"orion",east:"helios",south:"orion",west:"umbra"}},helios:{name:"Helios Reach",tier:2,ore:"dust",color:"#ffd17c",req:{thrusters:2},links:{north:"borealis",east:"orion",south:"forge",west:"orion"}},forge:{name:"Titan Foundry",tier:3,ore:"void",color:"#ff9a86",req:{mining:3},links:{north:"orion",east:"helios",south:"orion",west:"umbra"}},umbra:{name:"Umbra Exclusion",tier:3,ore:"diam",color:"#bb9cff",req:{mining:3,thrusters:2},links:{north:"borealis",east:"orion",south:"forge",west:"orion"}}};
 SYSTEMS.homestead={name:'Pioneer System',tier:1,ore:'moon',color:'#76eedf',links:{north:'orion',east:'orion',south:'orion',west:'orion'}};
 const GATES=[{id:"north",name:"Northern Gate",x:WORLD.w/2,y:185,color:"#8fdaff"},{id:"east",name:"Eastern Gate",x:WORLD.w-185,y:WORLD.h/2,color:"#f3cb8c"},{id:"south",name:"Southern Gate",x:WORLD.w/2,y:WORLD.h-185,color:"#ffa9b2"},{id:"west",name:"Western Gate",x:185,y:WORLD.h/2,color:"#ae9aff"}];
 const STATIONS=[
 {id:'port',name:'Orion Port',x:900,y:900,kind:'port'},
-{id:'frontier',name:'Frontier Depot',x:8700,y:7040,kind:'relay'},
-{id:'ember',name:'Ember Relay',x:18800,y:6840,kind:'relay'},
-{id:'rift',name:'Rift Anchorage',x:24800,y:20400,kind:'relay'},
-{id:'diamond',name:'Diamond Watch',x:40400,y:8600,kind:'relay'},
-{id:'outer',name:'Outer Haven',x:7800,y:23800,kind:'relay'},
- {id:'concord',name:'Concord Exchange',x:48000,y:28800,kind:'hub'},
+{id:'frontier',name:'Frontier Depot',x:17400,y:14080,kind:'relay'},
+{id:'ember',name:'Ember Relay',x:37600,y:13680,kind:'relay'},
+{id:'rift',name:'Rift Anchorage',x:49600,y:40800,kind:'relay'},
+{id:'diamond',name:'Diamond Watch',x:80800,y:17200,kind:'relay'},
+{id:'outer',name:'Outer Haven',x:15600,y:47600,kind:'relay'},
+ {id:'concord',name:'Concord Exchange',x:96000,y:57600,kind:'hub'},
  ...Object.values(FACTIONS).map(f=>({id:'base_'+f.id,name:f.baseName,x:f.home.x,y:f.home.y,kind:'faction',faction:f.id}))
 ];
+
+const DEEP_RIM_STATIONS=[
+ {id:'meridian_north',name:'North Meridian Exchange',x:WORLD.w/2,y:7700,kind:'hub',color:'#90dfff',ore:'neon'},
+ {id:'meridian_south',name:'South Meridian Exchange',x:WORLD.w/2,y:WORLD.h-7700,kind:'hub',color:'#ebbe8e',ore:'dust'},
+ {id:'meridian_west',name:'West Frontier Port',x:7200,y:WORLD.h/2,kind:'hub',color:'#87e8b6',ore:'moon'},
+ {id:'meridian_east',name:'East Frontier Port',x:WORLD.w-7200,y:WORLD.h/2,kind:'hub',color:'#c4a1ff',ore:'void'}
+];
+STATIONS.push(...DEEP_RIM_STATIONS);
 const GUNS={pulse:{name:'Pulse Blaster',desc:'Balanced starter blaster.',crafted:true,cost:null,fireRate:.26,damage:14,speed:640,color:'#79dfff'},scatter:{name:'Scatter Cannon',desc:'Three-shot spread.',crafted:false,cost:{ore:{moon:18,neon:8},tokens:{moon:2}},fireRate:.52,damage:9,speed:560,pellets:3,spread:.26,color:'#ffd27a'},rail:{name:'Railgun',desc:'Fast accurate shot.',crafted:false,cost:{ore:{neon:16,dust:7},tokens:{neon:3,dust:2}},fireRate:.62,damage:28,speed:880,color:'#71ffe0'},plasma:{name:'Plasma Lance',desc:'Heavy plasma bolt.',crafted:false,cost:{ore:{dust:12,void:4},tokens:{dust:3,void:1}},fireRate:.7,damage:42,speed:500,color:'#c498ff'},diamond:{name:'Diamond Repeater',desc:'Rapid endgame gun.',crafted:false,cost:{ore:{diam:10,void:3},tokens:{diam:2,void:1}},fireRate:.17,damage:13,speed:760,color:'#78f6ff'},arc:{name:'Arc Emitter',desc:'Fast ion bolts with high accuracy.',crafted:false,cost:{ore:{neon:20,dust:10},tokens:{neon:4,dust:2}},fireRate:.21,damage:18,speed:780,color:'#84ffe8'},siege:{name:'Nova Cannon',desc:'Slow-firing siege blast.',crafted:false,cost:{ore:{diam:16,void:9},tokens:{diam:5,void:3}},fireRate:.95,damage:85,speed:440,color:'#f6a9ff'}};
 // Each ship has meaningful tradeoffs; damageBonus is a fraction of base damage.
 const SHIPS={
@@ -397,7 +405,7 @@ function cargoCap(){return 20+S.upgrades.cargo*10+(S.equipped.utility==='cargori
 function currentZone(pos=S){if(S.system==='homestead')return {name:S.colony?.name||'Private Colony',tier:'SAFE',danger:0,color:'#72e9db'};
  if(Math.hypot(pos.x-WORLD.port.x,pos.y-WORLD.port.y)<WORLD.safeRadius)return ZONES[0];
  for(const f of Object.values(FACTIONS))if(Math.hypot(pos.x-f.home.x,pos.y-f.home.y)<1050){const z=ZONES.find(z=>z.faction===f.id);return {...z,tier:'SAFE',danger:0};}
- if(Math.hypot(pos.x-48000,pos.y-28800)<850)return {name:'Concord Neutral Exchange',color:'#9ee6ff',tier:'SAFE',danger:0};
+ if(Math.hypot(pos.x-96000,pos.y-57600)<850)return {name:'Concord Neutral Exchange',color:'#9ee6ff',tier:'SAFE',danger:0};
  for(let i=ZONES.length-1;i>=2;i--){const z=ZONES[i];if(pos.x>=z.x1&&pos.x<=z.x2&&pos.y>=z.y1&&pos.y<=z.y2)return z;}
  return ZONES[1];
 }
@@ -424,7 +432,7 @@ function spawnWorld(){
  function addAsteroid(x,y,kind,boost=0){if(factionSafeAt(x,y)||GATES.some(g=>Math.hypot(x-g.x,y-g.y)<240))return;asteroids.push({id:asteroids.length+1,x,y,kind,r:12+Math.random()*18,ore:1+Math.floor(Math.random()*(boost>=4?4:3)),rot:Math.random()*7});}
  function material(z,r){if(S.system==='orion'&&z.contested)return r<.08?'dust':r<.38?'void':'diam';if(S.system==='orion'&&z.faction==='solar')return r<.60?'moon':r<.86?'neon':r<.97?'dust':'void';if(S.system==='orion'&&z.faction==='crimson')return r<.15?'moon':r<.40?'neon':r<.76?'dust':r<.94?'void':'diam';if(S.system==='orion'&&z.faction==='verdant')return r<.50?'moon':r<.87?'neon':r<.99?'dust':'void';if(S.system==='orion'&&z.faction==='void')return r<.1?'moon':r<.23?'neon':r<.54?'dust':r<.94?'void':'diam';if(S.system==='borealis')return r<.1?'moon':r<.64?'neon':r<.9?'dust':'void';if(S.system==='helios')return r<.1?'neon':r<.81?'dust':'void';if(S.system==='forge')return r<.12?'neon':r<.45?'dust':r<.94?'void':'diam';if(S.system==='umbra')return r<.09?'dust':r<.37?'void':'diam';if(z.name==='Frontier')return r<.59?'moon':r<.86?'neon':r<.98?'dust':'void';if(z.name==='Ember Expanse')return r<.13?'moon':r<.53?'neon':r<.91?'dust':'void';if(z.name==='Abyssal Rift')return r<.05?'moon':r<.18?'neon':r<.57?'dust':r<.93?'void':'diam';if(z.name==='Diamond Exclusion')return r<.10?'dust':r<.35?'void':'diam';return r<.35?'moon':r<.65?'neon':r<.87?'dust':r<.97?'void':'diam';}
  // Baseline universe coverage (10x the previous playable map area).
- for(let i=0;i<1900;i++){const x=rand(90,WORLD.w-90),y=rand(90,WORLD.h-90);const z=currentZone({x,y});addAsteroid(x,y,material(z,Math.random()),z.danger);}
+ for(let i=0;i<3000;i++){const x=rand(90,WORLD.w-90),y=rand(90,WORLD.h-90);const z=currentZone({x,y});addAsteroid(x,y,material(z,Math.random()),z.danger);}
  // Higher-tier nebulae have meaningfully denser resources.
  for(const [idx,num] of [[2,640],[3,670],[4,650],[5,680],[6,850]]){const z=ZONES[idx];for(let i=0;i<num;i++){const x=rand(z.x1+80,z.x2-80),y=rand(z.y1+80,z.y2-80);if(currentZone({x,y}).name!==z.name)continue;addAsteroid(x,y,material(z,Math.random()),z.danger+1);}}
  for(const f of Object.values(FACTIONS))for(let j=0;j<14;j++){
@@ -432,9 +440,26 @@ function spawnWorld(){
    if(!asteroids.some(b=>Math.hypot(x-b.x,y-b.y)<100))addAsteroid(x,y,f.id==='void'?(j%4===0?'void':'dust'):f.id==='crimson'?(j%4===0?'dust':'neon'):f.id==='verdant'?(j%4===0?'neon':'moon'):'moon',1);
  }
  for(let i=0;i<10;i++){const a=i*Math.PI/5+.19,rad=WORLD.safeRadius+190+(i%3)*35;const x=clamp(WORLD.port.x+Math.cos(a)*rad,90,WORLD.w-90),y=clamp(WORLD.port.y+Math.sin(a)*rad,90,WORLD.h-90);if(!asteroids.some(b=>Math.hypot(x-b.x,y-b.y)<90))asteroids.push({id:40000+i,x,y,kind:i%5===0?'neon':'moon',r:16+i%3,ore:1+i%2,rot:a});}
- if(S.system!=='orion')for(let n=0;n<1550;n++){const x=rand(110,WORLD.w-110),y=rand(110,WORLD.h-110);addAsteroid(x,y,material(currentZone({x,y}),Math.random()),SYSTEMS[S.system].tier+1);}
+ if(S.system!=='orion')for(let n=0;n<2000;n++){const x=rand(110,WORLD.w-110),y=rand(110,WORLD.h-110);addAsteroid(x,y,material(currentZone({x,y}),Math.random()),SYSTEMS[S.system].tier+1);}
  function addDrone(x,y,tier,region){if(factionSafeAt(x,y)||Object.values(FACTIONS).some(f=>Math.hypot(x-f.home.x,y-f.home.y)<1450)||GATES.some(g=>Math.hypot(x-g.x,y-g.y)<260))return;const hp=42+tier*26;drones.push({id:Math.random().toString(36).slice(2),x,y,vx:0,vy:0,angle:0,hp,maxHp:hp,tier,region,cooldown:.4+Math.random()*.8});}
  for(const [idx,num,minTier,maxTier] of [[2,20,1,3],[3,23,2,4],[4,22,1,4],[5,28,3,5],[6,55,5,8],[1,24,3,6]]){const z=ZONES[idx];for(let i=0;i<num;i++){let x=rand(z.x1+200,z.x2-200),y=rand(z.y1+200,z.y2-200);if(idx===1&&S.system==='orion'&&currentZone({x,y}).name!==ZONES[1].name){continue;}const tier=Math.floor(rand(minTier,maxTier+1));addDrone(x,y,tier,idx);}}
+
+ // Outer Meridian: distant high-value belts, with safe neutral stations in each corridor.
+ for(const port of DEEP_RIM_STATIONS){
+  for(let j=0;j<165;j++){
+   const angle=(j/165)*Math.PI*2+(Math.random()-.5)*.16;
+   const radius=1500+Math.sqrt(Math.random())*7600;
+   const x=port.x+Math.cos(angle)*radius,y=port.y+Math.sin(angle)*radius;
+   if(x<120||y<120||x>WORLD.w-120||y>WORLD.h-120)continue;
+   const kind=j%29===0?'diam':j%7===0?'void':j%4===0?'dust':port.ore;
+   addAsteroid(x,y,kind,4);
+  }
+  for(let n=0;n<12;n++){
+   const angle=n*Math.PI/6,rad=3600+(n%3)*740;
+   addDrone(port.x+Math.cos(angle)*rad,port.y+Math.sin(angle)*rad,
+     Math.min(7,2+(n%3)+(SYSTEMS[S.system]?.tier||1)),7);
+  }
+ }
  spawnFactionPatrols();
 }
 spawnWorld();
@@ -456,7 +481,7 @@ function spawnParticles(x,y,color,n=6,power=90){for(let i=0;i<n;i++){const a=Mat
 function takeDamage(n){n=Math.max(1,Math.round(n*(S.faction==='solar'?.90:1)));S.hp-=n; shake=Math.max(shake,n*0.45); spawnParticles(S.x,S.y,'#ff8ba0',8,110); sfx.hit(); if(S.hp<=0){S.hp=S.maxHp; const home=FACTIONS[S.faction]?.home||WORLD.port;S.x=home.x+110;S.y=home.y+10;S.vx=S.vy=0; S.credits=Math.max(0,S.credits-80); log('Ship destroyed! Emergency tug recovered you at Orion Port.'); toast('Ship destroyed')}}
 // Obstacle-aware eight-direction A* routing. The ship never uses a straight-line
 // waypoint that intersects an expanded asteroid collision circle.
-const NAV_SIZE=360, NAV_COLS=Math.ceil(WORLD.w/NAV_SIZE),NAV_ROWS=Math.ceil(WORLD.h/NAV_SIZE);
+const NAV_SIZE=640, NAV_COLS=Math.ceil(WORLD.w/NAV_SIZE),NAV_ROWS=Math.ceil(WORLD.h/NAV_SIZE);
 function segmentClear(ax,ay,bx,by,exclude=null,pad=66){
  const dx=bx-ax,dy=by-ay,length=dx*dx+dy*dy||1;
  if(S.system==='orion'){
@@ -778,11 +803,11 @@ function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=in
  * Browser-only: no online trading or actual cryptocurrency.
  */
 const EXT_BOSSES={
- orion:{name:'Aegis Harvester',x:48000,y:21400,tier:1,hp:780,color:'#f78da9'},
- borealis:{name:'Glacial Devourer',x:68000,y:20800,tier:2,hp:1120,color:'#8ce7ff'},
- helios:{name:'Solar Tyrant',x:30000,y:42600,tier:2,hp:1230,color:'#ffc078'},
- forge:{name:'Iron Leviathan',x:66000,y:49000,tier:3,hp:1600,color:'#f0a68d'},
- umbra:{name:'Void Sovereign',x:48000,y:42200,tier:4,hp:2050,color:'#c49aff'}
+ orion:{name:'Aegis Harvester',x:96000,y:42800,tier:1,hp:780,color:'#f78da9'},
+ borealis:{name:'Glacial Devourer',x:136000,y:41600,tier:2,hp:1120,color:'#8ce7ff'},
+ helios:{name:'Solar Tyrant',x:60000,y:85200,tier:2,hp:1230,color:'#ffc078'},
+ forge:{name:'Iron Leviathan',x:132000,y:98000,tier:3,hp:1600,color:'#f0a68d'},
+ umbra:{name:'Void Sovereign',x:96000,y:84400,tier:4,hp:2050,color:'#c49aff'}
 };
 const EXT_MODS={
  capacitor:{name:'Rapid Capacitor',detail:'Fires 18% faster. +1 energy per shot.',cost:{credits:210,ore:{neon:6,dust:2}}},
@@ -837,7 +862,7 @@ function extSitePoint(i){
  const shift={orion:0,borealis:1,helios:2,forge:3,umbra:4}[S.system]||0;
  const wave=Math.sin((i+1+shift*3)*92.157)*9993.73;
  const frac=x=>x-Math.floor(x);
- let x=3800+frac(wave)*88800,y=3000+frac(wave*1.735)*51600;
+ let x=7600+frac(wave)*177600,y=6000+frac(wave*1.735)*103200;
  if(factionSafeAt(x,y)){x=Math.min(WORLD.w-1000,x+2500);y=Math.min(WORLD.h-1000,y+1800);}
  return {id:S.system+'-signal-'+i,x,y,kind:i%3===0?'anomaly':i%3===1?'cache':'wreck',collected:!!S.explored[S.system+'-signal-'+i]};
 }
@@ -1264,7 +1289,7 @@ function factionStationLabel(st){
 // The functions in this extension live inside the original game closure.
 const V14_VERSION=14, V14_CYCLE=2*60*60*1000, V14_OPEN=12*60*1000,
       V14_MUSTER=20*60*1000, V14_COLLAPSE=3*60*1000;
-const V14_RIFT_PORTAL={x:48000,y:26600},V14_RIFT_SIZE={w:4200,h:2800},
+const V14_RIFT_PORTAL={x:96000,y:53200},V14_RIFT_SIZE={w:4200,h:2800},
       V14_EXTRACT={x:420,y:1380};
 const V14_SKINS=[
  {id:'founders',name:'Founders Fleet',faction:'all',cap:500,price:420,primary:'#d0e7fb',trim:'#64c8ff',trail:'#7bf4ff',desc:'Recovered ceramic armor from the first Concord expeditions.'},
@@ -1747,7 +1772,7 @@ function warpCreateColony(){return {owned:false,name:'Pioneer Anchorage',star:'E
  {name:'Aurelia',style:0},{name:'Vesper',style:1},{name:'Verdantia',style:2},{name:'Noctis',style:3}],stored:{moon:0,neon:0,dust:0,void:0,diam:0},focus:'moon',lastTick:Date.now(),mined:0,spent:0,visits:0,returnTo:null};}
 function warpInit(){
  // Older versions used the original 48k x 28.8k coordinate space. Scale exactly once.
- if(S.worldScaleVersion!==2){
+ if(![2,4].includes(S.worldScaleVersion)){
   if(!S.rift?.inside){S.x=clamp((Number(S.x)||900)*2,30,WORLD.w-30);S.y=clamp((Number(S.y)||900)*2,30,WORLD.h-30);}
   else if(S.rift.returnTo){S.rift.returnTo.x*=2;S.rift.returnTo.y*=2;}
   if(Array.isArray(S.outposts))for(const p of S.outposts){p.x*=2;p.y*=2;}
@@ -1915,9 +1940,54 @@ function warpInitializeUI(){
  const chart=$('mapDrawer');if(chart){const p=document.createElement('p');p.className='warp-lede';p.textContent='Map: 96k × 57.6k per public system. Your own colony is accessed from My System.';if(chart.insertBefore&&chart.querySelector)chart.insertBefore(p,chart.querySelector('canvas'));else chart.appendChild(p);}
  warpRender();warpRenderEconomy();
 }
-v14Init();v14SpawnConvoys();warpInit();factionInit();warpInitializeUI();
+
+function warp16ScalePosition(pos){
+ if(!pos||!Number.isFinite(+pos.x)||!Number.isFinite(+pos.y))return;
+ // Preserve the historic small neutral starter-port neighborhood.
+ if(Math.hypot(pos.x-WORLD.port.x,pos.y-WORLD.port.y)<1500)return;
+ pos.x=clamp(+pos.x*2,35,WORLD.w-35);
+ pos.y=clamp(+pos.y*2,35,WORLD.h-35);
+}
+function warp16Init(){
+ if(S.worldScaleVersion!==4){
+  if(S.system==='homestead'){
+   S.x=clamp((Number(S.x)||48000)+48000,35,WORLD.w-35);
+   S.y=clamp((Number(S.y)||28800)+28800,35,WORLD.h-35);
+  }else if(!S.rift?.inside){warp16ScalePosition(S);}
+  if(Array.isArray(S.outposts))for(const p of S.outposts){if(p.system!=='homestead')warp16ScalePosition(p);}
+  if(S.colony?.returnTo)warp16ScalePosition(S.colony.returnTo);
+  if(S.rift?.returnTo)warp16ScalePosition(S.rift.returnTo);
+  S.worldScaleVersion=4;
+ }
+ S.saveVersion=16;
+ if(S.system==='homestead'){spawnWorld();spawnExpansionWorld();}
+}
+function warp16FrontierRender(){
+ const el=$('warp16FrontierList');if(!el)return;
+ el.innerHTML=DEEP_RIM_STATIONS.map(st=>{
+  const distance=Math.round(Math.hypot(st.x-S.x,st.y-S.y));
+  const canTransit=!!dockedStation&&S.system!=='homestead'&&!S.rift?.inside&&S.credits>=85;
+  return '<div class="gate-entry"><div><strong>'+st.name+'</strong><small>Neutral trading sanctuary · '+distance.toLocaleString()+' units away</small></div>'
+   +'<div class="inlineBtns"><button data-frontier-route="'+st.id+'">Route</button>'
+   +'<button data-frontier-transit="'+st.id+'" '+(canTransit?'':'disabled')+' title="Dock at any station to use paid transit">Jump 85 SC</button></div></div>';
+ }).join('');
+}
+function warp16Transit(id){
+ const to=DEEP_RIM_STATIONS.find(st=>st.id===id);
+ if(!to||S.system==='homestead'||S.rift?.inside)return toast('Transit is only available in the public galaxy.');
+ const st=currentStation();
+ if(!st||!dockedStation||Math.hypot(S.vx,S.vy)>65)return toast('Dock at a station before using the Meridian Transit Network.');
+ if(S.credits<85)return toast('Transit fare: 85 Scrap Credits.');
+ if(Date.now()-(S.lastMeridianTransitAt||0)<20000)return toast('Meridian drives cooling down.');
+ S.credits-=85;S.lastMeridianTransitAt=Date.now();
+ S.x=to.x+110;S.y=to.y;S.vx=S.vy=0;S.angle=0;
+ dockedStation=null;autopilot=null;miningTarget=null;
+ log('Meridian transit complete: '+to.name+' · 85 SC fare.');
+ toast('Arrived at '+to.name);save();renderUI(true);
+}
+v14Init();v14SpawnConvoys();warpInit();warp16Init();factionInit();warpInitializeUI();
 function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Chamber",tier:"EVENT"}:currentZone();$('systemTag').textContent=SYSTEMS[S.system].name;$('factionTag').textContent=S.faction?FACTIONS[S.faction].name:'Unaligned';$('factionTag').style.color=S.faction?FACTIONS[S.faction].color:'#dceafa'; $('zoneTag').textContent=zone.name+' · '+zone.tier; $('dockTag').textContent=dockedStation?('Dock: '+dockedStation.name):'Dock: no'; $('hostileTag').textContent=drones.filter(d=>Math.hypot(d.x-S.x,d.y-S.y)<700).length+' hostiles'; $('coordsTag').textContent='X '+Math.round(S.x)+' • Y '+Math.round(S.y); $('topCredits').innerHTML=S.credits+' <small>SC</small>'; $('hpText').textContent=Math.round(100*S.hp/S.maxHp)+'%'; $('energyText').textContent=Math.round(S.energy)+'%'; $('cargoText').textContent=cargoCount()+' / '+cargoCap(); $('speedText').textContent=Math.round(Math.hypot(S.vx,S.vy)); $('xpText').textContent=S.xp; $('gunText').textContent=GUNS[S.equipped.gun].name.replace(' Blaster','').replace(' Cannon','');$('damageBonusText').textContent='+'+damagePercent()+'%';$('combatReadout').textContent=activeShip().name+' · '+actualDamage()+' DMG / hit · '+gunDps()+' DPS · Mk-'+gunLevel(); $('assistBtnState').textContent=S.settings.assist?'ON':'OFF'; $('hpBar').style.width=(100*S.hp/S.maxHp)+'%'; $('energyBar').style.width=S.energy+'%'; $('cargoBar').style.width=(100*cargoCount()/cargoCap())+'%'; $('stationBtn').disabled=!dockedStation; $('stationPrompt').classList.toggle('hidden', !!dockedStation); $('stationSubtitle').textContent=dockedStation?('Docked at '+dockedStation.name):'Dock first'; $('stationTitle').textContent=dockedStation?(dockedStation.name+' • Ship console'):'Station services'; if(!dockedStation)$('stationModal').classList.remove('open'); $('toggleSound').setAttribute('aria-pressed',String(S.settings.sound)); $('toggleSound').title=S.settings.sound?'Mute audio':'Enable audio';
- if(!includePanels)return;renderGates();extRenderUI();renderFactionUI();v14RenderUI();warpRenderIfOpen();
+ if(!includePanels)return;renderGates();extRenderUI();renderFactionUI();v14RenderUI();warpRenderIfOpen();warp16FrontierRender();
  $('walletGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small>$${OREDEF[k].ticker}</small><b style="color:${OREDEF[k].color}">${S.tokens[k]}</b><small>${k==='moon'||k==='neon'?'Controlled flow':'Rare reserve'}</small></div>`).join(''); $('oreGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small style="color:${OREDEF[k].color}">${OREDEF[k].name}</small><b>${S.ore[k]}</b><small>${OREDEF[k].oreForToken} ore → ${OREDEF[k].tokenOut} $${OREDEF[k].ticker}</small></div>`).join('');
  $('zoneList').innerHTML=ZONES.slice(1).map(z=>`<div class="zone-card" style="border-left-color:${z.color}"><b>${z.name} · ${z.tier}</b><br>${z.desc}</div>`).join('');$('marketList').innerHTML=KINDS.map(k=>`<div class="rowItem"><div><strong style="color:${OREDEF[k].color}">${OREDEF[k].name}</strong><small>Buy ${OREDEF[k].buy} · Sell ${OREDEF[k].sell} · Refine ${OREDEF[k].oreForToken} ore + ${Math.max(0,OREDEF[k].fee-(S.equipped.utility==='autorefiner'?1:0))} fee → ${OREDEF[k].tokenOut} $${OREDEF[k].ticker}</small></div><div class="inlineBtns"><button data-buy="${k}">Buy</button><button data-sell="${k}">Sell</button><button data-refine="${k}">Refine</button></div></div>`).join('');
  const upDefs=[{id:'thrusters',name:'Thrusters',lv:S.upgrades.thrusters,desc:'Acceleration and top speed. No zone locks.',cost:(()=>{const l=S.upgrades.thrusters; if(l>=5) return null; return {credits:120*l,tokens:{neon:l}}})()},{id:'mining',name:'Mining rig',lv:S.upgrades.mining,desc:'Mine faster; high-tier enemies are still dangerous.',cost:(()=>{const l=S.upgrades.mining; if(l>=5) return null; if(l<3) return {credits:120*l,tokens:{neon:1+l}}; if(l===3) return {credits:120*l,tokens:{dust:2}}; return {credits:120*l,tokens:{diam:1}}})()},{id:'cargo',name:'Cargo frame',lv:S.upgrades.cargo,desc:'Increase cargo capacity.',cost:(()=>{const l=S.upgrades.cargo; if(l>=5) return null; if(l<3) return {credits:120*l,tokens:{moon:1+l}}; if(l===3) return {credits:120*l,tokens:{neon:2}}; return {credits:120*l,tokens:{dust:2}}})()}];
@@ -1978,6 +2048,12 @@ $('stationModal').addEventListener('click',e=>{
 });
 
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab)); $('repairShipBtn').onclick=repairShip; $('stationModal').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b) return; if(b.dataset.buy) buyOre(b.dataset.buy); if(b.dataset.sell) sellOre(b.dataset.sell); if(b.dataset.refine) doRefine(b.dataset.refine); if(b.dataset.upgrade) upgradeSys(b.dataset.upgrade);if(b.dataset.upgradeGun)upgradeGun(b.dataset.upgradeGun);if(b.dataset.buyShip)buyShip(b.dataset.buyShip);if(b.dataset.equipShip)equipShip(b.dataset.equipShip); if(b.dataset.craft) craft(b.dataset.craftCat,b.dataset.craft); if(b.dataset.equip) equip(b.dataset.equipCat,b.dataset.equip)}); $('savePaint').onclick=()=>{S.ship.hull=$('hullColor').value; S.ship.accent=$('accentColor').value; save(); toast('Paint saved')};
+
+$('warp16FrontierList').addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.frontierRoute){routeToStation(b.dataset.frontierRoute);$('mapDrawer').classList.remove('open');}
+ if(b.dataset.frontierTransit)warp16Transit(b.dataset.frontierTransit);
+});
 $('factionDrawer').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.factionJoin)factionJoin(b.dataset.factionJoin);if(b.hasAttribute('data-faction-claim'))factionClaimMission();});
 $('factionSelectModal').addEventListener('click',e=>{const b=e.target.closest('[data-faction-join]');if(b)factionJoin(b.dataset.factionJoin);});
 $('factionHomeBtn').onclick=factionHomeRoute;

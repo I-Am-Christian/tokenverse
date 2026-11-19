@@ -22,7 +22,7 @@ function factionSmoke(html){
  const assert=(v,m)=>{if(!v)throw Error(m)};
  const result={};
  assert(Object.keys(api.FACTIONS).length===4,'missing 4 factions');
- assert(api.WORLD.w===96000&&api.WORLD.h===57600,'world not fourfold');
+ assert(api.WORLD.w===192000&&api.WORLD.h===115200,'world not fourfold');
  result.world=[api.WORLD.w,api.WORLD.h];result.factions=Object.keys(api.FACTIONS);
  result.stations=api.STATIONS.length;result.ships=Object.keys(api.SHIPS).length;result.guns=Object.keys(api.GUNS).length;
  assert(result.ships===36&&result.guns===9,'existing ships/guns overwritten');
@@ -32,7 +32,7 @@ function factionSmoke(html){
   assert(api.factionSafeAt(f.home.x,f.home.y),'home base not protected '+id);
   assert(api.STATIONS.some(st=>st.faction===id),'no base station for '+id);
  }
- assert(api.currentZone({x:48000,y:28000}).name.includes('Concord')||api.currentZone({x:48000,y:28000}).name.includes('Disputed'),'center not contested/neutral');
+ assert(api.currentZone({x:96000,y:56000}).name.includes('Concord')||api.currentZone({x:96000,y:56000}).name.includes('Disputed'),'center not contested/neutral');
  api.S.credits=1500;api.S.ore.neon=3;api.factionJoin('solar');
  assert(api.S.faction==='solar','join failed');
  assert(!elem('factionSelectModal').classList.contains('open'),'join did not close selection');
@@ -52,13 +52,13 @@ function factionSmoke(html){
  assert(api.factionMission().progress===0,'contract did not reset progress');
  result.reputation=api.S.factionReputation.verdant;
  result.patrols=api.factionPatrols.length;assert(result.patrols===28,'missing faction patrols');
- assert(api.factionSafeAt(48000,28800),'neutral exchange not safe');
+ assert(api.factionSafeAt(96000,57600),'neutral exchange not safe');
  // A short approach test within one region, rather than pathfinding the full 48k map in a UI unit test.
  api.S.x=9000;api.S.y=6650;const before=api.S.hp;
  const nav=api.planRoute({x:9000,y:6650},{x:10300,y:7600});
  assert(nav.length>0,'navigation broken in expanded territory');
  result.localRoute=nav.length;
- const distant=api.planRoute({x:9000,y:6600},{x:77800,y:13200});
+ const distant=api.planRoute({x:9000,y:6600},{x:155600,y:26400});
  assert(distant.length>0,'long-distance faction navigation failed');
  result.longRoute=distant.length;
  return result;
@@ -71,6 +71,6 @@ test('four factions, protected home regions, reputation, docking, and world expa
  assert.equal(result.ships,36);
  assert.equal(result.guns,9);
  assert.equal(result.patrols,28);
- assert.deepEqual(result.world,[96000,57600]);
+ assert.deepEqual(result.world,[192000,115200]);
  assert.ok(result.longRoute>0);
 });

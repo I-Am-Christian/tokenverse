@@ -25,30 +25,30 @@ const read=()=>fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
 
 test('Warp Coin v0.15 rebrands the browser and scales all five public galaxy maps',()=>{
  const html=read(),{api}=bootWarp(html);
- assert.match(html,/<title>Warp Coin v0\.15/);
+ assert.match(html,/<title>Warp Coin v0\.16/);
  assert.match(html,/WARP<span>COIN<\/span>/);
- assert.deepEqual([api.WORLD.w,api.WORLD.h],[96000,57600]);
+ assert.deepEqual([api.WORLD.w,api.WORLD.h],[192000,115200]);
  assert.equal(Object.keys(api.SHIPS).length,36);
  assert.equal(Object.keys(api.GUNS).length,9);
  assert.equal(Object.keys(api.FACTIONS).length,4);
  assert.equal(Object.keys(api.SYSTEMS).length,6);
  assert.equal(api.GATES.length,4);
- assert.equal(api.S.worldScaleVersion,2);
- assert.equal(api.S.saveVersion,15);
- assert.ok(api.STATIONS.some(s=>s.id==='concord'&&s.x===48000&&s.y===28800));
- assert.ok(api.ZONES.some(z=>z.contested&&z.x1===42400));
+ assert.equal(api.S.worldScaleVersion,4);
+ assert.equal(api.S.saveVersion,16);
+ assert.ok(api.STATIONS.some(s=>s.id==='concord'&&s.x===96000&&s.y===57600));
+ assert.ok(api.ZONES.some(z=>z.contested&&z.x1===84800));
 });
 
 test('v0.14 pilot saves migrate position and all existing outposts only once',()=>{
  const old={system:'orion',x:11000,y:5100,credits:1600,worldScaleVersion:undefined,
   outposts:[{id:'old',system:'orion',x:4000,y:5500,modules:{storage:1},hold:{moon:8}}],faction:'solar'};
  const {api}=bootWarp(read(),{'tokenverse-deep-space-v10':JSON.stringify(old)});
- assert.equal(api.S.x,22000);assert.equal(api.S.y,10200);
- assert.equal(api.S.outposts[0].x,8000);assert.equal(api.S.outposts[0].y,11000);
+ assert.equal(api.S.x,44000);assert.equal(api.S.y,20400);
+ assert.equal(api.S.outposts[0].x,16000);assert.equal(api.S.outposts[0].y,22000);
  assert.equal(api.S.outposts[0].modules.storage,1);
  assert.equal(api.S.credits,1600);
  const {api:again}=bootWarp(read(),{'tokenverse-deep-space-v10':JSON.stringify(api.S)});
- assert.equal(again.S.x,22000);assert.equal(again.S.outposts[0].x,8000);
+ assert.equal(again.S.x,44000);assert.equal(again.S.outposts[0].x,16000);
 });
 
 test('free Pioneer Charter unlocks a separate solar system with a dockable base and safe return',()=>{
@@ -58,7 +58,7 @@ test('free Pioneer Charter unlocks a separate solar system with a dockable base 
  api.warpHomeWarp();assert.equal(api.S.system,'homestead');assert.equal(api.S.colony.visits,1);
  assert.equal(api.asteroids.length>40,true);assert.equal(api.drones.length,0);
  api.updateShip(.01);assert.equal(api.currentStation().id,'pioneer_hq');
- assert.ok(api.WARP_STAR.x===48000&&api.WARP_STAR.y===28800);
+ assert.ok(api.WARP_STAR.x===96000&&api.WARP_STAR.y===57600);
  api.warpLeave();assert.equal(api.S.system,before.system);
  assert.equal(api.S.x,before.x);assert.equal(api.S.y,before.y);
 });
@@ -98,7 +98,7 @@ test('a saved colony reopens inside the private system without regenerating the 
  store.set('tokenverse-deep-space-v10',JSON.stringify(api.S));
  const next=bootWarp(read(),{'tokenverse-deep-space-v10':store.get('tokenverse-deep-space-v10')});
  assert.equal(next.api.S.system,'homestead');assert.equal(next.api.S.colony.name,'Persistent Frontier');
- assert.equal(next.api.S.worldScaleVersion,2);assert.equal(next.api.S.colony.visits,1);
+ assert.equal(next.api.S.worldScaleVersion,4);assert.equal(next.api.S.colony.visits,1);
  next.api.renderUI(true);next.api.draw();
 });
 

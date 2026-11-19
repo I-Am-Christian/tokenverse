@@ -33,8 +33,8 @@ test('v0.14 keeps existing ships, factions and 80% fullscreen game canvas',()=>{
  assert.equal(Object.keys(api.GUNS).length,9);
  assert.equal(Object.keys(api.FACTIONS).length,4);
  assert.equal(Object.keys(api.SYSTEMS).length,6);
- assert.deepEqual([api.WORLD.w,api.WORLD.h],[96000,57600]);
- assert.equal(api.S.saveVersion,15);
+ assert.deepEqual([api.WORLD.w,api.WORLD.h],[192000,115200]);
+ assert.equal(api.S.saveVersion,16);
  assert.match(html, /id="v14BellButton"/);
  assert.match(html, /id="v14ShipPreview"/);
  assert.match(html, /data-section="logistics"/);
@@ -59,7 +59,7 @@ test('twelve daily Bells have stable even UTC IDs and 12 minute windows',()=>{
 
 test('Rift requires an active Bell and exact entry zone; ore and resolution persist once',()=>{
  const {api,time,storageMap}=bootV14(read());
- api.S.faction='solar';api.S.x=48000;api.S.y=26600;api.S.system='orion';api.S.vx=api.S.vy=0;
+ api.S.faction='solar';api.S.x=96000;api.S.y=53200;api.S.system='orion';api.S.vx=api.S.vy=0;
  assert.equal(api.v14CanEnter(),true);
  api.v14EnterRift();assert.equal(api.S.rift.inside,true);
  const key=api.S.rift.bellId;
@@ -80,7 +80,7 @@ test('Rift requires an active Bell and exact entry zone; ore and resolution pers
  const after=api.S.credits;
  assert.equal(api.v14ResolveRift('extracted'),false);
  assert.equal(api.S.credits,after,'cannot double claim from repeated extraction');
- api.S.x=48000;api.S.y=26600;api.S.vx=api.S.vy=0;
+ api.S.x=96000;api.S.y=53200;api.S.vx=api.S.vy=0;
  assert.equal(api.v14CanEnter(),false,'resolved Bell cannot be replayed for cargo');
  assert.equal(api.S.rift.deposits[0].ore,d.ore,'depleted deposit stays depleted');
  time.now=Date.parse('2026-11-18T00:12:01Z');
