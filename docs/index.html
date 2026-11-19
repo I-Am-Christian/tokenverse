@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#050b19" />
-<title>Warp Coin v0.16 — The Outer Meridian</title>
+<title>Warp Coin v0.17 — Trade Route Intelligence</title>
 <style>
 
 :root{color-scheme:dark;--ink:#040a18;--glass:rgba(5,15,35,.72);--panel:rgba(7,19,42,.92);--stroke:rgba(99,171,215,.25);--text:#e9f6ff;--muted:#7e9db4;--ice:#6de8f2;--mint:#70f4cd;--violet:#9684ff;--amber:#ffca7a;--danger:#ff788d;font-family:Inter, 'Segoe UI',system-ui,sans-serif}
@@ -317,6 +317,7 @@
  <div id="factionSelectCards" class="faction-options"></div><p class="notice">This is a solo NPC-faction simulation. Shared player factions and territory wars will require the multiplayer server.</p></div>
  </div><div id="toast"></div>
 </div>
+<script src="./trade-route-engine.js"></script>
 <script>
 (()=>{
 'use strict';
@@ -1881,12 +1882,74 @@ function warpTradeTable(){const header=['orion','borealis','helios','forge','umb
  }).join('');
  return '<table class="warp-economy-table"><thead><tr><th>Ore</th>'+header.map(h=>'<th>'+V14_REGIONS[h].name.replace(' ','<br>')+'</th>').join('')+'</tr></thead><tbody>'+rows+'</tbody></table>';
 }
+
+/* Warp Coin v0.17: persistent local freight routes and price intel. */
+function warp17TradePanel(){
+ if(S.system==='homestead')return '<h3>Trade Route Scanner</h3><p class="warp-lede">Return to public space to compare local NPC exchange routes. No server or account is required.</p>';
+ const engine=window.WarpTradeEngine;
+ if(!engine)return '<p class="warp-lede">Local trade intelligence unavailable. Reload this game page.</p>';
+ const offers=engine.scanArbitrage({systems:SYSTEMS,origin:S.system,commodities:KINDS,priceFor:v14Price,
+   canEnter:id=>gateUnlocked(SYSTEMS[id]),credits:S.credits,freeCargo:cargoCap()-cargoCount(),limit:8});
+ let active='';
+ if(S.tradePlan){
+  const p=S.tradePlan,arrived=S.system===p.destination;
+  const route=arrived?[]:engine.shortestGateRoute(SYSTEMS,S.system,p.destination,id=>gateUnlocked(SYSTEMS[id]));
+  const info=arrived?'Destination reached. Dock and sell your shipment.':
+    route.length?'Next '+GATES.find(g=>g.id===route[0].gate).name+' · '+route.length+' jump(s) remaining':
+    'Route locked: ship upgrades needed.';
+  active='<div class="warp-module"><div><b>ACTIVE FREIGHT ROUTE · '+SYSTEMS[p.destination].name+'</b><small>'+
+    OREDEF[p.kind].name+' · '+info+'</small></div><div><button data-trade-next="1" '+
+    (!arrived&&!route.length?'disabled':'')+'>'+(arrived?'Find dock':'Next gate')+
+    '</button> <button data-trade-cancel="1">Clear</button></div></div>';
+ }
+ const rows=offers.length?offers.map(o=>'<div class="warp-module"><div><b style="color:'+OREDEF[o.kind].color+'">'+
+   OREDEF[o.kind].name+' → '+SYSTEMS[o.destination].name+'</b><small>Buy '+o.ask+' SC · sell '+o.bid+
+   ' SC · margin +'+o.margin+' SC/ore · '+o.hops+' gate(s)</small><small>Loadable '+o.units+
+   '/5 · projected gross +'+o.grossProfit+' SC before costs</small></div><div><button data-trade-buy="'+
+   o.kind+'" '+(!dockedStation||!o.units?'disabled':'')+'>Buy 1</button> <button data-trade-plan="'+
+   o.destination+'" data-trade-kind="'+o.kind+'">Plot</button></div></div>').join(''):
+   '<p class="warp-lede">No positive spreads on currently unlocked routes. Try later after NPC deliveries or upgrade your ship to reach other markets.</p>';
+ return '<h3>Trade Route Scanner <span class="test-pill">LOCAL SIMULATION</span></h3>'+
+  '<p class="warp-lede">Compare the current market’s ask with destination bids. Plot a route through unlocked star gates. Buy ore only while docked. Prices can change before delivery.</p>'+
+  active+rows+'<p class="warp-lede">Estimated gross returns exclude time, risk and fees. This is fictional in-game trading, not real crypto or securities.</p>';
+}
+function warp17NextTradeGate(){
+ const p=S.tradePlan;if(!p)return toast('No active trade route.');
+ if(S.system==='homestead'||S.rift?.inside)return toast('Return to public space first.');
+ if(S.system===p.destination){
+  const safe=STATIONS.filter(st=>st.kind!=='faction').sort((a,b)=>
+   Math.hypot(a.x-S.x,a.y-S.y)-Math.hypot(b.x-S.x,b.y-S.y))[0];
+  if(safe)routeToStation(safe.id);
+  return;
+ }
+ const path=window.WarpTradeEngine.shortestGateRoute(SYSTEMS,S.system,p.destination,id=>gateUnlocked(SYSTEMS[id]));
+ if(!path.length)return toast('No unlocked gateway route.');
+ routeGate(path[0].gate);
+}
+function warp17PlotTrade(destination,kind){
+ if(S.system==='homestead'||S.rift?.inside)return toast('Public galaxy only.');
+ if(!SYSTEMS[destination]||destination==='homestead'||destination===S.system||!KINDS.includes(kind))return;
+ const path=window.WarpTradeEngine.shortestGateRoute(SYSTEMS,S.system,destination,id=>gateUnlocked(SYSTEMS[id]));
+ if(!path.length)return toast('Upgrade ship systems to unlock this route.');
+ S.tradePlan={origin:S.system,destination,kind,started:Date.now()};save();
+ warp17NextTradeGate();renderUI(true);
+ $('warpEconomyDrawer').classList.remove('open');
+ $('toggleWarpEconomy').setAttribute('aria-expanded','false');
+}
+function warp17Init(){
+ const p=S.tradePlan;
+ if(!p||typeof p!=='object'||!SYSTEMS[p.destination]||p.destination==='homestead'||!KINDS.includes(p.kind))S.tradePlan=null;
+ else S.tradePlan={origin:SYSTEMS[p.origin]?p.origin:'orion',destination:p.destination,
+    kind:p.kind,started:Number.isFinite(+p.started)?+p.started:Date.now()};
+ S.saveVersion=17;
+}
+
 function warpRenderEconomy(){const box=$('warpEconomyContent');if(!box)return;
  const owned=S.colony?.owned;const baseCost=owned?Object.values(S.colony.modules).reduce((n,k)=>n+k*135,0):0;
  const netWorth=Math.round(S.credits+KINDS.reduce((n,k)=>n+(S.ore[k]||0)*(v14Price('orion',k)?.bid||0)+(S.colony?.stored[k]||0)*(v14Price('orion',k)?.bid||0),0)+baseCost);
  const local=S.system==='homestead'?'orion':S.system;
  const lines=KINDS.map(k=>{const p=v14Price(local,k);return '<div class="warp-module"><div><b>'+OREDEF[k].name+'</b><small>Bid '+p.bid+' SC · Ask '+p.ask+' SC · '+p.stock+' in warehouse</small></div><div><button data-warp-market="sell" data-kind="'+k+'">Sell 1</button> <button data-warp-market="buy" data-kind="'+k+'">Buy 1</button></div></div>';}).join('');
- box.innerHTML='<div class="warp-metricline"><div><small>PILOT ESTIMATED ASSETS</small><b>'+netWorth+' SC</b></div><div><small>CASH BALANCE</small><b>'+S.credits+' SC</b></div></div><p class="warp-lede">Indicative asset value uses Orion raw-ore bids; ships and token balances are not included. These are simulation values, not tradable securities or real-world money.</p><h3>Galactic Supply Board</h3><p class="warp-lede">Each quote is buy / sell SC per raw ore. Prices reflect local inventories, NPC shipments, and convoy deliveries.</p><div class="warp-table-scroll">'+warpTradeTable()+'</div><h3>Local Warehouse · '+V14_REGIONS[local].name+'</h3><p class="warp-lede">Regional trading requires docking at a public station. Your personal colony has warehouse transfers instead.</p>'+lines+'<h3>Trade strategy</h3><p class="warp-lede">Mine where deposits are plentiful. Carry ore through gates to shortage regions. Watch the bid/ask spread, fuel time, convoy fees, and limited SC buying budgets. Your colony’s miners operate at a cost, never minting SC or crypto.</p>';
+ box.innerHTML='<div class="warp-metricline"><div><small>PILOT ESTIMATED ASSETS</small><b>'+netWorth+' SC</b></div><div><small>CASH BALANCE</small><b>'+S.credits+' SC</b></div></div><p class="warp-lede">Indicative asset value uses Orion raw-ore bids; ships and token balances are not included. These are simulation values, not tradable securities or real-world money.</p><h3>Galactic Supply Board</h3><p class="warp-lede">Each quote is buy / sell SC per raw ore. Prices reflect local inventories, NPC shipments, and convoy deliveries.</p><div class="warp-table-scroll">'+warpTradeTable()+'</div><h3>Local Warehouse · '+V14_REGIONS[local].name+'</h3><p class="warp-lede">Regional trading requires docking at a public station. Your personal colony has warehouse transfers instead.</p>'+lines+'<h3>Trade strategy</h3><p class="warp-lede">Mine where deposits are plentiful. Carry ore through gates to shortage regions. Watch the bid/ask spread, fuel time, convoy fees, and limited SC buying budgets. Your colony’s miners operate at a cost, never minting SC or crypto.</p>'+warp17TradePanel();
 }
 function warpPlanetPoint(p,i,t){const r=[1800,3150,4850,6800][i],speed=[.025,.017,.012,.009][i],a=.7+i*1.1+t*speed;return {x:WARP_STAR.x+Math.cos(a)*r,y:WARP_STAR.y+Math.sin(a)*r*.72,r};}
 function warpDrawSpace(){if(S.system!=='homestead')return;
@@ -1933,11 +1996,16 @@ function warpInitializeUI(){
  else if(b.dataset.warpPlanet!==undefined)warpPlanetChange(Number(b.dataset.warpPlanet),b.dataset.warpAction);
  else if(b.dataset.warpFocus)warpFocus(b.dataset.warpFocus);else if(b.dataset.warpLoad)warpLoad(b.dataset.warpLoad);else if(b.dataset.warpDeposit)warpDeposit(b.dataset.warpDeposit);
  });
- ep.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!b.dataset.warpMarket)return;
+ ep.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.tradePlan){warp17PlotTrade(b.dataset.tradePlan,b.dataset.tradeKind);return;}
+  if(b.dataset.tradeNext){warp17NextTradeGate();return;}
+  if(b.dataset.tradeCancel){S.tradePlan=null;save();warpRenderEconomy();return;}
+  if(b.dataset.tradeBuy){v14RegionalTrade(b.dataset.tradeBuy,'buy');return;}
+  if(!b.dataset.warpMarket)return;
  if(S.system==='homestead')return toast('Warp to a public exchange to trade.');
  if(!dockedStation)return toast('Dock at a station before trading.');
  v14RegionalTrade(b.dataset.kind,b.dataset.warpMarket);warpRenderEconomy();});
- const chart=$('mapDrawer');if(chart){const p=document.createElement('p');p.className='warp-lede';p.textContent='Map: 96k × 57.6k per public system. Your own colony is accessed from My System.';if(chart.insertBefore&&chart.querySelector)chart.insertBefore(p,chart.querySelector('canvas'));else chart.appendChild(p);}
+ const chart=$('mapDrawer');if(chart){const p=document.createElement('p');p.className='warp-lede';p.textContent='Map: 192k × 115.2k per public system. Your own colony is accessed from My System.';if(chart.insertBefore&&chart.querySelector)chart.insertBefore(p,chart.querySelector('canvas'));else chart.appendChild(p);}
  warpRender();warpRenderEconomy();
 }
 
@@ -1985,7 +2053,7 @@ function warp16Transit(id){
  log('Meridian transit complete: '+to.name+' · 85 SC fare.');
  toast('Arrived at '+to.name);save();renderUI(true);
 }
-v14Init();v14SpawnConvoys();warpInit();warp16Init();factionInit();warpInitializeUI();
+v14Init();v14SpawnConvoys();warpInit();warp16Init();warp17Init();factionInit();warpInitializeUI();
 function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Chamber",tier:"EVENT"}:currentZone();$('systemTag').textContent=SYSTEMS[S.system].name;$('factionTag').textContent=S.faction?FACTIONS[S.faction].name:'Unaligned';$('factionTag').style.color=S.faction?FACTIONS[S.faction].color:'#dceafa'; $('zoneTag').textContent=zone.name+' · '+zone.tier; $('dockTag').textContent=dockedStation?('Dock: '+dockedStation.name):'Dock: no'; $('hostileTag').textContent=drones.filter(d=>Math.hypot(d.x-S.x,d.y-S.y)<700).length+' hostiles'; $('coordsTag').textContent='X '+Math.round(S.x)+' • Y '+Math.round(S.y); $('topCredits').innerHTML=S.credits+' <small>SC</small>'; $('hpText').textContent=Math.round(100*S.hp/S.maxHp)+'%'; $('energyText').textContent=Math.round(S.energy)+'%'; $('cargoText').textContent=cargoCount()+' / '+cargoCap(); $('speedText').textContent=Math.round(Math.hypot(S.vx,S.vy)); $('xpText').textContent=S.xp; $('gunText').textContent=GUNS[S.equipped.gun].name.replace(' Blaster','').replace(' Cannon','');$('damageBonusText').textContent='+'+damagePercent()+'%';$('combatReadout').textContent=activeShip().name+' · '+actualDamage()+' DMG / hit · '+gunDps()+' DPS · Mk-'+gunLevel(); $('assistBtnState').textContent=S.settings.assist?'ON':'OFF'; $('hpBar').style.width=(100*S.hp/S.maxHp)+'%'; $('energyBar').style.width=S.energy+'%'; $('cargoBar').style.width=(100*cargoCount()/cargoCap())+'%'; $('stationBtn').disabled=!dockedStation; $('stationPrompt').classList.toggle('hidden', !!dockedStation); $('stationSubtitle').textContent=dockedStation?('Docked at '+dockedStation.name):'Dock first'; $('stationTitle').textContent=dockedStation?(dockedStation.name+' • Ship console'):'Station services'; if(!dockedStation)$('stationModal').classList.remove('open'); $('toggleSound').setAttribute('aria-pressed',String(S.settings.sound)); $('toggleSound').title=S.settings.sound?'Mute audio':'Enable audio';
  if(!includePanels)return;renderGates();extRenderUI();renderFactionUI();v14RenderUI();warpRenderIfOpen();warp16FrontierRender();
  $('walletGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small>$${OREDEF[k].ticker}</small><b style="color:${OREDEF[k].color}">${S.tokens[k]}</b><small>${k==='moon'||k==='neon'?'Controlled flow':'Rare reserve'}</small></div>`).join(''); $('oreGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small style="color:${OREDEF[k].color}">${OREDEF[k].name}</small><b>${S.ore[k]}</b><small>${OREDEF[k].oreForToken} ore → ${OREDEF[k].tokenOut} $${OREDEF[k].ticker}</small></div>`).join('');
@@ -2058,7 +2126,7 @@ $('factionDrawer').addEventListener('click',e=>{const b=e.target.closest('button
 $('factionSelectModal').addEventListener('click',e=>{const b=e.target.closest('[data-faction-join]');if(b)factionJoin(b.dataset.factionJoin);});
 $('factionHomeBtn').onclick=factionHomeRoute;
 $('hullColor').value=S.ship.hull; $('accentColor').value=S.ship.accent;
-renderLog();renderUI();setTab('market');save();log('Warp Coin v0.15 online · 96k × 57.6k galactic maps · private pioneer systems and economy.');requestAnimationFrame(loop);
+renderLog();renderUI();setTab('market');save();log('Warp Coin v0.17 online · 192k × 115.2k worlds · trade route intelligence.');requestAnimationFrame(loop);
 })();
 </script>
 </body>
