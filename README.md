@@ -1,3 +1,13 @@
+# Warp Coin v0.17 — Trade Route Intelligence (review build)
+
+**Existing playable game:** https://i-am-christian.github.io/tokenverse/ (currently v0.16 until this branch merges).
+
+This proposed update adds a **Trade Route Scanner** to the Economy drawer: evaluate local market price spreads between five public star systems, account for ship cargo capacity and available Scrap Credits, and plot a persistent multi-gate route toward the destination. The route remembers its target in the existing local browser save. See [v0.17 release notes](WARP_COIN_V017.md).
+
+**Backend separation:** No Supabase connection is used. When multiplayer accounts are introduced, Warp Coin / Tokenverse will use a **new, independent Supabase project**. Hello Earth's database is not shared with the game. All credits and token prices in this browser prototype are simulated; real deposits, NFTs and withdrawals remain disabled.
+
+---
+
 # Warp Coin v0.16 — The Outer Meridian
 
 **Play the updated game:** https://i-am-christian.github.io/tokenverse/
