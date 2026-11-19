@@ -1,8 +1,8 @@
 {
   "name": "warp-coin",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "private": true,
-  "description": "Warp Coin browser space mining game with expanded outer meridian and simulated economy",
+  "description": "Warp Coin browser mining and faction space game with simulated trade route intelligence",
   "type": "module",
   "scripts": {
     "start": "node server.js",
