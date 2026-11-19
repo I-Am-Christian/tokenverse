@@ -1920,11 +1920,15 @@ function warp17NextTradeGate(){
   const safe=STATIONS.filter(st=>st.kind!=='faction').sort((a,b)=>
    Math.hypot(a.x-S.x,a.y-S.y)-Math.hypot(b.x-S.x,b.y-S.y))[0];
   if(safe)routeToStation(safe.id);
+  $('warpEconomyDrawer').classList.remove('open');
+  $('toggleWarpEconomy').setAttribute('aria-expanded','false');
   return;
  }
  const path=window.WarpTradeEngine.shortestGateRoute(SYSTEMS,S.system,p.destination,id=>gateUnlocked(SYSTEMS[id]));
  if(!path.length)return toast('No unlocked gateway route.');
  routeGate(path[0].gate);
+ $('warpEconomyDrawer').classList.remove('open');
+ $('toggleWarpEconomy').setAttribute('aria-expanded','false');
 }
 function warp17PlotTrade(destination,kind){
  if(S.system==='homestead'||S.rift?.inside)return toast('Public galaxy only.');
