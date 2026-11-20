@@ -1,3 +1,13 @@
+# Warp Coin v0.19 — The Living Frontier
+
+**Play:** https://i-am-christian.github.io/tokenverse/ (updates after the v0.19 branch is merged and GitHub Pages deploys).
+
+The unchanged **192,000 × 115,200** worlds now feature optional roaming frontier encounters as you travel: **salvage drifting vessels**, **answer distress transmissions**, **fight pirate ambushes**, and **discover rare Eidon caches**. Open the new **Signals** panel to plot the event marker, investigate or ignore it. Events are local-only with one-time SC, XP, ore and research rewards; pirate raids use the existing ship combat system. [Read release notes](WARP_COIN_V019.md).
+
+**No Supabase connection**: The browser remains solo with local saves. A completely separate, new Supabase project will be used for Tokenverse later; the Hello Earth / Atlas AI database remains untouched.
+
+---
+
 # Warp Coin v0.18 — Pulse & Cruise (development build)
 
 **Public game:** https://i-am-christian.github.io/tokenverse/ (the published site updates when this branch merges)

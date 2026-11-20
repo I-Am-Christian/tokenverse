@@ -51,7 +51,7 @@ test('new browser build parses and retains original galaxy dimensions',()=>{
  const {api}=bootWarp(read());
  assert.deepEqual([api.WORLD.w,api.WORLD.h],[192000,115200]);
  assert.equal(api.S.worldScaleVersion,4);
- assert.equal(api.S.saveVersion,18);
+ assert.ok(api.S.saveVersion>=18,'v0.18 travel features must remain in later save formats');
  assert.equal(api.S.exploredSystems.orion,true);
  const html=read();
  assert.match(html,/id="pulseJumpBtn"/);
