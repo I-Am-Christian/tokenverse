@@ -92,7 +92,7 @@ test('outer-meridian transit costs SC, requires docking, and enforces cooldown',
  api.updateShip(.02);
  const before=api.S.x;
  api.warp16Transit('meridian_east');
- assert.equal(api.S.credits,415);
+ assert.equal(api.S.credits,460,'first visit to the Meridian station grants its one-time 45 SC discovery bonus');
  assert.equal(api.S.x,before);
 });
 
