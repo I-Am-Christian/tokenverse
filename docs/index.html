@@ -176,6 +176,16 @@
 .warp-economy-table th:first-child{text-align:left}.warp-economy-table thead{color:#8bd8f3;background:#101f39}
 .warp-economy-table td b{color:#83f4d9}.warp-economy-table small{display:block;font-size:8px}
 @media(max-width:680px){.warp-drawer{max-height:60vh}.warp-module{gap:4px}.warp-drawer h3{margin-top:10px}.warp-planetrow button{padding:6px 5px}}
+/* v0.20: keep fast travel reachable on phones without cutting off controls. */
+#actionBar{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#58bce299 transparent;justify-content:flex-start}
+#actionBar .dock-action{flex:0 0 auto}
+@media(max-width:620px){
+ #actionBar{justify-content:flex-start;overflow-x:auto;overscroll-behavior-x:contain}
+ #warpDriveBtn{min-width:118px}
+ #actionBar .dock-action{min-width:68px;padding:0 8px}
+ #actionBar::-webkit-scrollbar{height:3px}
+ #actionBar::-webkit-scrollbar-thumb{background:#62cae1;border-radius:10px}
+}
 </style>
 </head>
 <body>
@@ -250,11 +260,12 @@
   <div id="stationPrompt" class="hud"><b>Tap space</b> to plot a course · <b>Tap ore</b> to mine</div>
 
   <div id="actionBar" class="hud">
+    <button id="warpDriveBtn" title="Engage Warp Drive, shortcut H" aria-label="Engage Warp Drive" class="dock-action primary">✦ Warp Drive <span id="warpDriveState">READY</span></button>
     <button id="stationBtn" title="Open dock console" aria-label="Open dock console" class="dock-action primary"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="9"/></svg>Dock console</button>
     <button id="mineNearestBtn" title="Scan for nearby ore" aria-label="Scan for nearby ore" class="dock-action"><svg viewBox="0 0 24 24"><path d="m3 21 6-6M3 10l7-7 11 11-7 7L3 10ZM10 3l7 7"/></svg>Scan ore</button><button id="scanBtn" title="Pulse scanner" aria-label="Scan nearby anomalies" class="dock-action">◉ Scan</button><button id="opsBtn" title="Open station and drone operations" class="dock-action">⚙ Ops</button>
     <button id="portBtn" title="Autopilot to Orion Port" aria-label="Autopilot to Orion Port" class="dock-action"><svg viewBox="0 0 24 24"><path d="m3 12 18-9-9 18-2-8-7-1Z"/></svg>Return port</button>
     <button id="pulseJumpBtn" title="Pulse Jump (J) — instant short hop along a clear navigation path" aria-label="Pulse Jump, keyboard J" class="dock-action"><svg viewBox="0 0 24 24"><path d="M3 13h8l-2 7 12-12h-8l2-5Z"/><path d="M3 5h6M2 9h4"/></svg>Pulse Jump</button>
-    <button id="warpDriveBtn" title="Engage Warp Drive, shortcut H" aria-label="Engage Warp Drive" class="dock-action primary">✦ Warp Drive <span id="warpDriveState">READY</span></button>
+    
     <button id="assistBtn" title="Toggle flight stabilizers" aria-label="Toggle flight stabilizers" class="dock-action"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Stabilizers <span id="assistBtnState">ON</span></button>
     <button id="resetBtn" aria-label="Reset save">Reset</button>
   </div>
