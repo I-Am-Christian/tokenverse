@@ -792,18 +792,19 @@ function warp19BuildUI(){
  button.setAttribute('aria-label','Frontier events and distress signals');
  button.setAttribute('aria-expanded','false');
  button.innerHTML='<span aria-hidden="true">✧</span><span>Signals</span>';
- menu.insertBefore(button,$('toggleLog'));
+ if(menu?.insertBefore)menu.insertBefore(button,$('toggleLog'));
+ else if(menu?.appendChild)menu.appendChild(button);
  const panel=document.createElement('div');panel.id='frontierSignalsDrawer';
  panel.className='hud drawer warp-drawer';
  panel.innerHTML='<h3>Frontier Signals <span class="test-pill">LOCAL EVENTS</span></h3><div id="frontierSignalsBody"></div>';
- area.appendChild(panel);
+ if(area?.appendChild)area.appendChild(panel);
  button.onclick=()=>{
   const opening=!panel.classList.contains('open');
   document.querySelectorAll('.drawer').forEach(d=>d.classList.remove('open'));
   document.querySelectorAll('.console-btn[aria-expanded]').forEach(b=>b.setAttribute('aria-expanded','false'));
   if(opening){panel.classList.add('open');button.setAttribute('aria-expanded','true');warp19RenderPanel();}
  };
- panel.addEventListener('click',e=>{
+ panel.addEventListener?.('click',e=>{
   const b=e.target.closest('button');if(!b)return;
   if(b.dataset.signalRoute)warp19Route();
   if(b.dataset.signalClaim)warp19Claim();
