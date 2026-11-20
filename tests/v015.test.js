@@ -34,7 +34,7 @@ test('Warp Coin v0.15 rebrands the browser and scales all five public galaxy map
  assert.equal(Object.keys(api.SYSTEMS).length,6);
  assert.equal(api.GATES.length,4);
  assert.equal(api.S.worldScaleVersion,4);
- assert.equal(api.S.saveVersion,16);
+ assert.equal(api.S.saveVersion,20);
  assert.ok(api.STATIONS.some(s=>s.id==='concord'&&s.x===96000&&s.y===57600));
  assert.ok(api.ZONES.some(z=>z.contested&&z.x1===84800));
 });
