@@ -530,7 +530,7 @@ function fireGun(){if(S.rift?.inside){v14RiftFire();return;}const now=performanc
  warpCombatFX?.trainingShot({x:S.x+Math.cos(S.angle)*31,y:S.y+Math.sin(S.angle)*31,angle:S.angle,weapon:S.equipped.gun,color:gun.color});
  if(performance.now()-lastSafeLog>2200){toast('Safe-zone hologram: live weapons disabled.');lastSafeLog=performance.now();}
  return
- } lastShot=now; S.energy=Math.max(0,S.energy-(S.weaponMod==='recycler'?1:S.weaponMod==='capacitor'?4:3)); sfx.fire();warpAudio?.event('laser');warpCombatFX?.muzzle({x:S.x+Math.cos(S.angle)*31,y:S.y+Math.sin(S.angle)*31,angle:S.angle,weapon:S.equipped.gun,color:gun.color}); const pellets=gun.pellets||1; for(let i=0;i<pellets;i++){const spread=(i-(pellets-1)/2)*(gun.spread||0); const ang=S.angle+spread; bullets.push({from:'player',x:S.x+Math.cos(ang)*24,y:S.y+Math.sin(ang)*24,vx:Math.cos(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),vy:Math.sin(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),life:1.5,damage:Math.round(actualDamage()*(S.weaponMod==='focus'?1.20:1)*factionDamageMultiplier()),color:gun.color,weapon:S.equipped.gun})}}
+ } lastShot=now; S.energy=Math.max(0,S.energy-(S.weaponMod==='recycler'?1:S.weaponMod==='capacitor'?4:3)); sfx.fire();warpAudio?.event('gun-'+S.equipped.gun);warpCombatFX?.muzzle({x:S.x+Math.cos(S.angle)*31,y:S.y+Math.sin(S.angle)*31,angle:S.angle,weapon:S.equipped.gun,color:gun.color}); const pellets=gun.pellets||1; for(let i=0;i<pellets;i++){const spread=(i-(pellets-1)/2)*(gun.spread||0); const ang=S.angle+spread; bullets.push({from:'player',x:S.x+Math.cos(ang)*24,y:S.y+Math.sin(ang)*24,vx:Math.cos(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),vy:Math.sin(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),life:1.5,damage:Math.round(actualDamage()*(S.weaponMod==='focus'?1.20:1)*factionDamageMultiplier()),color:gun.color,weapon:S.equipped.gun})}}
 function spawnParticles(x,y,color,n=6,power=90){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2, sp=Math.random()*power; particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:.25+Math.random()*.55,color,size:1+Math.random()*2})}}
 function takeDamage(n){n=Math.max(1,Math.round(n*(S.faction==='solar'?.90:1)));S.hp-=n; shake=Math.max(shake,n*0.45); spawnParticles(S.x,S.y,'#ff8ba0',8,110); sfx.hit();warpAudio?.event('hit'); if(S.hp<=0){S.hp=S.maxHp; const home=FACTIONS[S.faction]?.home||WORLD.port;S.x=home.x+110;S.y=home.y+10;S.vx=S.vy=0; S.credits=Math.max(0,S.credits-80); log('Ship destroyed! Emergency tug recovered you at Orion Port.'); toast('Ship destroyed')}}
 // Obstacle-aware eight-direction A* routing. The ship never uses a straight-line
@@ -1820,7 +1820,7 @@ function v14RiftFire(){const now=performance.now()/1000,gun=GUNS[S.equipped.gun]
  S.energy=Math.max(0,S.energy-2.5);
  const count=gun.pellets||1;for(let i=0;i<count;i++){const a=S.angle+(i-(count-1)/2)*(gun.spread||0);
  v14RiftBullets.push({x:S.x+Math.cos(a)*26,y:S.y+Math.sin(a)*26,vx:Math.cos(a)*gun.speed,vy:Math.sin(a)*gun.speed,life:1.8,dmg:actualDamage(),color:gun.color,weapon:S.equipped.gun,from:'player'});}
- sfx.fire();
+ sfx.fire();warpAudio?.event('gun-'+S.equipped.gun);
 }
 function v14RiftUpdate(dt){const b=v14BellClock();if(!S.rift?.inside)return;
  if(!b.active||S.rift.bellId!==b.id){v14ResolveRift('recovered');return;}
