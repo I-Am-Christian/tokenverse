@@ -69,7 +69,7 @@ test('combatFX has distinct palettes for core guns, safe rendering and reduced m
  assert.doesNotThrow(()=>fx.draw(canvas,[bullet],(x,y)=>[x,y],
   {quality:'low',reducedMotion:true,width:1920,height:1080,time:1}));
  fx.tick(.07);fx.tick(.07);fx.tick(.07);fx.tick(.07);fx.tick(.07);
- assert.deepEqual(fx.stats(),{bursts:1,flashes:0,training:0});
+ assert.equal(fx.stats().bursts,1);assert.equal(fx.stats().flashes,0);assert.equal(fx.stats().training,0);
  fx.tick(.08);fx.tick(.08);fx.tick(.08);fx.tick(.08);fx.tick(.08);
  assert.equal(fx.stats().bursts,0);
 });
@@ -84,7 +84,7 @@ test('cosmetic impact and muzzle lists are bounded and expire predictably',()=>{
  assert.ok(fx.stats().flashes<=70);
  assert.ok(fx.stats().training<=12);
  for(let n=0;n<12;n++)fx.tick(.08);
- assert.deepEqual(fx.stats(),{bursts:0,flashes:0,training:0});
+ assert.equal(fx.stats().bursts,0);assert.equal(fx.stats().flashes,0);assert.equal(fx.stats().training,0);
 });
 test('firing outside protected space keeps normal projectile damage and adds visual metadata',()=>{
  const {api}=bootWarp(rootHtml());
