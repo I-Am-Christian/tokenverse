@@ -217,7 +217,7 @@
     <div id="cargoDrawer" class="hud drawer"><h3 >Cargo manifest</h3><div id="oreGrid" class="grid2"></div></div>
     <div id="mapDrawer" class="hud drawer"><h3>Galactic chart · 192k × 115.2k</h3>
 <canvas id="navigationChart" width="440" height="264" role="img" aria-label="Galaxy chart with current ship position, gates and stations"></canvas>
-<div class="map-hint">Plot a distant route: Warp Cruise engages automatically in clear space. Press J or tap Pulse Jump to hop along a safe stretch. Precision flight returns around hazards and docking zones.</div><div class="map-hint">Four faction home territories are separated by neutral corridors. Colored markers show home bases and gates; white marker is your ship.</div>
+<div class="map-hint"><b>Tap the galaxy chart</b> to choose a distant destination. Warp Drive accelerates on clear routes, and J/Pulse Jump hops through safe waypoints. Normal controls take over near hazards and docking zones.</div><div class="map-hint">Four faction home territories are separated by neutral corridors. Colored markers show home bases and gates; white marker is your ship.</div>
 <div class="notice" style="margin-bottom:10px">All sectors are open. Danger increases with enemy tier, not invisible barriers.</div><div id="zoneList" class="zone-list"></div><h3 style="margin-top:15px">Outer Meridian transit network</h3><p class="map-hint">Plot a route or dock at any station and jump directly to an outer relay for 85 SC. Transit is simulated.</p><div id="warp16FrontierList" class="gate-list"></div></div>
     <div id="gatesDrawer" class="hud drawer"><h3>Interstellar Jump Gates</h3><div class="notice">North, east, south and west gates lead to four other star systems. Plot a safe route, brake, and cross the portal.</div><div id="gateList" class="gate-list"></div></div><div id="factionDrawer" class="hud drawer" aria-label="Faction management">
 <h3>Faction territories</h3>
@@ -2488,6 +2488,18 @@ $('toggleWallet').onclick=()=>toggleDrawer('walletDrawer'); $('toggleCargo').onc
 };
 $('stationBtn').onclick=()=>{if(dockedStation){renderUI();$('stationModal').classList.add('open');} else toast('Dock first')}; $('closeStationBtn').onclick=()=>$('stationModal').classList.remove('open'); $('mineNearestBtn').onclick=mineNearest; $('pulseJumpBtn').onclick=warp18PulseJump; $('warpDriveBtn').onclick=warp20ToggleDrive; $('portBtn').onclick=()=>routeToStation('port'); $('assistBtn').onclick=()=>{S.settings.assist=!S.settings.assist; renderUI(); save()}; $('resetBtn').onclick=()=>{if(confirm('Delete the local test pilot save and its demo assets? The next new save will receive a fresh test grant.')){localStorage.removeItem('tokenverse-deep-space-v10');localStorage.removeItem('tokenverse-fullscreen-v08'); localStorage.removeItem('tokenverse-fullscreen-v07'); localStorage.removeItem('tokenverse-simplified-v06'); localStorage.removeItem('tokenverse-pages-v1'); location.reload()}}; $('resetInLedger').onclick=()=>$('resetBtn').click();
 $('shipFilter').addEventListener('change',e=>{shipFilter=e.target.value;renderUI(true);});
+$('navigationChart').addEventListener('pointerdown',e=>{
+ if(S.rift?.inside)return toast('Exit the Heart Chamber before plotting a galactic route.');
+ const rect=$('navigationChart').getBoundingClientRect();
+ if(!rect.width||!rect.height)return;
+ const nx=clamp((e.clientX-rect.left)/rect.width,0,1),ny=clamp((e.clientY-rect.top)/rect.height,0,1);
+ const x=clamp(nx*WORLD.w,50,WORLD.w-50),y=clamp(ny*WORLD.h,50,WORLD.h-50);
+ if(setAutopilot('point',x,y)){
+  $('mapDrawer').classList.remove('open');
+  toast('Destination plotted · Warp Drive ready');
+  warpAudio?.event('signal');
+ }
+});
 $('scanBtn').onclick=extScan;
 $('opsBtn').onclick=()=>toggleDrawer('opsDrawer');
 $('deployOutpostBtn').onclick=extDeployOutpost;
