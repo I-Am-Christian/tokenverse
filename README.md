@@ -1,3 +1,23 @@
+# Warp Coin v0.18 — Pulse & Cruise (development build)
+
+**Public game:** https://i-am-christian.github.io/tokenverse/ (the published site updates when this branch merges)
+
+The world remains **192,000 × 115,200 units per public system**. Safe long-range autopilot routes now engage **Warp Cruise**, while asteroid fields, combat zones and docking approaches retain precise low-speed handling. Press **J** or use the **Pulse Jump** button to jump up to **8,500 units** along a verified clear corridor (28 energy, 9-second cooldown). New public systems and four Outer Meridian stations also give one-time local exploration bonuses. [Read the v0.18 details](WARP_COIN_V018.md).
+
+**Database:** Tokenverse will use its own *new* Supabase project later. No existing Supabase project is connected or touched. All market balances, rewards and progress in the browser remain local simulated game data.
+
+---
+
+# Warp Coin v0.17 — Trade Route Intelligence (review build)
+
+**Existing playable game:** https://i-am-christian.github.io/tokenverse/ (currently v0.16 until this branch merges).
+
+This proposed update adds a **Trade Route Scanner** to the Economy drawer: evaluate local market price spreads between five public star systems, account for ship cargo capacity and available Scrap Credits, and plot a persistent multi-gate route toward the destination. The route remembers its target in the existing local browser save. See [v0.17 release notes](WARP_COIN_V017.md).
+
+**Backend separation:** No Supabase connection is used. When multiplayer accounts are introduced, Warp Coin / Tokenverse will use a **new, independent Supabase project**. Hello Earth's database is not shared with the game. All credits and token prices in this browser prototype are simulated; real deposits, NFTs and withdrawals remain disabled.
+
+---
+
 # Warp Coin v0.16 — The Outer Meridian
 
 **Play the updated game:** https://i-am-christian.github.io/tokenverse/
