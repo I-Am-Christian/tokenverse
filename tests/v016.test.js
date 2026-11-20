@@ -28,7 +28,7 @@ test('v0.16 public maps are four times larger and offer neutral outer trade sanc
  const {api}=bootWarp(read());
  assert.deepEqual([api.WORLD.w,api.WORLD.h],[192000,115200]);
  assert.equal(api.S.worldScaleVersion,4);
- assert.equal(api.S.saveVersion,16);
+ assert.equal(api.S.saveVersion,20);
  assert.equal(api.DEEP_RIM_STATIONS.length,4);
  assert.equal(api.GATES.length,4);
  assert.equal(Object.keys(api.FACTIONS).length,4);
