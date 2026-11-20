@@ -1373,7 +1373,7 @@ function extDronePhysics(dt){
 }
 function extBossHit(b){
  if(!extBoss||Math.hypot(extBoss.x-b.x,extBoss.y-b.y)>78)return false;
- extBoss.hp-=Math.max(0,b.damage);S.bossDamage[S.system]=Math.ceil(extBoss.hp);
+ extBoss.hp-=Math.max(0,b.damage);warpCombatFX?.impact({x:b.x,y:b.y,weapon:b.weapon,color:b.color,killed:extBoss.hp<=0});S.bossDamage[S.system]=Math.ceil(extBoss.hp);
  spawnParticles(b.x,b.y,extBoss.color,4,90);
  if(extBoss.hp<=0){
  const award=400+220*extBoss.tier;S.credits+=award;S.blueprintFragments+=2+extBoss.tier;
@@ -1621,6 +1621,7 @@ function factionHitPatrol(b){
   if(p.downUntil>Date.now()||p.faction===S.faction)continue;
   if(Math.hypot(p.x-b.x,p.y-b.y)<19){
     p.hp-=b.damage;
+    warpCombatFX?.impact({x:b.x,y:b.y,weapon:b.weapon,color:b.color,killed:p.hp<=0});
     spawnParticles(p.x,p.y,FACTIONS[p.faction].color,7,80);
     if(p.hp<=0){
       p.downUntil=Date.now()+90000;p.hp=0;
@@ -1815,9 +1816,10 @@ function v14Chime(type){
 }
 function v14RiftAim(){if(pointer.inside){const dx=pointer.x-innerWidth/2,dy=pointer.y-innerHeight/2;if(Math.hypot(dx,dy)>6)S.angle=Math.atan2(dy,dx);}}
 function v14RiftFire(){const now=performance.now()/1000,gun=GUNS[S.equipped.gun];if(now-v14LastRiftFire<gun.fireRate)return;v14LastRiftFire=now;
+ warpCombatFX?.muzzle({x:S.x+Math.cos(S.angle)*31,y:S.y+Math.sin(S.angle)*31,angle:S.angle,weapon:S.equipped.gun,color:gun.color});
  S.energy=Math.max(0,S.energy-2.5);
  const count=gun.pellets||1;for(let i=0;i<count;i++){const a=S.angle+(i-(count-1)/2)*(gun.spread||0);
- v14RiftBullets.push({x:S.x+Math.cos(a)*26,y:S.y+Math.sin(a)*26,vx:Math.cos(a)*gun.speed,vy:Math.sin(a)*gun.speed,life:1.8,dmg:actualDamage(),color:gun.color});}
+ v14RiftBullets.push({x:S.x+Math.cos(a)*26,y:S.y+Math.sin(a)*26,vx:Math.cos(a)*gun.speed,vy:Math.sin(a)*gun.speed,life:1.8,dmg:actualDamage(),color:gun.color,weapon:S.equipped.gun,from:'player'});}
  sfx.fire();
 }
 function v14RiftUpdate(dt){const b=v14BellClock();if(!S.rift?.inside)return;
@@ -1842,8 +1844,8 @@ function v14RiftUpdate(dt){const b=v14BellClock();if(!S.rift?.inside)return;
    if(Math.hypot(h.x-S.x,h.y-S.y)<30){S.hp=Math.max(1,S.hp-11);h.life=0;sfx.hit();}
    if(h.life<=0)v14RiftHazards.splice(i,1);
  }
- for(let i=v14RiftBullets.length-1;i>=0;i--){const q=v14RiftBullets[i];q.x+=q.vx*dt;q.y+=q.vy*dt;q.life-=dt;
-   if(S.rift.guardianHp>0&&Math.hypot(q.x-3180,q.y-1320)<110){S.rift.guardianHp=Math.max(0,S.rift.guardianHp-q.dmg);q.life=0;
+ for(let i=v14RiftBullets.length-1;i>=0;i--){const q=v14RiftBullets[i];warpCombatFX?.trail(q);q.x+=q.vx*dt;q.y+=q.vy*dt;q.life-=dt;
+   if(S.rift.guardianHp>0&&Math.hypot(q.x-3180,q.y-1320)<110){S.rift.guardianHp=Math.max(0,S.rift.guardianHp-q.dmg);warpCombatFX?.impact({x:q.x,y:q.y,color:q.color,weapon:q.weapon,killed:S.rift.guardianHp<=0});q.life=0;
      if(!S.rift.guardianHp)log('Heart guardian disabled. The inner deposits are clear.');}
    if(q.life<=0)v14RiftBullets.splice(i,1);
  }
@@ -2154,7 +2156,8 @@ function v14RiftDraw(){const w=innerWidth,h=innerHeight,t=performance.now()/1000
   for(let i=0;i<7;i++){const q=i*Math.PI*2/7,r=a.radius*(i%2?.78:1);i?ctx.lineTo(Math.cos(q)*r,Math.sin(q)*r):ctx.moveTo(Math.cos(q)*r,Math.sin(q)*r);}ctx.closePath();ctx.fill();ctx.stroke();v14AsteroidSurface(ctx,a);ctx.restore();}
  if(S.rift.guardianHp>0){const [x,y]=view(3180,1320);ctx.save();ctx.translate(x,y);ctx.rotate(S.settings.reducedMotion?0:t*.15);ctx.fillStyle='#392849';ctx.strokeStyle='#f7a5eb';ctx.lineWidth=4;ctx.shadowColor='#e67dff';ctx.shadowBlur=20;ctx.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,r=i%2?65:115;i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
   ctx.fillStyle='#ffcbf8';ctx.textAlign='center';ctx.fillText('HEART GUARDIAN · '+Math.ceil(S.rift.guardianHp/450*100)+'%',x,y-130);}
- for(const q of v14RiftBullets){const [x,y]=view(q.x,q.y);ctx.fillStyle=q.color;ctx.fillRect(x-3,y-3,6,6);}
+ if(warpCombatFX)warpCombatFX.draw(ctx,v14RiftBullets,view,{quality:S.settings.quality||'medium',reducedMotion:!!S.settings.reducedMotion,time:t,width:w,height:h});
+ else for(const q of v14RiftBullets){const [x,y]=view(q.x,q.y);ctx.fillStyle=q.color;ctx.fillRect(x-3,y-3,6,6);}
  for(const q of v14RiftHazards){const [x,y]=view(q.x,q.y);ctx.shadowColor='#f9a7c3';ctx.shadowBlur=12;ctx.fillStyle='#ff9cbb';ctx.beginPath();ctx.arc(x,y,8,0,7);ctx.fill();ctx.shadowBlur=0;}
  v14DrawFactionHull(ctx,w/2,h/2,S.angle,1.15);
  const b=v14BellClock();ctx.fillStyle='rgba(4,12,30,.82)';ctx.fillRect(w/2-150,75,300,46);
@@ -2491,7 +2494,10 @@ function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Cha
  $('shipList').innerHTML=Object.entries(SHIPS).filter(([id,ship])=>shipFilter==='all'||(ship.role||'premium')===shipFilter).map(([id,ship])=>`<div class="rowItem"><div><strong>${ship.name}${id===S.shipId?' · ACTIVE':''}</strong><small>${ship.desc}</small><div class="ship-stats"><span>Hull ${ship.hull}</span><span>Speed ${Math.round(ship.speed*100)}%</span><span>Thrust ${Math.round(ship.accel*100)}%</span><span>DMG +${Math.round(ship.damageBonus*100)}%</span><span>Cargo ${ship.cargo>=0?'+':''}${ship.cargo}</span></div><small>${S.ownedShips[id]?'Owned · Ready for launch':costText(ship.cost)}</small></div><div class="inlineBtns"><button ${id===S.shipId?'disabled':''} ${S.ownedShips[id]?`data-equip-ship="${id}"`:`data-buy-ship="${id}"`}>${id===S.shipId?'Piloting':S.ownedShips[id]?'Deploy':'Purchase'}</button></div></div>`).join('');
  $('equipList').innerHTML=`<div class="rowItem"><div><strong>Primary weapons</strong><small>Equip a crafted weapon.</small></div><div></div></div>${Object.entries(GUNS).filter(([k])=>S.crafted.guns[k]).map(([k,v])=>`<div class="rowItem"><div><strong>${v.name}</strong><small>${v.desc}</small></div><div><button ${S.equipped.gun===k?'disabled':''} data-equip-cat="guns" data-equip="${k}">${S.equipped.gun===k?'Equipped':'Equip'}</button></div></div>`).join('')}<div class="rowItem"><div><strong>Utilities</strong><small>Equip one utility module.</small></div><div></div></div>${Object.entries(UTILS).filter(([k])=>S.crafted.utils[k]).map(([k,v])=>`<div class="rowItem"><div><strong>${v.name}</strong><small>${v.desc}</small></div><div><button ${S.equipped.utility===k?'disabled':''} data-equip-cat="utils" data-equip="${k}">${S.equipped.utility===k?'Equipped':'Equip'}</button></div></div>`).join('')}`;
  }
-function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt))return;updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt);
+function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt)){
+ if(pressed.f||touchFireHeld)fireGun();
+ warpCombatFX?.tick(dt);return;
+}updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim();if(pressed.f||touchFireHeld)fireGun(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt);
  if(performance.now()-warp20LastAudioTick>230){
   warp20LastAudioTick=performance.now();
   warpAudio?.update({cruising:warp18Cruising,speed:Math.hypot(S.vx,S.vy),
@@ -2511,7 +2517,16 @@ $('toggleWallet').onclick=()=>toggleDrawer('walletDrawer'); $('toggleCargo').onc
  }else{warpAudio?.disable();toast('Sound muted');}
  renderUI();save();
 };
-$('stationBtn').onclick=()=>{if(dockedStation){renderUI();$('stationModal').classList.add('open');} else toast('Dock first')}; $('closeStationBtn').onclick=()=>$('stationModal').classList.remove('open'); $('mineNearestBtn').onclick=mineNearest; $('pulseJumpBtn').onclick=warp18PulseJump; $('warpDriveBtn').onclick=warp20ToggleDrive; $('portBtn').onclick=()=>routeToStation('port'); $('assistBtn').onclick=()=>{S.settings.assist=!S.settings.assist; renderUI(); save()}; $('resetBtn').onclick=()=>{if(confirm('Delete the local test pilot save and its demo assets? The next new save will receive a fresh test grant.')){localStorage.removeItem('tokenverse-deep-space-v10');localStorage.removeItem('tokenverse-fullscreen-v08'); localStorage.removeItem('tokenverse-fullscreen-v07'); localStorage.removeItem('tokenverse-simplified-v06'); localStorage.removeItem('tokenverse-pages-v1'); location.reload()}}; $('resetInLedger').onclick=()=>$('resetBtn').click();
+$('stationBtn').onclick=()=>{if(dockedStation){renderUI();$('stationModal').classList.add('open');} else toast('Dock first')}; $('closeStationBtn').onclick=()=>$('stationModal').classList.remove('open'); $('mineNearestBtn').onclick=mineNearest;
+$('shootBtn').onclick=()=>fireGun();
+$('shootBtn').addEventListener('pointerdown',e=>{e.preventDefault();touchFireHeld=true;fireGun();});
+const warpStopFire=()=>{touchFireHeld=false;};
+$('shootBtn').addEventListener('pointerup',warpStopFire);
+$('shootBtn').addEventListener('pointercancel',warpStopFire);
+$('shootBtn').addEventListener('pointerleave',warpStopFire);
+addEventListener('pointerup',warpStopFire);
+addEventListener('blur',()=>{touchFireHeld=false;pressed.f=false;});
+$('pulseJumpBtn').onclick=warp18PulseJump; $('warpDriveBtn').onclick=warp20ToggleDrive; $('portBtn').onclick=()=>routeToStation('port'); $('assistBtn').onclick=()=>{S.settings.assist=!S.settings.assist; renderUI(); save()}; $('resetBtn').onclick=()=>{if(confirm('Delete the local test pilot save and its demo assets? The next new save will receive a fresh test grant.')){localStorage.removeItem('tokenverse-deep-space-v10');localStorage.removeItem('tokenverse-fullscreen-v08'); localStorage.removeItem('tokenverse-fullscreen-v07'); localStorage.removeItem('tokenverse-simplified-v06'); localStorage.removeItem('tokenverse-pages-v1'); location.reload()}}; $('resetInLedger').onclick=()=>$('resetBtn').click();
 $('shipFilter').addEventListener('change',e=>{shipFilter=e.target.value;renderUI(true);});
 $('navigationChart').addEventListener('pointerdown',e=>{
  if(S.rift?.inside)return toast('Exit the Heart Chamber before plotting a galactic route.');
@@ -2585,7 +2600,7 @@ $('factionDrawer').addEventListener('click',e=>{const b=e.target.closest('button
 $('factionSelectModal').addEventListener('click',e=>{const b=e.target.closest('[data-faction-join]');if(b)factionJoin(b.dataset.factionJoin);});
 $('factionHomeBtn').onclick=factionHomeRoute;
 $('hullColor').value=S.ship.hull; $('accentColor').value=S.ship.accent;
-renderLog();renderUI();setTab('market');save();log('Warp Coin v0.20 ready · 192k × 115.2k universe · Warp Drive, improved graphics and sound.');requestAnimationFrame(loop);
+renderLog();renderUI();setTab('market');save();log('Warp Coin v0.21 · Weapons Reforged: animated bolts, impact rings, muzzle flashes and hold-to-fire.');requestAnimationFrame(loop);
 })();
 </script>
 </body>
