@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#050b19" />
-<title>Warp Coin v0.19 — Living Frontier</title>
+<title>Warp Coin v0.20 — Hyperdrive & Living Galaxy</title>
 <style>
 
 :root{color-scheme:dark;--ink:#040a18;--glass:rgba(5,15,35,.72);--panel:rgba(7,19,42,.92);--stroke:rgba(99,171,215,.25);--text:#e9f6ff;--muted:#7e9db4;--ice:#6de8f2;--mint:#70f4cd;--violet:#9684ff;--amber:#ffca7a;--danger:#ff788d;font-family:Inter, 'Segoe UI',system-ui,sans-serif}
@@ -38,6 +38,13 @@
 .warp19-actions button:disabled{opacity:.35}
 #frontierSignalsDrawer{width:min(360px,88vw)}
 #toggleFrontierSignals{border-color:rgba(166,227,255,.4)}
+#warpDriveBtn{border:1px solid rgba(119,239,252,.78);background:linear-gradient(120deg,#116b86,#243c90);color:#ebfeff;box-shadow:0 0 20px rgba(28,192,230,.2)}
+#warpDriveBtn.warp20-active{background:linear-gradient(120deg,#167d9d,#3a5bd2);box-shadow:0 0 26px rgba(71,212,255,.34)}
+#warpDriveState{font-size:9px;letter-spacing:1.1px;margin-left:5px;color:#cbfff1}
+#toggleSound{border-color:rgba(110,239,204,.55)}
+#toggleSound.warp20-sound-on{background:rgba(21,100,95,.75);border-color:#85e8c7}
+#warpAudioVolume{width:min(210px,100%);vertical-align:middle;accent-color:#87e9db}
+#cruiseTag{min-height:24px;color:#8eecff}
 #toggleFrontierSignals.warp19-alert{border-color:#e5b4ff;background:linear-gradient(115deg,rgba(73,44,107,.96),rgba(19,52,77,.96));box-shadow:0 0 18px rgba(189,128,255,.2)}
 @media(prefers-reduced-motion:reduce){#toggleFrontierSignals{transition:none}}
 .combat-readout{margin-top:10px;padding:7px 4px 0;border-top:1px solid rgba(107,206,225,.15);font-size:10px;letter-spacing:.45px;color:#a8e6f5;line-height:1.35}
@@ -178,7 +185,7 @@
   <div id="topBar" class="hud">
     <div id="brand">
       <div class="brand-mark"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true"><circle cx="16" cy="16" r="4" fill="#6fe8f2"/><ellipse cx="16" cy="16" rx="15" ry="6" stroke="#6fe8f2" fill="none" stroke-width="1.2" transform="rotate(-37 16 16)"/><path d="M7 26 25 6" stroke="#fff" stroke-width="1.1"/></svg></div>
-      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Living Frontier 0.19</div></div>
+      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Hyperdrive 0.20</div></div>
     </div>
     <div id="topCenter"><span class="sector-signal"><i class="signal-dot"></i>Solo sector</span><i class="sector-divider"></i><span id="systemTag" class="pill">Orion Belt</span><span id="factionTag" class="pill">Choose faction</span><button id="v14BellButton" class="pill" aria-label="Open the Twelve Bells event console">BELL · COUNTDOWN</button><span id="v14BellBadge" class="pill" aria-hidden="true">NEXT BELL</span><span id="zoneTag" class="pill">Frontier</span><i class="sector-divider"></i><span id="dockTag" class="pill">In flight</span><span id="hostileTag" class="pill">0 hostiles</span><span id="coordsTag" class="pill">X 0 • Y 0</span></div>
     <div id="topRight"><div class="top-credit"><div class="credit-caption">Credit balance</div><div id="topCredits">0 <small>SC</small></div></div></div>
@@ -204,7 +211,7 @@
       <button class="console-btn" id="toggleCargo" aria-label="Cargo manifest" aria-expanded="false" title="Cargo manifest"><svg viewBox="0 0 24 24"><path d="m3 7 9-4 9 4-9 5-9-5ZM3 7v11l9 4 9-4V7M12 12v10M8 5l9 5"/></svg><span>Cargo</span></button>
       <button class="console-btn" id="toggleMap" aria-label="Navigation map" aria-expanded="false" title="Navigation map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 2 2 4 4-6ZM12 2v4M12 18v4M2 12h4M18 12h4"/></svg><span>Navigation</span></button><button class="console-btn" id="toggleGates" aria-label="Star gates" aria-expanded="false" title="Star gates"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="10"/><path d="M4 12h16"/></svg><span>Gates</span></button>
       <button class="console-btn" id="toggleFaction" aria-label="Faction territories" aria-expanded="false" title="Faction territories"><svg viewBox="0 0 24 24"><path d="M5 21V4h10l-2.2 4L15 12H5M5 4V2M4 21h3"/><path d="M9 16h11M9 19h8"/></svg><span>Factions</span></button><button class="console-btn" id="toggleLog" aria-label="Comms log" aria-expanded="false" title="Comms log"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h12M4 17h8"/><rect x="2" y="2" width="20" height="20" rx="3"/></svg><span>Comms</span></button>
-      <button class="console-btn" id="toggleSound" aria-label="Toggle sound" aria-expanded="false" title="Toggle sound"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4ZM17 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg><span>Audio</span></button>
+      <button class="console-btn" id="toggleSound" aria-label="Enable or disable space audio" aria-expanded="false" title="Toggle sound"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4ZM17 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg><span id="audioToggleLabel">Sound OFF</span></button>
     </div>
     <div id="walletDrawer" class="hud drawer"><h3>Asset ledger <span class="test-pill">LOCAL TEST</span></h3><div id="walletGrid" class="grid2"></div><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px"><span style="font-size:10px;color:var(--muted)">SIMULATED ASSETS · NO CASH VALUE</span><button id="resetInLedger" class="dock-action" style="min-width:0;height:30px;font-size:9px">Reset pilot</button></div></div>
     <div id="cargoDrawer" class="hud drawer"><h3 >Cargo manifest</h3><div id="oreGrid" class="grid2"></div></div>
@@ -228,6 +235,8 @@
       <div class="v14-caption">Expedition ledger</div><p id="v14RiftCount" class="v14-sub"></p><p id="v14RiftResult" class="v14-sub"></p>
       <div class="v14-caption">Graphics & access</div><label class="v14-sub">Visual quality <select id="v14Quality"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="auto">Auto</option></select></label>
       <label class="v14-sub" style="display:block;margin-top:10px"><input id="v14ReducedMotion" type="checkbox"> Reduced motion and flashes</label>
+       <label class="v14-sub" style="display:block;margin-top:12px">Sound volume <input id="warpAudioVolume" type="range" min="0" max="100" value="65" aria-label="Sound effect and space ambiance volume"></label>
+       <p class="v14-sub">Sound is off until enabled. Click Sound OFF on the right console to hear the original space ambience and engine effects.</p>
       <p class="v14-disclaimer">Simulated local event. Each Bell uses your device clock; no shared PvP or cryptocurrency payouts are active.</p>
     </div>
   </div>
@@ -245,6 +254,7 @@
     <button id="mineNearestBtn" title="Scan for nearby ore" aria-label="Scan for nearby ore" class="dock-action"><svg viewBox="0 0 24 24"><path d="m3 21 6-6M3 10l7-7 11 11-7 7L3 10ZM10 3l7 7"/></svg>Scan ore</button><button id="scanBtn" title="Pulse scanner" aria-label="Scan nearby anomalies" class="dock-action">◉ Scan</button><button id="opsBtn" title="Open station and drone operations" class="dock-action">⚙ Ops</button>
     <button id="portBtn" title="Autopilot to Orion Port" aria-label="Autopilot to Orion Port" class="dock-action"><svg viewBox="0 0 24 24"><path d="m3 12 18-9-9 18-2-8-7-1Z"/></svg>Return port</button>
     <button id="pulseJumpBtn" title="Pulse Jump (J) — instant short hop along a clear navigation path" aria-label="Pulse Jump, keyboard J" class="dock-action"><svg viewBox="0 0 24 24"><path d="M3 13h8l-2 7 12-12h-8l2-5Z"/><path d="M3 5h6M2 9h4"/></svg>Pulse Jump</button>
+    <button id="warpDriveBtn" title="Engage Warp Drive, shortcut H" aria-label="Engage Warp Drive" class="dock-action primary">✦ Warp Drive <span id="warpDriveState">READY</span></button>
     <button id="assistBtn" title="Toggle flight stabilizers" aria-label="Toggle flight stabilizers" class="dock-action"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Stabilizers <span id="assistBtnState">ON</span></button>
     <button id="resetBtn" aria-label="Reset save">Reset</button>
   </div>
@@ -333,6 +343,9 @@
 <script src="./trade-route-engine.js"></script>
 <script src="./travel-drive.js"></script>
 <script src="./frontier-encounters.js"></script>
+<script src="./warp-route.js"></script>
+<script src="./space-audio.js"></script>
+<script src="./space-visuals.js"></script>
 <script>
 (()=>{
 'use strict';
@@ -411,6 +424,8 @@ S.hp=Math.min(S.maxHp,Math.max(1,Number(S.hp)||100));
 let asteroids=[],drones=[],bullets=[],particles=[],logs=[],damagePopups=[],factionPatrols=[];
 let autopilot=null,miningTarget=null,pointer={x:0,y:0,inside:false},pressed={},dockedStation=null,activeTab='market',lastTime=performance.now(),clock=0,mineClock=0,lastShot=0,shake=0,clickMarker=null,portalCooldown=0,lastSafeLog=0,uiLast=0,shipFilter='all';
 const canvas=$('space'),ctx=canvas.getContext('2d');
+const warpAudio=window.WarpAudio?.create?.()||null;
+let warp20LastAudioTick=0,warp20PreviousCruise=false;
 function DPR(){return Math.min(2,window.devicePixelRatio||1)}
 function resize(){canvas.width=Math.floor(innerWidth*DPR());canvas.height=Math.floor(innerHeight*DPR());ctx.setTransform(DPR(),0,0,DPR(),0,0)} addEventListener('resize',resize); resize();
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))} function norm(vx,vy){const m=Math.hypot(vx,vy)||1; return [vx/m,vy/m,m]}
@@ -2374,8 +2389,12 @@ function warp16Transit(id){
  log('Meridian transit complete: '+to.name+' · 85 SC fare.');
  toast('Arrived at '+to.name);save();renderUI(true);
 }
-v14Init();v14SpawnConvoys();warpInit();warp16Init();warp17Init();warp18Init();warp19Init();factionInit();warpInitializeUI();warp19BuildUI();
-function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Chamber",tier:"EVENT"}:currentZone();$('systemTag').textContent=SYSTEMS[S.system].name;$('factionTag').textContent=S.faction?FACTIONS[S.faction].name:'Unaligned';$('factionTag').style.color=S.faction?FACTIONS[S.faction].color:'#dceafa'; $('zoneTag').textContent=zone.name+' · '+zone.tier; $('dockTag').textContent=dockedStation?('Dock: '+dockedStation.name):'Dock: no'; $('hostileTag').textContent=drones.filter(d=>Math.hypot(d.x-S.x,d.y-S.y)<700).length+' hostiles'; $('coordsTag').textContent='X '+Math.round(S.x)+' • Y '+Math.round(S.y); $('topCredits').innerHTML=S.credits+' <small>SC</small>'; $('hpText').textContent=Math.round(100*S.hp/S.maxHp)+'%'; $('energyText').textContent=Math.round(S.energy)+'%'; $('cargoText').textContent=cargoCount()+' / '+cargoCap(); $('speedText').textContent=Math.round(Math.hypot(S.vx,S.vy)); $('xpText').textContent=S.xp; $('gunText').textContent=GUNS[S.equipped.gun].name.replace(' Blaster','').replace(' Cannon','');$('damageBonusText').textContent='+'+damagePercent()+'%';$('combatReadout').textContent=activeShip().name+' · '+actualDamage()+' DMG / hit · '+gunDps()+' DPS · Mk-'+gunLevel(); $('assistBtnState').textContent=S.settings.assist?'ON':'OFF'; $('hpBar').style.width=(100*S.hp/S.maxHp)+'%'; $('energyBar').style.width=S.energy+'%'; $('cargoBar').style.width=(100*cargoCount()/cargoCap())+'%'; $('stationBtn').disabled=!dockedStation; $('stationPrompt').classList.toggle('hidden', !!dockedStation); $('stationSubtitle').textContent=dockedStation?('Docked at '+dockedStation.name):'Dock first'; $('stationTitle').textContent=dockedStation?(dockedStation.name+' • Ship console'):'Station services'; if(!dockedStation)$('stationModal').classList.remove('open'); $('toggleSound').setAttribute('aria-pressed',String(S.settings.sound)); $('toggleSound').title=S.settings.sound?'Mute audio':'Enable audio';
+v14Init();v14SpawnConvoys();warpInit();warp16Init();warp17Init();warp18Init();warp19Init();warp20Init();factionInit();warpInitializeUI();warp19BuildUI();
+function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Chamber",tier:"EVENT"}:currentZone();$('systemTag').textContent=SYSTEMS[S.system].name;$('factionTag').textContent=S.faction?FACTIONS[S.faction].name:'Unaligned';$('factionTag').style.color=S.faction?FACTIONS[S.faction].color:'#dceafa'; $('zoneTag').textContent=zone.name+' · '+zone.tier; $('dockTag').textContent=dockedStation?('Dock: '+dockedStation.name):'Dock: no'; $('hostileTag').textContent=drones.filter(d=>Math.hypot(d.x-S.x,d.y-S.y)<700).length+' hostiles'; $('coordsTag').textContent='X '+Math.round(S.x)+' • Y '+Math.round(S.y); $('topCredits').innerHTML=S.credits+' <small>SC</small>'; $('hpText').textContent=Math.round(100*S.hp/S.maxHp)+'%'; $('energyText').textContent=Math.round(S.energy)+'%'; $('cargoText').textContent=cargoCount()+' / '+cargoCap(); $('speedText').textContent=Math.round(Math.hypot(S.vx,S.vy)); $('xpText').textContent=S.xp; $('gunText').textContent=GUNS[S.equipped.gun].name.replace(' Blaster','').replace(' Cannon','');$('damageBonusText').textContent='+'+damagePercent()+'%';$('combatReadout').textContent=activeShip().name+' · '+actualDamage()+' DMG / hit · '+gunDps()+' DPS · Mk-'+gunLevel(); $('assistBtnState').textContent=S.settings.assist?'ON':'OFF'; $('hpBar').style.width=(100*S.hp/S.maxHp)+'%'; $('energyBar').style.width=S.energy+'%'; $('cargoBar').style.width=(100*cargoCount()/cargoCap())+'%'; $('stationBtn').disabled=!dockedStation; $('stationPrompt').classList.toggle('hidden', !!dockedStation); $('stationSubtitle').textContent=dockedStation?('Docked at '+dockedStation.name):'Dock first'; $('stationTitle').textContent=dockedStation?(dockedStation.name+' • Ship console'):'Station services'; if(!dockedStation)$('stationModal').classList.remove('open'); $('toggleSound').setAttribute('aria-pressed',String(S.settings.sound)); $('toggleSound').title=S.settings.sound?'Mute audio':'Enable space ambience and effects';
+ $('audioToggleLabel').textContent=S.settings.sound?'Sound ON':'Sound OFF';
+ $('toggleSound').classList.toggle('warp20-sound-on',!!S.settings.sound);
+ $('warpDriveBtn').classList.toggle('warp20-active',!!autopilot&&!!S.settings.warpDriveEnabled);
+ $('warpDriveState').textContent=S.settings.warpDriveEnabled?(autopilot?'ON':'READY'):'OFF';
  $('cruiseTag').textContent=warp18Cruising?'WARP CRUISE · '+Math.round(Math.hypot(S.vx,S.vy)).toLocaleString()+' units/s':
    autopilot?'Autopilot engaged · J for Pulse Jump':'Plot a long route for automatic Warp Cruise';
  $('pulseJumpBtn').disabled=!autopilot||S.energy<(window.WarpTravelDrive?.CFG.pulseEnergy||28)||!!S.rift?.inside;
@@ -2392,11 +2411,18 @@ function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Cha
 function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt))return;updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt)}
 let lastPersist=performance.now();function loop(ts){const dt=Math.min(.05,(ts-lastTime)/1000); lastTime=ts; update(dt); draw(); if((ts|0)%260<17) renderUI(false); if(ts-lastPersist>4000){lastPersist=ts;save();} requestAnimationFrame(loop)}
 function toggleDrawer(id){const d=$(id),opening=!d.classList.contains('open');document.querySelectorAll('.drawer').forEach(el=>el.classList.remove('open')); if(opening)d.classList.add('open');for(const [btn,panel] of Object.entries({toggleWallet:'walletDrawer',toggleCargo:'cargoDrawer',toggleMap:'mapDrawer',toggleGates:'gatesDrawer',toggleFaction:'factionDrawer'}))$(btn).setAttribute('aria-expanded',String($(panel).classList.contains('open')));}
-addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();else if(lower==='e'&&!e.repeat)warp19Claim();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
+addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='h'&&!e.repeat)warp20ToggleDrive();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();else if(lower==='e'&&!e.repeat)warp19Claim();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
 addEventListener('keyup',e=>{pressed[e.key]=false; pressed[e.key.toLowerCase()]=false});
 canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const wx=S.x+(e.clientX-innerWidth/2), wy=S.y+(e.clientY-innerHeight/2);if(S.rift?.inside){v14RiftClick(wx,wy);return;} if(warp19Click(wx,wy))return;if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
-$('toggleWallet').onclick=()=>toggleDrawer('walletDrawer'); $('toggleCargo').onclick=()=>toggleDrawer('cargoDrawer'); $('toggleMap').onclick=()=>toggleDrawer('mapDrawer'); $('toggleGates').onclick=()=>{renderGates();toggleDrawer('gatesDrawer')};$('toggleFaction').onclick=()=>{renderFactionUI();toggleDrawer('factionDrawer')}; $('gateList').addEventListener('click',e=>{const b=e.target.closest('[data-gate]');if(b){routeGate(b.dataset.gate);$('gatesDrawer').classList.remove('open');}}); $('toggleLog').onclick=()=>{const hidden=$('quickLog').classList.toggle('hidden');$('toggleLog').setAttribute('aria-expanded',String(!hidden));}; $('toggleSound').onclick=()=>{S.settings.sound=!S.settings.sound; renderUI(); save(); toast(S.settings.sound?'Sound on':'Sound off')};
-$('stationBtn').onclick=()=>{if(dockedStation){renderUI();$('stationModal').classList.add('open');} else toast('Dock first')}; $('closeStationBtn').onclick=()=>$('stationModal').classList.remove('open'); $('mineNearestBtn').onclick=mineNearest; $('pulseJumpBtn').onclick=warp18PulseJump; $('portBtn').onclick=()=>routeToStation('port'); $('assistBtn').onclick=()=>{S.settings.assist=!S.settings.assist; renderUI(); save()}; $('resetBtn').onclick=()=>{if(confirm('Delete the local test pilot save and its demo assets? The next new save will receive a fresh test grant.')){localStorage.removeItem('tokenverse-deep-space-v10');localStorage.removeItem('tokenverse-fullscreen-v08'); localStorage.removeItem('tokenverse-fullscreen-v07'); localStorage.removeItem('tokenverse-simplified-v06'); localStorage.removeItem('tokenverse-pages-v1'); location.reload()}}; $('resetInLedger').onclick=()=>$('resetBtn').click();
+$('toggleWallet').onclick=()=>toggleDrawer('walletDrawer'); $('toggleCargo').onclick=()=>toggleDrawer('cargoDrawer'); $('toggleMap').onclick=()=>toggleDrawer('mapDrawer'); $('toggleGates').onclick=()=>{renderGates();toggleDrawer('gatesDrawer')};$('toggleFaction').onclick=()=>{renderFactionUI();toggleDrawer('factionDrawer')}; $('gateList').addEventListener('click',e=>{const b=e.target.closest('[data-gate]');if(b){routeGate(b.dataset.gate);$('gatesDrawer').classList.remove('open');}}); $('toggleLog').onclick=()=>{const hidden=$('quickLog').classList.toggle('hidden');$('toggleLog').setAttribute('aria-expanded',String(!hidden));}; $('toggleSound').onclick=()=>{
+ S.settings.sound=!S.settings.sound;
+ if(S.settings.sound){
+  if(warpAudio&&!warpAudio.enable()){S.settings.sound=false;toast('Web Audio is unavailable in this browser.');}
+  else{warpAudio?.event('signal');toast('Space audio enabled');}
+ }else{warpAudio?.disable();toast('Sound muted');}
+ renderUI();save();
+};
+$('stationBtn').onclick=()=>{if(dockedStation){renderUI();$('stationModal').classList.add('open');} else toast('Dock first')}; $('closeStationBtn').onclick=()=>$('stationModal').classList.remove('open'); $('mineNearestBtn').onclick=mineNearest; $('pulseJumpBtn').onclick=warp18PulseJump; $('warpDriveBtn').onclick=warp20ToggleDrive; $('portBtn').onclick=()=>routeToStation('port'); $('assistBtn').onclick=()=>{S.settings.assist=!S.settings.assist; renderUI(); save()}; $('resetBtn').onclick=()=>{if(confirm('Delete the local test pilot save and its demo assets? The next new save will receive a fresh test grant.')){localStorage.removeItem('tokenverse-deep-space-v10');localStorage.removeItem('tokenverse-fullscreen-v08'); localStorage.removeItem('tokenverse-fullscreen-v07'); localStorage.removeItem('tokenverse-simplified-v06'); localStorage.removeItem('tokenverse-pages-v1'); location.reload()}}; $('resetInLedger').onclick=()=>$('resetBtn').click();
 $('shipFilter').addEventListener('change',e=>{shipFilter=e.target.value;renderUI(true);});
 $('scanBtn').onclick=extScan;
 $('opsBtn').onclick=()=>toggleDrawer('opsDrawer');
@@ -2425,6 +2451,14 @@ $('v14BellEntry').onclick=v14EnterRift;
 $('v14BellExit').onclick=v14TryExtract;
 $('v14Quality').addEventListener('change',e=>{S.settings.quality=e.target.value;save();toast('Quality: '+e.target.value);});
 $('v14ReducedMotion').addEventListener('change',e=>{S.settings.reducedMotion=!!e.target.checked;save();});
+ $('warpAudioVolume').value=Math.round((S.settings.audioVolume??.65)*100);
+ $('warpAudioVolume').addEventListener('input',e=>{
+  S.settings.audioVolume=clamp((Number(e.target.value)||0)/100,0,1);
+  warpAudio?.setVolume(S.settings.audioVolume);
+  save();
+ });
+ // Browser audio needs a gesture; automatically resume after interaction if sound was previously enabled.
+ addEventListener('pointerdown',()=>{if(S.settings.sound&&!warpAudio?.isEnabled())warpAudio?.enable();},{once:true});
 $('v14SkinNone').onclick=()=>v14EquipSkin('none');
 $('v14StoryRepair').onclick=v14StoryRepair;
 $('v14StoryContact').onclick=v14StoryContact;
@@ -2450,7 +2484,7 @@ $('factionDrawer').addEventListener('click',e=>{const b=e.target.closest('button
 $('factionSelectModal').addEventListener('click',e=>{const b=e.target.closest('[data-faction-join]');if(b)factionJoin(b.dataset.factionJoin);});
 $('factionHomeBtn').onclick=factionHomeRoute;
 $('hullColor').value=S.ship.hull; $('accentColor').value=S.ship.accent;
-renderLog();renderUI();setTab('market');save();log('Warp Coin v0.19 online · 192k × 115.2k living galaxy · frontier encounters active.');requestAnimationFrame(loop);
+renderLog();renderUI();setTab('market');save();log('Warp Coin v0.20 ready · 192k × 115.2k universe · Warp Drive, improved graphics and sound.');requestAnimationFrame(loop);
 })();
 </script>
 </body>
