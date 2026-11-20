@@ -58,7 +58,7 @@ test('existing galaxy and simulated balances survive the v0.19 migration',()=>{
  const {api,store}=bootWarp(read(),{'tokenverse-deep-space-v10':JSON.stringify(old)});
  assert.deepEqual([api.WORLD.w,api.WORLD.h],[192000,115200]);
  assert.equal(api.S.worldScaleVersion,4);
- assert.equal(api.S.saveVersion,19);
+ assert.equal(api.S.saveVersion,20);
  assert.equal(api.S.credits,1897);
  assert.equal(api.S.ore.moon,7);
  assert.equal(api.S.roaming.completed,0);
@@ -118,7 +118,7 @@ test('active rescued signal remains in a reloaded browser save',()=>{
  const reload=bootWarp(read(),{'tokenverse-deep-space-v10':JSON.stringify(api.S)});
  assert.equal(reload.api.S.roaming.active.id,id);
  assert.equal(reload.api.S.roaming.active.kind,'distress');
- assert.equal(reload.api.S.saveVersion,19);
+ assert.equal(reload.api.S.saveVersion,20);
 });
 test('expired frontier signals never pay rewards and cannot be endlessly retriggered by teleport',()=>{
  const {api,current}=bootWarp(read());
