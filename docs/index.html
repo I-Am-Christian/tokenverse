@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#050b19" />
-<title>Warp Coin v0.18 — Pulse & Cruise</title>
+<title>Warp Coin v0.19 — Living Frontier</title>
 <style>
 
 :root{color-scheme:dark;--ink:#040a18;--glass:rgba(5,15,35,.72);--panel:rgba(7,19,42,.92);--stroke:rgba(99,171,215,.25);--text:#e9f6ff;--muted:#7e9db4;--ice:#6de8f2;--mint:#70f4cd;--violet:#9684ff;--amber:#ffca7a;--danger:#ff788d;font-family:Inter, 'Segoe UI',system-ui,sans-serif}
@@ -31,6 +31,13 @@
 #cruiseTag{color:#81eadf;border-top-color:rgba(112,250,223,.25)}
 #pulseJumpBtn{border-color:rgba(127,229,246,.55)}
 #pulseJumpBtn:disabled{opacity:.33}
+.warp19-event{padding:12px;border:1px solid rgba(120,225,246,.36);background:rgba(23,61,85,.26);border-radius:8px}
+.warp19-label{font-size:13px;letter-spacing:1px;font-weight:900;color:#9eeefa}
+.warp19-actions{display:flex;flex-wrap:wrap;gap:7px}
+.warp19-actions button{padding:8px 11px;border:1px solid #4982a6;background:#183b5c;border-radius:6px;color:#e9f7ff;font-size:11px}
+.warp19-actions button:disabled{opacity:.35}
+#frontierSignalsDrawer{width:min(360px,88vw)}
+#toggleFrontierSignals{border-color:rgba(166,227,255,.4)}
 .combat-readout{margin-top:10px;padding:7px 4px 0;border-top:1px solid rgba(107,206,225,.15);font-size:10px;letter-spacing:.45px;color:#a8e6f5;line-height:1.35}
 .fabricator-label{font-size:10px;letter-spacing:2px;color:#74dced;border-bottom:1px solid rgba(109,232,242,.22);padding:13px 1px 9px;margin:8px 0 5px;font-weight:900}
 .test-pill{color:#7ff4cf;border:1px solid rgba(127,244,207,.4);padding:3px 5px;border-radius:3px;font-size:8px;letter-spacing:1px;margin-left:7px}
@@ -169,7 +176,7 @@
   <div id="topBar" class="hud">
     <div id="brand">
       <div class="brand-mark"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true"><circle cx="16" cy="16" r="4" fill="#6fe8f2"/><ellipse cx="16" cy="16" rx="15" ry="6" stroke="#6fe8f2" fill="none" stroke-width="1.2" transform="rotate(-37 16 16)"/><path d="M7 26 25 6" stroke="#fff" stroke-width="1.1"/></svg></div>
-      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Pulse & Cruise 0.18</div></div>
+      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Living Frontier 0.19</div></div>
     </div>
     <div id="topCenter"><span class="sector-signal"><i class="signal-dot"></i>Solo sector</span><i class="sector-divider"></i><span id="systemTag" class="pill">Orion Belt</span><span id="factionTag" class="pill">Choose faction</span><button id="v14BellButton" class="pill" aria-label="Open the Twelve Bells event console">BELL · COUNTDOWN</button><span id="v14BellBadge" class="pill" aria-hidden="true">NEXT BELL</span><span id="zoneTag" class="pill">Frontier</span><i class="sector-divider"></i><span id="dockTag" class="pill">In flight</span><span id="hostileTag" class="pill">0 hostiles</span><span id="coordsTag" class="pill">X 0 • Y 0</span></div>
     <div id="topRight"><div class="top-credit"><div class="credit-caption">Credit balance</div><div id="topCredits">0 <small>SC</small></div></div></div>
@@ -323,6 +330,7 @@
 </div>
 <script src="./trade-route-engine.js"></script>
 <script src="./travel-drive.js"></script>
+<script src="./frontier-encounters.js"></script>
 <script>
 (()=>{
 'use strict';
@@ -682,6 +690,228 @@ function warp18StationDiscovery(st){
  log('Discovered '+st.name+' · +45 SC and +12 XP.');
  toast('Frontier discovered · +45 SC');save();
 }
+
+/* v0.19 — optional, travel-triggered solo encounters. No multiplayer or server calls. */
+let warp19Previous={system:S.system,x:S.x,y:S.y};
+const WARP19_LABELS={wreck:'Abandoned Salvage',distress:'Distress Transmission',pirates:'Pirate Ambush',cache:'Eidon Relic Cache'};
+const WARP19_DESC={
+ wreck:'A drifting vessel holds recoverable scrap and raw ore. Approach slowly to salvage it.',
+ distress:'A stranded pilot is transmitting an emergency beacon. Reach the signal and stabilize your ship.',
+ pirates:'Raiders have appeared in the frontier. Defeat them for a bounty, or leave the area.',
+ cache:'A rare Eidon signature resonates from a sealed relic. Investigate it for research fragments.'
+};
+function warp19Init(){
+ const original=S.roaming&&typeof S.roaming==='object'&&!Array.isArray(S.roaming)?S.roaming:{};
+ S.roaming={
+  ordinal:Math.max(0,Math.floor(Number(original.ordinal)||0)),
+  distance:Math.max(0,Math.min(100000,Number(original.distance)||0)),
+  lastSpawnAt:Number.isFinite(+original.lastSpawnAt)?Math.min(Date.now(),+original.lastSpawnAt):0,
+  active:null,
+  history:Array.isArray(original.history)?original.history.slice(-12).filter(x=>x&&typeof x==='object'):[],
+  completed:Math.max(0,Math.floor(Number(original.completed)||0))
+ };
+ const a=original.active;
+ if(a&&typeof a==='object'&&SYSTEMS[a.system]&&a.system!=='homestead'&&
+    ['wreck','distress','pirates','cache'].includes(a.kind)&&
+    Number.isFinite(+a.x)&&Number.isFinite(+a.y)&&+a.x>0&&+a.x<WORLD.w&&
+    +a.y>0&&+a.y<WORLD.h&&Number.isFinite(+a.expiresAt)&&+a.expiresAt>Date.now()){
+  S.roaming.active={id:String(a.id||'frontier-legacy').slice(0,60),system:a.system,kind:a.kind,
+   x:+a.x,y:+a.y,expiresAt:+a.expiresAt,remaining:a.kind==='pirates'?
+    Math.max(1,Math.min(2,Math.floor(Number(a.remaining)||1))):0};
+ }
+ warp19Previous={system:S.system,x:S.x,y:S.y};
+ S.saveVersion=19;
+}
+function warp19BuildUI(){
+ const area=$('drawerArea'),menu=$('drawerToggles');
+ const button=document.createElement('button');button.id='toggleFrontierSignals';button.className='console-btn';
+ button.setAttribute('aria-label','Frontier events and distress signals');
+ button.setAttribute('aria-expanded','false');
+ button.innerHTML='<span aria-hidden="true">✧</span><span>Signals</span>';
+ menu.insertBefore(button,$('toggleLog'));
+ const panel=document.createElement('div');panel.id='frontierSignalsDrawer';
+ panel.className='hud drawer warp-drawer';
+ panel.innerHTML='<h3>Frontier Signals <span class="test-pill">LOCAL EVENTS</span></h3><div id="frontierSignalsBody"></div>';
+ area.appendChild(panel);
+ button.onclick=()=>{
+  const opening=!panel.classList.contains('open');
+  document.querySelectorAll('.drawer').forEach(d=>d.classList.remove('open'));
+  document.querySelectorAll('.console-btn[aria-expanded]').forEach(b=>b.setAttribute('aria-expanded','false'));
+  if(opening){panel.classList.add('open');button.setAttribute('aria-expanded','true');warp19RenderPanel();}
+ };
+ panel.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.signalRoute)warp19Route();
+  if(b.dataset.signalClaim)warp19Claim();
+  if(b.dataset.signalIgnore)warp19Finish('ignored');
+ });
+ warp19RenderPanel();
+}
+function warp19RenderPanel(){
+ const el=$('frontierSignalsBody');if(!el)return;
+ const a=S.roaming?.active;
+ if(a){
+  const local=a.system===S.system;
+  const dist=local?Math.round(Math.hypot(a.x-S.x,a.y-S.y)):null;
+  const time=Math.max(0,Math.ceil((a.expiresAt-Date.now())/1000));
+  el.innerHTML='<div class="warp19-event"><div class="warp19-label">'+
+    WARP19_LABELS[a.kind]+'</div><p class="warp-lede">'+WARP19_DESC[a.kind]+'</p>'+
+   '<p class="warp-lede">System: '+SYSTEMS[a.system].name+' · '+
+    (local?dist.toLocaleString()+' units away':'Return to the original system')+' · '+time+'s remaining</p>'+
+   (a.kind==='pirates'?'<p class="warp-lede">'+a.remaining+' hostile raider(s) left to defeat.</p>':'')+
+   '<div class="warp19-actions"><button data-signal-route="1" '+(!local?'disabled':'')+'>Plot signal</button>'+
+   (a.kind!=='pirates'?'<button data-signal-claim="1" '+(!local?'disabled':'')+'>Investigate</button>':'')+
+   '<button data-signal-ignore="1">Ignore</button></div></div>';
+ }else el.innerHTML='<p class="warp-lede">Fly through the outer reaches to detect abandoned ships, rescue transmissions, pirate raids and rare relic signatures. Signals are optional; safe ports remain protected.</p>';
+ const recent=S.roaming?.history||[];
+ el.innerHTML+='<h4 class="expansion-caption">Encounter log · '+(S.roaming?.completed||0)+' resolved</h4>'+
+   (recent.length?recent.slice(-6).reverse().map(x=>'<div class="v14-bulletin">'+
+    (WARP19_LABELS[x.kind]||'Signal')+' · '+(x.status==='completed'?'Resolved':x.status)+'</div>').join(''):
+   '<p class="warp-lede">No field operations recorded yet.</p>')+
+   '<p class="warp-lede">All rewards and events are part of the single-player local simulation.</p>';
+}
+function warp19Route(){
+ const a=S.roaming?.active;
+ if(!a||a.system!==S.system)return toast('No active signal in this system.');
+ if(a.kind==='pirates')toast('Pirates detected · prepare weapons.');
+ if(setAutopilot('point',a.x,a.y)){
+  $('frontierSignalsDrawer').classList.remove('open');
+  $('toggleFrontierSignals').setAttribute('aria-expanded','false');
+ }
+}
+function warp19EventPoint(){
+ const e=window.WarpFrontierEncounters;if(!e)return null;
+ const destination=autopilot?.path?.[autopilot.step];
+ const dir=destination?Math.atan2(destination.y-S.y,destination.x-S.x):
+  Math.hypot(S.vx,S.vy)>40?Math.atan2(S.vy,S.vx):S.angle;
+ return e.choosePosition(S,dir,WORLD,{
+  isSafe:factionSafeAt,obstacles:asteroids,
+  stations:[...STATIONS,...(S.outposts||[]).filter(o=>o.system===S.system)],
+  pathClear:(from,to)=>segmentClear(from.x,from.y,to.x,to.y,null,110)
+ });
+}
+function warp19Create(){
+ const rules=window.WarpFrontierEncounters;
+ if(!rules||S.rift?.inside||S.system==='homestead'||S.roaming.active||factionSafeAt(S.x,S.y))return false;
+ const spot=warp19EventPoint();if(!spot)return false;
+ const kind=rules.encounterType(S.roaming.ordinal);
+ const time=Date.now(),id=S.system+'-'+(S.roaming.ordinal+1)+'-'+time;
+ S.roaming.ordinal++;
+ S.roaming.distance=0;S.roaming.lastSpawnAt=time;
+ S.roaming.active={id,system:S.system,kind,x:spot.x,y:spot.y,
+  expiresAt:time+150000,remaining:kind==='pirates'?(SYSTEMS[S.system].tier>=2?2:1):0};
+ if(kind==='pirates')warp19EnsureRaiders();
+ log('Frontier signal: '+WARP19_LABELS[kind]+'. Open Signals or approach the beacon.');
+ toast('NEW SIGNAL · '+WARP19_LABELS[kind]);save();warp19RenderPanel();
+ return true;
+}
+function warp19EnsureRaiders(){
+ const a=S.roaming.active;
+ if(!a||a.kind!=='pirates'||a.system!==S.system)return;
+ const existing=drones.filter(d=>d.pirateEncounter===a.id).length;
+ const count=Math.max(0,a.remaining-existing),tier=Math.min(3,SYSTEMS[S.system].tier);
+ for(let i=0;i<count;i++){
+  const index=existing+i,theta=.4+index*2.6,xx=clamp(a.x+Math.cos(theta)*110,90,WORLD.w-90),
+   yy=clamp(a.y+Math.sin(theta)*110,90,WORLD.h-90);
+  const hp=45+tier*17;
+  drones.push({id:'raider-'+a.id+'-'+index,pirateEncounter:a.id,x:xx,y:yy,vx:0,vy:0,
+   angle:theta,hp,maxHp:hp,tier,region:1,cooldown:1.35});
+ }
+}
+function warp19RemoveRaiders(id){
+ for(let i=drones.length-1;i>=0;i--)if(drones[i].pirateEncounter===id)drones.splice(i,1);
+}
+function warp19Finish(status='completed'){
+ const a=S.roaming.active;if(!a)return;
+ if(a.kind==='pirates')warp19RemoveRaiders(a.id);
+ if(status==='completed')S.roaming.completed++;
+ S.roaming.history.push({kind:a.kind,status,system:a.system,at:Date.now()});
+ S.roaming.history=S.roaming.history.slice(-12);
+ S.roaming.active=null;S.roaming.distance=0;
+ S.roaming.lastSpawnAt=Date.now();
+ if(status==='expired'||status==='ignored')log('Frontier signal '+status+'; you can continue your journey.');
+ save();warp19RenderPanel();renderUI(false);
+}
+function warp19Claim(){
+ const a=S.roaming.active;
+ if(!a||a.system!==S.system)return toast('No nearby active signal.');
+ if(a.kind==='pirates')return toast('Defeat the raiders to claim the bounty.');
+ const d=Math.hypot(S.x-a.x,S.y-a.y),speed=Math.hypot(S.vx,S.vy);
+ if(d>170)return toast('Fly within 170 units of the signal.');
+ if(speed>115)return toast('Slow down to investigate the signal.');
+ let reward=0,experience=0,fragments=0,cargo=0,ore='';
+ if(a.kind==='wreck'){
+  reward=65;experience=15;ore=S.system==='umbra'?'void':S.system==='helios'?'dust':'neon';
+  cargo=Math.min(2,Math.max(0,cargoCap()-cargoCount()));
+ }else if(a.kind==='distress'){reward=100;experience=30;}
+ else if(a.kind==='cache'){reward=135;experience=40;fragments=2;}
+ else return;
+ S.credits+=reward;S.xp+=experience;
+ if(fragments)S.blueprintFragments=(S.blueprintFragments||0)+fragments;
+ if(cargo)S.ore[ore]=(S.ore[ore]||0)+cargo;
+ spawnParticles(a.x,a.y,a.kind==='cache'?'#d5b0ff':'#84eaf5',18,130);
+ log(WARP19_LABELS[a.kind]+' resolved: +'+reward+' SC, +'+experience+' XP'+
+  (cargo?', +'+cargo+' '+OREDEF[ore].name+' ore':'')+
+  (fragments?', +'+fragments+' blueprint fragments':'')+'.');
+ toast('SIGNAL COMPLETE · +'+reward+' SC');
+ warp19Finish('completed');renderUI(true);
+}
+function warp19PirateDestroyed(d){
+ const event=S.roaming?.active;
+ const idx=drones.indexOf(d);if(idx>=0)drones.splice(idx,1);
+ if(!event||event.id!==d.pirateEncounter||event.kind!=='pirates')return;
+ event.remaining=Math.max(0,event.remaining-1);
+ if(event.remaining===0){
+  S.credits+=115;S.xp+=35;
+  log('Raiders defeated · patrol bounty +115 SC, +35 XP.');
+  toast('PIRATE BOUNTY · +115 SC');
+  warp19Finish('completed');renderUI(true);
+ }else{log('Raider disabled · '+event.remaining+' target remains.');save();warp19RenderPanel();}
+}
+function warp19Tick(dt){
+ const p={system:S.system,x:S.x,y:S.y},rules=window.WarpFrontierEncounters;
+ if(!rules)return;
+ const moved=rules.distanceStep(warp19Previous,p);warp19Previous=p;
+ const a=S.roaming?.active;
+ if(S.system==='homestead'||S.rift?.inside)return;
+ if(a){
+  if(Date.now()>=a.expiresAt){warp19Finish('expired');return;}
+  if(a.system===S.system){
+   if(Math.hypot(S.x-a.x,S.y-a.y)>12500){warp19Finish('ignored');return;}
+   if(a.kind==='pirates')warp19EnsureRaiders();
+   else if(Math.hypot(S.x-a.x,S.y-a.y)<160&&Math.hypot(S.vx,S.vy)<95)warp19Claim();
+  }
+  return;
+ }
+ if(factionSafeAt(S.x,S.y))return;
+ S.roaming.distance+=moved;
+ const needed=S.roaming.ordinal===0?4500:11000;
+ if(S.roaming.distance>=needed&&Date.now()-S.roaming.lastSpawnAt>=25000)warp19Create();
+}
+function warp19Click(x,y){
+ const a=S.roaming?.active;
+ if(!a||a.system!==S.system||Math.hypot(x-a.x,y-a.y)>95)return false;
+ warp19Route();return true;
+}
+function warp19Draw(){
+ const a=S.roaming?.active;if(!a||a.system!==S.system||S.rift?.inside)return;
+ const [x,y]=worldToScreen(a.x,a.y),w=innerWidth,h=innerHeight;
+ if(x< -140||x>w+140||y< -140||y>h+140)return;
+ const t=performance.now()/1000,colors={wreck:'#8fe9ff',distress:'#a1ffba',pirates:'#ff8f9f',cache:'#d2a5ff'};
+ const color=colors[a.kind]||'#8fe9ff',r=25+Math.sin(t*3)*4;
+ ctx.save();ctx.translate(x,y);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=16;
+ ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.stroke();
+ if(a.kind==='wreck'){
+  ctx.rotate(t*.15);ctx.strokeRect(-12,-9,24,18);ctx.fillRect(-3,-3,6,6);
+ }else if(a.kind==='pirates'){
+  ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(13,11);ctx.lineTo(-13,11);ctx.closePath();ctx.stroke();
+ }else if(a.kind==='cache'){
+  ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(12,0);ctx.lineTo(0,14);ctx.lineTo(-12,0);ctx.closePath();ctx.stroke();
+ }else{ctx.beginPath();ctx.arc(0,0,4,0,7);ctx.fill();ctx.beginPath();ctx.arc(0,0,13,-1.1,1.1);ctx.stroke();}
+ ctx.shadowBlur=0;ctx.textAlign='center';ctx.font='bold 11px system-ui';
+ ctx.fillText(WARP19_LABELS[a.kind],0,-42);ctx.restore();
+}
+
 function warp18Init(){
  S.exploredSystems=S.exploredSystems&&typeof S.exploredSystems==='object'&&!Array.isArray(S.exploredSystems)?S.exploredSystems:{};
  if(!Object.keys(S.exploredSystems).length&&S.system!=='homestead')S.exploredSystems[S.system]=true;
@@ -774,7 +1004,7 @@ function updateMining(dt){
 
 
 function updateDrones(dt){const safe=factionSafeAt(S.x,S.y); for(const d of drones){const dx=S.x-d.x, dy=S.y-d.y, dist=Math.hypot(dx,dy), tier=d.tier; if(dist<840&&!safe){const [nx,ny]=norm(dx,dy); d.vx+=nx*(70+tier*12)*dt; d.vy+=ny*(70+tier*12)*dt; d.angle=Math.atan2(ny,nx); if(dist<260){d.vx+=-d.vx*1.2*dt; d.vy+=-d.vy*1.2*dt}} else {d.vx+=Math.cos(d.angle)*14*dt; d.vy+=Math.sin(d.angle)*14*dt; d.angle+=(Math.random()-.5)*.4*dt} const sp=Math.hypot(d.vx,d.vy), mx=90+tier*40; if(sp>mx){d.vx*=mx/sp; d.vy*=mx/sp} d.x=clamp(d.x+d.vx*dt,20,WORLD.w-20); d.y=clamp(d.y+d.vy*dt,20,WORLD.h-20);const portD=Math.hypot(d.x-WORLD.port.x,d.y-WORLD.port.y);if(portD<WORLD.safeRadius+165){const [nx,ny]=norm(d.x-WORLD.port.x,d.y-WORLD.port.y);d.x=WORLD.port.x+nx*(WORLD.safeRadius+165);d.y=WORLD.port.y+ny*(WORLD.safeRadius+165);d.vx+=nx*120;d.vy+=ny*120;}d.cooldown-=dt; if(dist<520&&d.cooldown<=0&&!safe){d.cooldown=1.20-Math.min(.82,tier*.092); const ang=Math.atan2(S.y-d.y,S.x-d.x); bullets.push({from:'drone',x:d.x+Math.cos(ang)*18,y:d.y+Math.sin(ang)*18,vx:Math.cos(ang)*(320+tier*55),vy:Math.sin(ang)*(320+tier*55),life:1.8,damage:6+tier*5,color:tier>2?'#ff9fe8':'#ff8ea2'})}}}
-function updateBullets(dt){for(let i=bullets.length-1;i>=0;i--){const b=bullets[i]; b.x+=b.vx*dt; b.y+=b.vy*dt; b.life-=dt; if(b.life<=0||b.x<0||b.y<0||b.x>WORLD.w||b.y>WORLD.h){bullets.splice(i,1);continue} if(b.from==='player'){if(factionHitPatrol(b)){bullets.splice(i,1);continue;}if(extBossHit(b)){bullets.splice(i,1);continue;}let hit=false; for(const d of drones){if(Math.hypot(d.x-b.x,d.y-b.y)<18){d.hp-=b.damage;damagePopups.push({x:d.x,y:d.y-22,amount:Math.round(b.damage),life:.75});spawnParticles(b.x,b.y,b.color,5,80); hit=true; if(d.hp<=0){S.stats.kills=(S.stats.kills||0)+1;S.credits+=24+d.tier*14; S.xp+=18+d.tier*7; spawnParticles(d.x,d.y,'#ff9ea9',16,140); sfx.boom(); log('Destroyed a tier '+d.tier+' drone.'); const home=ZONES[d.region]||ZONES[1];d.x=home.x1+200+Math.random()*(home.x2-home.x1-400);d.y=home.y1+200+Math.random()*(home.y2-home.y1-400);d.hp=d.maxHp; d.vx=d.vy=0} break}} if(hit){bullets.splice(i,1); continue}} else {if(Math.hypot(S.x-b.x,S.y-b.y)<16){if(!factionSafeAt(S.x,S.y))takeDamage(b.damage);bullets.splice(i,1);continue}}}}
+function updateBullets(dt){for(let i=bullets.length-1;i>=0;i--){const b=bullets[i]; b.x+=b.vx*dt; b.y+=b.vy*dt; b.life-=dt; if(b.life<=0||b.x<0||b.y<0||b.x>WORLD.w||b.y>WORLD.h){bullets.splice(i,1);continue} if(b.from==='player'){if(factionHitPatrol(b)){bullets.splice(i,1);continue;}if(extBossHit(b)){bullets.splice(i,1);continue;}let hit=false; for(const d of drones){if(Math.hypot(d.x-b.x,d.y-b.y)<18){d.hp-=b.damage;damagePopups.push({x:d.x,y:d.y-22,amount:Math.round(b.damage),life:.75});spawnParticles(b.x,b.y,b.color,5,80); hit=true; if(d.hp<=0){S.stats.kills=(S.stats.kills||0)+1;S.credits+=24+d.tier*14; S.xp+=18+d.tier*7; spawnParticles(d.x,d.y,'#ff9ea9',16,140); sfx.boom(); log('Destroyed a tier '+d.tier+' drone.'); if(d.pirateEncounter)warp19PirateDestroyed(d);else {const home=ZONES[d.region]||ZONES[1];d.x=home.x1+200+Math.random()*(home.x2-home.x1-400);d.y=home.y1+200+Math.random()*(home.y2-home.y1-400);d.hp=d.maxHp; d.vx=d.vy=0}} break}} if(hit){bullets.splice(i,1); continue}} else {if(Math.hypot(S.x-b.x,S.y-b.y)<16){if(!factionSafeAt(S.x,S.y))takeDamage(b.damage);bullets.splice(i,1);continue}}}}
 function updateAsteroidCollision(){
  for(const a of asteroids){if(a.ore<=0)continue;
   const d=Math.hypot(S.x-a.x,S.y-a.y),rr=a.r+20;
@@ -840,7 +1070,8 @@ function drawTacticalRadar(g,mm){if(typeof warpRadar==='function'&&warpRadar(g,m
     g.fillStyle=gate.color;g.beginPath();
     g.arc(x+gate.x/WORLD.w*w,y+gate.y/WORLD.h*h,2.5,0,Math.PI*2);g.fill();
   }
-  const pilotX=x+S.x/WORLD.w*w,pilotY=y+S.y/WORLD.h*h;
+  const event=S.roaming?.active;if(event&&event.system===S.system){g.fillStyle=event.kind==='pirates'?'#ff788e':event.kind==='cache'?'#d6acff':'#8ae8e9';g.fillRect(x+event.x/WORLD.w*w-2,y+event.y/WORLD.h*h-2,5,5);}
+   const pilotX=x+S.x/WORLD.w*w,pilotY=y+S.y/WORLD.h*h;
   g.strokeStyle='rgba(255,255,255,.8)';g.lineWidth=1;
   g.beginPath();g.arc(pilotX,pilotY,5,0,Math.PI*2);g.stroke();
   g.fillStyle='#fff';g.beginPath();g.arc(pilotX,pilotY,2.7,0,Math.PI*2);g.fill();
@@ -880,7 +1111,7 @@ function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=in
  for(const p of particles){const [x,y]=worldToScreen(p.x,p.y); ctx.globalAlpha=Math.max(0,p.life); ctx.fillStyle=p.color; ctx.fillRect(x,y,p.size,p.size); ctx.globalAlpha=1}
  for(const n of damagePopups){const [dx,dy]=worldToScreen(n.x,n.y);if(dx>0&&dx<w&&dy>0&&dy<h){ctx.fillStyle='rgba(255,222,153,'+Math.min(1,n.life/.45)+')';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText('-'+n.amount,dx,dy);ctx.textAlign='left';}}
  if(clickMarker){const [mx,my]=worldToScreen(clickMarker.x,clickMarker.y); if(mx>-80&&mx<w+80&&my>-80&&my<h+80){const pulse=(Math.sin(t*5)+1)/2; ctx.strokeStyle='rgba(114,235,255,.95)'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(mx,my,10+pulse*8,0,7); ctx.stroke(); ctx.beginPath(); ctx.arc(mx,my,24+pulse*12,0,7); ctx.stroke(); ctx.fillStyle='rgba(114,235,255,.18)'; ctx.beginPath(); ctx.arc(mx,my,5,0,7); ctx.fill();}}
- extDraw();v14DrawFactionHull(ctx,w/2,h/2,S.angle,1);
+ extDraw();warp19Draw();v14DrawFactionHull(ctx,w/2,h/2,S.angle,1);
  const radarBox=hudRadarBounds(w,h);if(radarBox)drawTacticalRadar(ctx,radarBox);drawNavigationChart(); ctx.restore()}
 /* TOKENVERSE 0.12 — local, simulated extension. Runs inside the main game closure.
  * Uses existing S, SHIPS, GUNS, WORLD, asteroids, drones, bullets, ctx, etc.
@@ -2140,7 +2371,7 @@ function warp16Transit(id){
  log('Meridian transit complete: '+to.name+' · 85 SC fare.');
  toast('Arrived at '+to.name);save();renderUI(true);
 }
-v14Init();v14SpawnConvoys();warpInit();warp16Init();warp17Init();warp18Init();factionInit();warpInitializeUI();
+v14Init();v14SpawnConvoys();warpInit();warp16Init();warp17Init();warp18Init();warp19Init();factionInit();warpInitializeUI();warp19BuildUI();
 function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Chamber",tier:"EVENT"}:currentZone();$('systemTag').textContent=SYSTEMS[S.system].name;$('factionTag').textContent=S.faction?FACTIONS[S.faction].name:'Unaligned';$('factionTag').style.color=S.faction?FACTIONS[S.faction].color:'#dceafa'; $('zoneTag').textContent=zone.name+' · '+zone.tier; $('dockTag').textContent=dockedStation?('Dock: '+dockedStation.name):'Dock: no'; $('hostileTag').textContent=drones.filter(d=>Math.hypot(d.x-S.x,d.y-S.y)<700).length+' hostiles'; $('coordsTag').textContent='X '+Math.round(S.x)+' • Y '+Math.round(S.y); $('topCredits').innerHTML=S.credits+' <small>SC</small>'; $('hpText').textContent=Math.round(100*S.hp/S.maxHp)+'%'; $('energyText').textContent=Math.round(S.energy)+'%'; $('cargoText').textContent=cargoCount()+' / '+cargoCap(); $('speedText').textContent=Math.round(Math.hypot(S.vx,S.vy)); $('xpText').textContent=S.xp; $('gunText').textContent=GUNS[S.equipped.gun].name.replace(' Blaster','').replace(' Cannon','');$('damageBonusText').textContent='+'+damagePercent()+'%';$('combatReadout').textContent=activeShip().name+' · '+actualDamage()+' DMG / hit · '+gunDps()+' DPS · Mk-'+gunLevel(); $('assistBtnState').textContent=S.settings.assist?'ON':'OFF'; $('hpBar').style.width=(100*S.hp/S.maxHp)+'%'; $('energyBar').style.width=S.energy+'%'; $('cargoBar').style.width=(100*cargoCount()/cargoCap())+'%'; $('stationBtn').disabled=!dockedStation; $('stationPrompt').classList.toggle('hidden', !!dockedStation); $('stationSubtitle').textContent=dockedStation?('Docked at '+dockedStation.name):'Dock first'; $('stationTitle').textContent=dockedStation?(dockedStation.name+' • Ship console'):'Station services'; if(!dockedStation)$('stationModal').classList.remove('open'); $('toggleSound').setAttribute('aria-pressed',String(S.settings.sound)); $('toggleSound').title=S.settings.sound?'Mute audio':'Enable audio';
  $('cruiseTag').textContent=warp18Cruising?'WARP CRUISE · '+Math.round(Math.hypot(S.vx,S.vy)).toLocaleString()+' units/s':
    autopilot?'Autopilot engaged · J for Pulse Jump':'Plot a long route for automatic Warp Cruise';
@@ -2155,12 +2386,12 @@ function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Cha
  $('shipList').innerHTML=Object.entries(SHIPS).filter(([id,ship])=>shipFilter==='all'||(ship.role||'premium')===shipFilter).map(([id,ship])=>`<div class="rowItem"><div><strong>${ship.name}${id===S.shipId?' · ACTIVE':''}</strong><small>${ship.desc}</small><div class="ship-stats"><span>Hull ${ship.hull}</span><span>Speed ${Math.round(ship.speed*100)}%</span><span>Thrust ${Math.round(ship.accel*100)}%</span><span>DMG +${Math.round(ship.damageBonus*100)}%</span><span>Cargo ${ship.cargo>=0?'+':''}${ship.cargo}</span></div><small>${S.ownedShips[id]?'Owned · Ready for launch':costText(ship.cost)}</small></div><div class="inlineBtns"><button ${id===S.shipId?'disabled':''} ${S.ownedShips[id]?`data-equip-ship="${id}"`:`data-buy-ship="${id}"`}>${id===S.shipId?'Piloting':S.ownedShips[id]?'Deploy':'Purchase'}</button></div></div>`).join('');
  $('equipList').innerHTML=`<div class="rowItem"><div><strong>Primary weapons</strong><small>Equip a crafted weapon.</small></div><div></div></div>${Object.entries(GUNS).filter(([k])=>S.crafted.guns[k]).map(([k,v])=>`<div class="rowItem"><div><strong>${v.name}</strong><small>${v.desc}</small></div><div><button ${S.equipped.gun===k?'disabled':''} data-equip-cat="guns" data-equip="${k}">${S.equipped.gun===k?'Equipped':'Equip'}</button></div></div>`).join('')}<div class="rowItem"><div><strong>Utilities</strong><small>Equip one utility module.</small></div><div></div></div>${Object.entries(UTILS).filter(([k])=>S.crafted.utils[k]).map(([k,v])=>`<div class="rowItem"><div><strong>${v.name}</strong><small>${v.desc}</small></div><div><button ${S.equipped.utility===k?'disabled':''} data-equip-cat="utils" data-equip="${k}">${S.equipped.utility===k?'Equipped':'Equip'}</button></div></div>`).join('')}`;
  }
-function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt))return;updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt)}
+function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt))return;updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt)}
 let lastPersist=performance.now();function loop(ts){const dt=Math.min(.05,(ts-lastTime)/1000); lastTime=ts; update(dt); draw(); if((ts|0)%260<17) renderUI(false); if(ts-lastPersist>4000){lastPersist=ts;save();} requestAnimationFrame(loop)}
 function toggleDrawer(id){const d=$(id),opening=!d.classList.contains('open');document.querySelectorAll('.drawer').forEach(el=>el.classList.remove('open')); if(opening)d.classList.add('open');for(const [btn,panel] of Object.entries({toggleWallet:'walletDrawer',toggleCargo:'cargoDrawer',toggleMap:'mapDrawer',toggleGates:'gatesDrawer',toggleFaction:'factionDrawer'}))$(btn).setAttribute('aria-expanded',String($(panel).classList.contains('open')));}
-addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
+addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();else if(lower==='e'&&!e.repeat)warp19Claim();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
 addEventListener('keyup',e=>{pressed[e.key]=false; pressed[e.key.toLowerCase()]=false});
-canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const wx=S.x+(e.clientX-innerWidth/2), wy=S.y+(e.clientY-innerHeight/2);if(S.rift?.inside){v14RiftClick(wx,wy);return;} if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
+canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const wx=S.x+(e.clientX-innerWidth/2), wy=S.y+(e.clientY-innerHeight/2);if(S.rift?.inside){v14RiftClick(wx,wy);return;} if(warp19Click(wx,wy))return;if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
 $('toggleWallet').onclick=()=>toggleDrawer('walletDrawer'); $('toggleCargo').onclick=()=>toggleDrawer('cargoDrawer'); $('toggleMap').onclick=()=>toggleDrawer('mapDrawer'); $('toggleGates').onclick=()=>{renderGates();toggleDrawer('gatesDrawer')};$('toggleFaction').onclick=()=>{renderFactionUI();toggleDrawer('factionDrawer')}; $('gateList').addEventListener('click',e=>{const b=e.target.closest('[data-gate]');if(b){routeGate(b.dataset.gate);$('gatesDrawer').classList.remove('open');}}); $('toggleLog').onclick=()=>{const hidden=$('quickLog').classList.toggle('hidden');$('toggleLog').setAttribute('aria-expanded',String(!hidden));}; $('toggleSound').onclick=()=>{S.settings.sound=!S.settings.sound; renderUI(); save(); toast(S.settings.sound?'Sound on':'Sound off')};
 $('stationBtn').onclick=()=>{if(dockedStation){renderUI();$('stationModal').classList.add('open');} else toast('Dock first')}; $('closeStationBtn').onclick=()=>$('stationModal').classList.remove('open'); $('mineNearestBtn').onclick=mineNearest; $('pulseJumpBtn').onclick=warp18PulseJump; $('portBtn').onclick=()=>routeToStation('port'); $('assistBtn').onclick=()=>{S.settings.assist=!S.settings.assist; renderUI(); save()}; $('resetBtn').onclick=()=>{if(confirm('Delete the local test pilot save and its demo assets? The next new save will receive a fresh test grant.')){localStorage.removeItem('tokenverse-deep-space-v10');localStorage.removeItem('tokenverse-fullscreen-v08'); localStorage.removeItem('tokenverse-fullscreen-v07'); localStorage.removeItem('tokenverse-simplified-v06'); localStorage.removeItem('tokenverse-pages-v1'); location.reload()}}; $('resetInLedger').onclick=()=>$('resetBtn').click();
 $('shipFilter').addEventListener('change',e=>{shipFilter=e.target.value;renderUI(true);});
@@ -2216,7 +2447,7 @@ $('factionDrawer').addEventListener('click',e=>{const b=e.target.closest('button
 $('factionSelectModal').addEventListener('click',e=>{const b=e.target.closest('[data-faction-join]');if(b)factionJoin(b.dataset.factionJoin);});
 $('factionHomeBtn').onclick=factionHomeRoute;
 $('hullColor').value=S.ship.hull; $('accentColor').value=S.ship.accent;
-renderLog();renderUI();setTab('market');save();log('Warp Coin v0.18 online · 192k × 115.2k galaxy · Warp Cruise and Pulse Jump.');requestAnimationFrame(loop);
+renderLog();renderUI();setTab('market');save();log('Warp Coin v0.19 online · 192k × 115.2k living galaxy · frontier encounters active.');requestAnimationFrame(loop);
 })();
 </script>
 </body>
