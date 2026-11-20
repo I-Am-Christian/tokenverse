@@ -659,41 +659,77 @@ function updateAim(){
 
 /* v0.18: optional rapid navigation; original world size remains unchanged. */
 let warp18Cruising=false,warp18CruiseCap=0;
-function warp18SafeCorridor(goal,limit=2600,pad=185){
+
+/* v0.20: one-click Warp Drive navigation plus persistent sound settings. */
+function warp20Init(){
+ S.settings.warpDriveEnabled=true;
+ S.settings.audioVolume=clamp(Number.isFinite(+S.settings.audioVolume)?+S.settings.audioVolume:.65,0,1);
+ warpAudio?.setVolume(S.settings.audioVolume);
+ S.saveVersion=20;
+}
+function warp20ToggleDrive(){
+ if(S.rift?.inside)return toast('Warp Drive is unavailable inside the Heart Chamber.');
+ S.settings.warpDriveEnabled=true;
+ if(!autopilot){
+  const options=S.system==='homestead'?[warpColonyStation()]:
+   STATIONS.filter(st=>st.kind!=='faction'&&Math.hypot(st.x-S.x,st.y-S.y)>2500);
+  const closest=options.sort((a,b)=>Math.hypot(a.x-S.x,a.y-S.y)-Math.hypot(b.x-S.x,b.y-S.y))[0];
+  if(!closest)return toast('Open Navigation or click space to choose a destination.');
+  if(setAutopilot('dock',closest.x,closest.y,closest)){
+   log('Warp Drive plotted a safe course to '+closest.name+'.');
+   toast('WARP COURSE · '+closest.name);
+   warpAudio?.event('warp');
+  }
+ }else{
+  // The primary Warp Drive button also performs the same safe hop as J/Pulse Jump.
+  warp18PulseJump();
+ }
+ save();renderUI(false);
+}
+
+function warp18SafeCorridor(goal,limit=950,pad=95){
  const dist=Math.hypot(goal.x-S.x,goal.y-S.y),engine=window.WarpTravelDrive;
- if(dist<2600||!engine)return false;
- const step=Math.min(limit,Math.max(0,dist-650))/dist;
+ if(dist<950||!engine)return false;
+ const step=Math.min(limit,Math.max(0,dist-210))/dist;
  const end={x:S.x+(goal.x-S.x)*step,y:S.y+(goal.y-S.y)*step};
  if(!segmentClear(S.x,S.y,end.x,end.y,autopilot?.exclude||null,pad))return false;
- if(engine.corridorDanger(S,end,drones,650))return false;
- if(engine.corridorDanger(S,end,S.system==='homestead'?[warpColonyStation()]:STATIONS,550))return false;
+ if(engine.corridorDanger(S,end,drones,430))return false;
+ if(engine.corridorDanger(S,end,S.system==='homestead'?[warpColonyStation()]:STATIONS,410))return false;
  return true;
 }
 function warp18PulseJump(){
  const drive=window.WarpTravelDrive;
- if(!autopilot||!drive)return toast('Plot a distant route to use Pulse Jump (J).');
- if(S.rift?.inside)return toast('Pulse disabled inside the Heart Chamber.');
- if(S.energy<drive.CFG.pulseEnergy)return toast('Need '+drive.CFG.pulseEnergy+' energy for Pulse Jump.');
+ if(!autopilot||!drive)return toast('Plot a course first. Use Warp Drive or Navigation.');
+ if(S.rift?.inside)return toast('Warp unavailable inside the Heart Chamber.');
+ if(S.energy<drive.CFG.pulseEnergy)return toast('Warp needs '+drive.CFG.pulseEnergy+' energy.');
  const cooldown=drive.CFG.pulseCooldownMs-(Date.now()-(S.lastPulseAt||0));
- if(cooldown>0)return toast('Pulse cooling down: '+Math.ceil(cooldown/1000)+'s');
- const goal=autopilot.path[autopilot.step]||{x:autopilot.x,y:autopilot.y};
- const end=drive.pulseDestination(S,goal);
- if(!end)return toast('Pulse Jump requires a longer clear route.');
- if(!segmentClear(S.x,S.y,end.x,end.y,autopilot.exclude,220)||
-  drive.corridorDanger(S,end,drones,850)||
-  drive.corridorDanger(S,end,S.system==='homestead'?[warpColonyStation()]:STATIONS,650))
-  return toast('Route contains hazards. Autopilot will steer around them.');
- const start={x:S.x,y:S.y};
+ if(cooldown>0)return toast('Warp recharging · '+Math.ceil(cooldown/1000)+'s');
+ const route=autopilot;
+ const plan=window.WarpRoute?.nextHop?.(S,route.path,route.step,{
+  maxRange:drive.CFG.pulseMaxRange,endpointGap:drive.CFG.pulseEndpointGap,
+  isClear:(from,to)=>
+    segmentClear(from.x,from.y,to.x,to.y,route.exclude,83)&&
+    !drive.corridorDanger(from,to,drones,390)&&
+    !drive.corridorDanger(from,to,S.system==='homestead'?[warpColonyStation()]:STATIONS,410)
+ });
+ const goal=route.path[route.step]||{x:route.x,y:route.y};
+ const legacy=drive.pulseDestination(S,goal);
+ const fallback=legacy&&segmentClear(S.x,S.y,legacy.x,legacy.y,route.exclude,105)&&
+  !drive.corridorDanger(S,legacy,drones,400)&&
+  !drive.corridorDanger(S,legacy,S.system==='homestead'?[warpColonyStation()]:STATIONS,410)
+  ?{...legacy,nextStep:route.step}:null;
+ const hop=plan||fallback;
+ if(!hop||hop.distance<250)return toast('Warp route obstructed. Autopilot will fly to a clear corridor.');
  S.energy-=drive.CFG.pulseEnergy;S.lastPulseAt=Date.now();
- S.x=clamp(end.x,22,WORLD.w-22);S.y=clamp(end.y,22,WORLD.h-22);
+ S.x=clamp(hop.x,22,WORLD.w-22);S.y=clamp(hop.y,22,WORLD.h-22);
  S.vx=0;S.vy=0;dockedStation=null;
+ route.step=hop.nextStep;route.lastPlan=performance.now();
  $('stationModal').classList.remove('open');
- spawnParticles(start.x,start.y,'#a1dcff',18,260);
- spawnParticles(S.x,S.y,'#7afad7',30,280);
+ spawnParticles(S.x,S.y,'#b1f1ff',18,220);
  if(!S.settings.reducedMotion)shake=Math.max(shake,5);
- log('Pulse Drive skipped '+Math.round(end.distance)+' units of clear space.');
- toast('PULSE JUMP · '+Math.round(end.distance).toLocaleString()+' units');
- save();renderUI(false);
+ log('Warp jumped '+Math.round(hop.distance).toLocaleString()+' units along a safe plotted route.');
+ toast('WARP JUMP · '+Math.round(hop.distance).toLocaleString()+' units');
+ warpAudio?.event('pulse');save();renderUI(false);
 }
 function warp18SystemDiscovery(id){
  if(!SYSTEMS[id]||id==='homestead'||S.exploredSystems[id])return;
@@ -960,11 +996,13 @@ function updateShip(dt){
   // Braking-distance target speed with cross-track correction. No teleport or snap-to-point.
   const [nx,ny]=norm(dx,dy);
   const finalStep=route.step===route.path.length-1;
-  warp18CruiseCap=window.WarpTravelDrive?.cruiseSpeed(dist,drive,S.upgrades.thrusters,warp18SafeCorridor(goal))||0;
+  warp18CruiseCap=S.settings.warpDriveEnabled?(window.WarpTravelDrive?.cruiseSpeed(dist,drive,S.upgrades.thrusters,warp18SafeCorridor(goal))||0):0;
   warp18Cruising=warp18CruiseCap>0;
+  if(warp18Cruising&&!warp20PreviousCruise)warpAudio?.event('warp');
+  warp20PreviousCruise=warp18Cruising;
   const driveAccel=warp18Cruising?Math.max(4100,accel*9):accel;
   const cruise=warp18Cruising?
-   Math.min(warp18CruiseCap,Math.sqrt(2*driveAccel*Math.max(0,dist-600))*.85):
+   Math.min(warp18CruiseCap,Math.max(400,(dist-330)*3.1),Math.sqrt(2*driveAccel*Math.max(0,dist-230))*.91):
    finalStep?Math.min(245,Math.sqrt(2*accel*Math.max(0,dist-24))*.65):
     Math.min(220,Math.sqrt(2*accel*Math.max(0,dist-35))*.7);
   const wantVx=nx*cruise,wantVy=ny*cruise;
@@ -2395,7 +2433,7 @@ function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Cha
  $('toggleSound').classList.toggle('warp20-sound-on',!!S.settings.sound);
  $('warpDriveBtn').classList.toggle('warp20-active',!!autopilot&&!!S.settings.warpDriveEnabled);
  $('warpDriveState').textContent=S.settings.warpDriveEnabled?(autopilot?'ON':'READY'):'OFF';
- $('cruiseTag').textContent=warp18Cruising?'WARP CRUISE · '+Math.round(Math.hypot(S.vx,S.vy)).toLocaleString()+' units/s':
+ $('cruiseTag').textContent=warp18Cruising?'WARP DRIVE ENGAGED · '+Math.round(Math.hypot(S.vx,S.vy)).toLocaleString()+' units/s':
    autopilot?'Autopilot engaged · J for Pulse Jump':'Plot a long route for automatic Warp Cruise';
  $('pulseJumpBtn').disabled=!autopilot||S.energy<(window.WarpTravelDrive?.CFG.pulseEnergy||28)||!!S.rift?.inside;
  if(!includePanels)return;renderGates();extRenderUI();renderFactionUI();v14RenderUI();warpRenderIfOpen();warp16FrontierRender();
