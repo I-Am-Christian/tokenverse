@@ -47,11 +47,21 @@
     }
     function event(name){
       if(!enabled||!context)return;
-      const now=context.currentTime;if(now-(last[name]||-10)<(name==='laser'?.06:name==='engine'?.25:.12))return;last[name]=now;
+      const now=context.currentTime;const gunShot=name.startsWith('gun-');if(now-(last[name]||-10)<(gunShot?.055:name==='laser'?.06:name==='engine'?.25:.12))return;last[name]=now;
       if(name==='warp'){beep(105,.75,'sawtooth',.15,4.3);beep(310,.85,'sine',.18,.42);}
       else if(name==='pulse'){beep(230,.5,'sawtooth',.16,2.8);beep(90,.9,'triangle',.22,.48);}
       else if(name==='signal'){beep(430,.24,'sine',.19,1.5);beep(660,.32,'triangle',.14,.9);}
       else if(name==='reward'){beep(530,.2,'triangle',.14,1.36);beep(790,.4,'sine',.16,1.25);}
+      else if(name.startsWith('gun-')){
+        const gun=name.slice(4);
+        if(gun==='scatter'||gun==='flak'){beep(210,.14,'sawtooth',.13,.48);beep(405,.065,'triangle',.11,.7);}
+        else if(gun==='rail'){beep(1040,.2,'sine',.13,.2);beep(370,.24,'sawtooth',.08,.76);}
+        else if(gun==='plasma'){beep(195,.27,'sine',.18,2.5);beep(510,.18,'triangle',.08,.65);}
+        else if(gun==='siege'){beep(95,.52,'sawtooth',.19,.42);beep(185,.36,'triangle',.11,1.8);}
+        else if(gun==='diamond'){beep(1020,.075,'triangle',.11,.74);}
+        else if(gun==='arc'||gun==='ion'){beep(800,.14,'sawtooth',.1,1.48);}
+        else beep(680,.115,'square',.11,.63);
+      }
       else if(name==='laser'){beep(690,.085,'square',.1,.65);}
       else if(name==='hit'){beep(160,.2,'sawtooth',.15,.55);}
       else if(name==='blast'){beep(115,.4,'sawtooth',.22,.38);}
