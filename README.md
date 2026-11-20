@@ -1,3 +1,13 @@
+# Warp Coin v0.21 — Weapons Reforged
+
+**Play:** https://i-am-christian.github.io/tokenverse/ (new version appears after the main branch deploys).
+
+**New weapon animations:** Bright muzzle flashes, different projectiles for pulse, scatter, railgun, plasma, diamond, arc/ion, flak, and siege weapons; ballistic tracers, plasma glows, electrical arcs, laser streaks, impact rings and larger elimination shockwaves. Also added hit popups, boss and faction impacts, **hold F** to auto-fire, and a touch-friendly **FIRE** button (press and hold). Inside peaceful protected stations, shooting generates a harmless holographic preview instead of dealing damage. Rift weapons receive the same graphics treatment. Original procedural sounds now vary by weapon. [See v0.21 release notes](WARP_COIN_V021.md).
+
+The huge **192,000 × 115,200** world, ships, upgrades, game economy, saved progress, Warp Drive, trading and discoveries are preserved. The game remains a local single-player simulation; **no Supabase project was connected**. The future backend must use a completely separate new Supabase project, not Hello Earth.
+
+---
+
 # Warp Coin v0.20 — Hyperdrive & Living Galaxy
 
 **Play the game:** https://i-am-christian.github.io/tokenverse/

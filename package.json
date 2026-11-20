@@ -1,8 +1,8 @@
 {
   "name": "warp-coin",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "private": true,
-  "description": "Warp Coin galaxy game with functional warp travel, procedurally improved graphics and opt-in space sound",
+  "description": "Warp Coin solo space game with animated weapons, responsive combat and safe warp travel",
   "type": "module",
   "scripts": {
     "start": "node server.js",
