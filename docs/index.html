@@ -507,9 +507,9 @@ function upgradeGun(id=S.equipped.gun){if(!dockedStation)return toast('Dock firs
 function buyShip(id){if(!dockedStation)return toast('Dock first');const ship=SHIPS[id];if(!ship||S.ownedShips[id])return;if(!spend(ship.cost))return toast('Need '+costText(ship.cost));S.ownedShips[id]=true;log('Purchased '+ship.name+'.');toast(ship.name+' added to hangar');save();renderUI(true);}
 function equipShip(id){if(!dockedStation)return toast('Dock first');if(!S.ownedShips[id]||!SHIPS[id])return;const ratio=S.hp/Math.max(1,S.maxHp);S.shipId=id;S.maxHp=activeShip().hull+(S.equipped.utility==='shield'?20:0);S.hp=Math.max(1,Math.min(S.maxHp,Math.round(S.maxHp*ratio)));S.vx=0;S.vy=0;log('Now piloting '+activeShip().name+'.');toast(activeShip().name+' deployed');save();renderUI(true);}
 function manualOverride(){if(autopilot||miningTarget){autopilot=null;miningTarget=null;clickMarker=null;}}
-function fireGun(){if(S.rift?.inside){v14RiftFire();return;}const now=performance.now()/1000, gun=GUNS[S.equipped.gun]; if(now-lastShot<gun.fireRate*(S.weaponMod==='capacitor'?.82:1)) return; if(factionSafeAt(S.x,S.y)){if(performance.now()-lastSafeLog>2200){toast('Weapons disabled in the protected port.');lastSafeLog=performance.now();}return} lastShot=now; S.energy=Math.max(0,S.energy-(S.weaponMod==='recycler'?1:S.weaponMod==='capacitor'?4:3)); sfx.fire(); const pellets=gun.pellets||1; for(let i=0;i<pellets;i++){const spread=(i-(pellets-1)/2)*(gun.spread||0); const ang=S.angle+spread; bullets.push({from:'player',x:S.x+Math.cos(ang)*24,y:S.y+Math.sin(ang)*24,vx:Math.cos(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),vy:Math.sin(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),life:1.5,damage:Math.round(actualDamage()*(S.weaponMod==='focus'?1.20:1)*factionDamageMultiplier()),color:gun.color})}}
+function fireGun(){if(S.rift?.inside){v14RiftFire();return;}const now=performance.now()/1000, gun=GUNS[S.equipped.gun]; if(now-lastShot<gun.fireRate*(S.weaponMod==='capacitor'?.82:1)) return; if(factionSafeAt(S.x,S.y)){if(performance.now()-lastSafeLog>2200){toast('Weapons disabled in the protected port.');lastSafeLog=performance.now();}return} lastShot=now; S.energy=Math.max(0,S.energy-(S.weaponMod==='recycler'?1:S.weaponMod==='capacitor'?4:3)); sfx.fire();warpAudio?.event('laser'); const pellets=gun.pellets||1; for(let i=0;i<pellets;i++){const spread=(i-(pellets-1)/2)*(gun.spread||0); const ang=S.angle+spread; bullets.push({from:'player',x:S.x+Math.cos(ang)*24,y:S.y+Math.sin(ang)*24,vx:Math.cos(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),vy:Math.sin(ang)*gun.speed*(S.weaponMod==='focus'?.88:1),life:1.5,damage:Math.round(actualDamage()*(S.weaponMod==='focus'?1.20:1)*factionDamageMultiplier()),color:gun.color})}}
 function spawnParticles(x,y,color,n=6,power=90){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2, sp=Math.random()*power; particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:.25+Math.random()*.55,color,size:1+Math.random()*2})}}
-function takeDamage(n){n=Math.max(1,Math.round(n*(S.faction==='solar'?.90:1)));S.hp-=n; shake=Math.max(shake,n*0.45); spawnParticles(S.x,S.y,'#ff8ba0',8,110); sfx.hit(); if(S.hp<=0){S.hp=S.maxHp; const home=FACTIONS[S.faction]?.home||WORLD.port;S.x=home.x+110;S.y=home.y+10;S.vx=S.vy=0; S.credits=Math.max(0,S.credits-80); log('Ship destroyed! Emergency tug recovered you at Orion Port.'); toast('Ship destroyed')}}
+function takeDamage(n){n=Math.max(1,Math.round(n*(S.faction==='solar'?.90:1)));S.hp-=n; shake=Math.max(shake,n*0.45); spawnParticles(S.x,S.y,'#ff8ba0',8,110); sfx.hit();warpAudio?.event('hit'); if(S.hp<=0){S.hp=S.maxHp; const home=FACTIONS[S.faction]?.home||WORLD.port;S.x=home.x+110;S.y=home.y+10;S.vx=S.vy=0; S.credits=Math.max(0,S.credits-80); log('Ship destroyed! Emergency tug recovered you at Orion Port.'); toast('Ship destroyed')}}
 // Obstacle-aware eight-direction A* routing. The ship never uses a straight-line
 // waypoint that intersects an expanded asteroid collision circle.
 const NAV_SIZE=640, NAV_COLS=Math.ceil(WORLD.w/NAV_SIZE),NAV_ROWS=Math.ceil(WORLD.h/NAV_SIZE);
@@ -856,7 +856,7 @@ function warp19Create(){
   expiresAt:time+150000,remaining:kind==='pirates'?(SYSTEMS[S.system].tier>=2?2:1):0};
  if(kind==='pirates')warp19EnsureRaiders();
  log('Frontier signal: '+WARP19_LABELS[kind]+'. Open Signals or approach the beacon.');
- toast('NEW SIGNAL · '+WARP19_LABELS[kind]);save();warp19RenderPanel();
+ toast('NEW SIGNAL · '+WARP19_LABELS[kind]);warpAudio?.event('signal');save();warp19RenderPanel();
  return true;
 }
 function warp19EnsureRaiders(){
@@ -907,7 +907,7 @@ function warp19Claim(){
  log(WARP19_LABELS[a.kind]+' resolved: +'+reward+' SC, +'+experience+' XP'+
   (cargo?', +'+cargo+' '+OREDEF[ore].name+' ore':'')+
   (fragments?', +'+fragments+' blueprint fragments':'')+'.');
- toast('SIGNAL COMPLETE · +'+reward+' SC');
+ toast('SIGNAL COMPLETE · +'+reward+' SC');warpAudio?.event('reward');
  warp19Finish('completed');renderUI(true);
 }
 function warp19PirateDestroyed(d){
@@ -918,7 +918,7 @@ function warp19PirateDestroyed(d){
  if(event.remaining===0){
   S.credits+=115;S.xp+=35;
   log('Raiders defeated · patrol bounty +115 SC, +35 XP.');
-  toast('PIRATE BOUNTY · +115 SC');
+  toast('PIRATE BOUNTY · +115 SC');warpAudio?.event('reward');
   warp19Finish('completed');renderUI(true);
  }else{log('Raider disabled · '+event.remaining+' target remains.');save();warp19RenderPanel();}
 }
@@ -1146,8 +1146,9 @@ function drawNavigationChart(){
   drawTacticalRadar(g,{x:0,y:0,w:map.width,h:map.height});
 }
 
-function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=innerHeight,t=performance.now()/1000; ctx.clearRect(0,0,w,h); const bg=ctx.createRadialGradient(w*.72,h*.22,40,w*.52,h*.5,Math.max(w,h)); bg.addColorStop(0,'#2a2660'); bg.addColorStop(.46,'#0c1c49'); bg.addColorStop(1,'#020714'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h); v14VisualBackdrop(ctx,w,h,t);ctx.save(); if(shake>0){ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake); shake*=.82}
- for(let i=0;i<240;i++){const sx=((i*129.13-S.x*.11)%w+w)%w, sy=((i*77.33-S.y*.11)%h+h)%h; ctx.fillStyle=i%9===0?'#c7f7ff':i%4===0?'#93baf8':'#5870a8'; const rr=i%9===0?1.8:1; ctx.beginPath(); ctx.arc(sx,sy,rr,0,7); ctx.fill()}
+function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=innerHeight,t=performance.now()/1000; ctx.clearRect(0,0,w,h); const bg=ctx.createRadialGradient(w*.72,h*.22,40,w*.52,h*.5,Math.max(w,h)); bg.addColorStop(0,'#2a2660'); bg.addColorStop(.46,'#0c1c49'); bg.addColorStop(1,'#020714'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h); if(!window.WarpVisuals?.backdrop?.(ctx,{w,h,x:S.x,y:S.y,t,system:S.system,quality:S.settings.quality||'medium',reducedMotion:!!S.settings.reducedMotion}))v14VisualBackdrop(ctx,w,h,t);ctx.save(); if(shake>0){ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake); shake*=.82}
+ if(!window.WarpVisuals?.starfield?.(ctx,{w,h,x:S.x,y:S.y,t,system:S.system,quality:S.settings.quality||'medium',reducedMotion:!!S.settings.reducedMotion,cruising:warp18Cruising})){for(let i=0;i<240;i++){const sx=((i*129.13-S.x*.11)%w+w)%w, sy=((i*77.33-S.y*.11)%h+h)%h; ctx.fillStyle=i%9===0?'#c7f7ff':i%4===0?'#93baf8':'#5870a8'; const rr=i%9===0?1.8:1; ctx.beginPath(); ctx.arc(sx,sy,rr,0,7); ctx.fill()}}
+
  if(warp18Cruising&&!S.settings.reducedMotion){
   ctx.save();ctx.strokeStyle='rgba(117,235,249,.27)';ctx.lineWidth=1.6;
   const angle=Math.atan2(S.vy,S.vx),dx=Math.cos(angle),dy=Math.sin(angle);
@@ -1167,7 +1168,7 @@ function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=in
  for(const p of particles){const [x,y]=worldToScreen(p.x,p.y); ctx.globalAlpha=Math.max(0,p.life); ctx.fillStyle=p.color; ctx.fillRect(x,y,p.size,p.size); ctx.globalAlpha=1}
  for(const n of damagePopups){const [dx,dy]=worldToScreen(n.x,n.y);if(dx>0&&dx<w&&dy>0&&dy<h){ctx.fillStyle='rgba(255,222,153,'+Math.min(1,n.life/.45)+')';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText('-'+n.amount,dx,dy);ctx.textAlign='left';}}
  if(clickMarker){const [mx,my]=worldToScreen(clickMarker.x,clickMarker.y); if(mx>-80&&mx<w+80&&my>-80&&my<h+80){const pulse=(Math.sin(t*5)+1)/2; ctx.strokeStyle='rgba(114,235,255,.95)'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(mx,my,10+pulse*8,0,7); ctx.stroke(); ctx.beginPath(); ctx.arc(mx,my,24+pulse*12,0,7); ctx.stroke(); ctx.fillStyle='rgba(114,235,255,.18)'; ctx.beginPath(); ctx.arc(mx,my,5,0,7); ctx.fill();}}
- extDraw();warp19Draw();v14DrawFactionHull(ctx,w/2,h/2,S.angle,1);
+ extDraw();warp19Draw();window.WarpVisuals?.thruster?.(ctx,{w,h,angle:S.angle,speed:Math.hypot(S.vx,S.vy),cruising:warp18Cruising,active:!!(pressed.w||pressed.ArrowUp||autopilot),quality:S.settings.quality||'medium',reducedMotion:!!S.settings.reducedMotion,time:t});v14DrawFactionHull(ctx,w/2,h/2,S.angle,1);
  const radarBox=hudRadarBounds(w,h);if(radarBox)drawTacticalRadar(ctx,radarBox);drawNavigationChart(); ctx.restore()}
 /* TOKENVERSE 0.12 — local, simulated extension. Runs inside the main game closure.
  * Uses existing S, SHIPS, GUNS, WORLD, asteroids, drones, bullets, ctx, etc.
@@ -1250,7 +1251,7 @@ function extScan(){
  const rare=nearby.filter(a=>['dust','void','diam'].includes(a.kind)).sort((a,b)=>Math.hypot(a.x-S.x,a.y-S.y)-Math.hypot(b.x-S.x,b.y-S.y));
  if(rare[0])extVisibleSignals.push({id:'ore-'+rare[0].id,x:rare[0].x,y:rare[0].y,kind:'rare',until:performance.now()+35e3});
  if(extBoss&&Math.hypot(extBoss.x-S.x,extBoss.y-S.y)<radius*1.7)extVisibleSignals.push({id:'boss',x:extBoss.x,y:extBoss.y,kind:'boss',until:performance.now()+35e3});
- extScanWave=1.4;toast(extVisibleSignals.length+' signals detected');log('Scanner ping: '+extVisibleSignals.length+' locations identified. Signals are clickable.');save();
+ extScanWave=1.4;warpAudio?.event('scan');toast(extVisibleSignals.length+' signals detected');log('Scanner ping: '+extVisibleSignals.length+' locations identified. Signals are clickable.');save();
 }
 function extFindSignal(x,y){return extVisibleSignals.find(p=>Math.hypot(p.x-x,p.y-y)<75);}
 function extClick(x,y){
@@ -2088,11 +2089,30 @@ function v14WorldOverlay(){const [x,y]=worldToScreen(V14_RIFT_PORTAL.x,V14_RIFT_
   ctx.fillRect(-26,-8,52,16);ctx.strokeRect(-26,-8,52,16);ctx.fillStyle='#e7b680';ctx.fillRect(-18,-12,12,4);ctx.fillRect(5,8,12,4);
   ctx.fillStyle='#69dcfc';ctx.beginPath();ctx.arc(-22,0,5,0,Math.PI*2);ctx.fill();ctx.restore();}
 }
-function v14AsteroidSurface(g,a){if(S.settings.quality==='low')return;
- const r=a.r||18;g.strokeStyle='rgba(8,17,29,.55)';g.lineWidth=1.3;
- g.beginPath();g.moveTo(-r*.72,-r*.12);g.lineTo(-r*.2,-r*.34);g.lineTo(r*.05,-r*.03);g.lineTo(r*.55,-r*.18);
+function v14AsteroidSurface(g,a){
+ if(S.settings.quality==='low')return;
+ const r=a.r||18,seed=Number(a.id)||3;
+ g.save();
+ // Faceted mineral shading: the original polygon silhouette remains intact.
+ g.fillStyle='rgba(229,244,255,.12)';
+ g.beginPath();g.moveTo(-r*.6,-r*.32);g.lineTo(-r*.06,-r*.8);
+ g.lineTo(r*.37,-r*.37);g.lineTo(-r*.09,-r*.15);g.closePath();g.fill();
+ g.fillStyle='rgba(3,8,27,.24)';
+ g.beginPath();g.moveTo(-r*.1,r*.1);g.lineTo(r*.8,-r*.14);
+ g.lineTo(r*.56,r*.7);g.lineTo(-r*.29,r*.58);g.closePath();g.fill();
+ g.strokeStyle='rgba(12,20,41,.65)';g.lineWidth=1.2;
+ g.beginPath();g.moveTo(-r*.72,-r*.12);g.lineTo(-r*.2,-r*.34);
+ g.lineTo(r*.05,-r*.03);g.lineTo(r*.55,-r*.18);
  g.moveTo(-r*.31,r*.22);g.lineTo(r*.1,r*.16);g.lineTo(r*.48,r*.65);g.stroke();
- g.strokeStyle=OREDEF[a.kind].color;g.lineWidth=1.8;g.beginPath();g.moveTo(-r*.25,-r*.15);g.lineTo(-r*.05,r*.18);g.lineTo(r*.18,r*.08);g.stroke();
+ for(let i=0;i<2;i++){
+  const x=Math.sin(seed*2.31+i*7)*r*.4,y=Math.cos(seed*1.71+i*6)*r*.4;
+  g.strokeStyle='rgba(4,10,30,.32)';g.lineWidth=1.3;
+  g.beginPath();g.ellipse(x,y,r*.13,r*.09,.2,0,7);g.stroke();
+ }
+ g.shadowColor=OREDEF[a.kind].color;g.shadowBlur=a.kind==='diam'?9:4;
+ g.strokeStyle=OREDEF[a.kind].color;g.lineWidth=a.kind==='diam'?2.3:1.4;
+ g.beginPath();g.moveTo(-r*.25,-r*.15);g.lineTo(-r*.05,r*.18);g.lineTo(r*.18,r*.08);g.stroke();
+ g.restore();
 }
 function v14RiftDraw(){const w=innerWidth,h=innerHeight,t=performance.now()/1000;
  ctx.clearRect(0,0,w,h);const sky=ctx.createRadialGradient(w*.5,h*.5,25,w*.5,h*.5,w*.75);sky.addColorStop(0,'#252049');sky.addColorStop(.6,'#131333');sky.addColorStop(1,'#030612');ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
@@ -2446,7 +2466,13 @@ function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Cha
  $('shipList').innerHTML=Object.entries(SHIPS).filter(([id,ship])=>shipFilter==='all'||(ship.role||'premium')===shipFilter).map(([id,ship])=>`<div class="rowItem"><div><strong>${ship.name}${id===S.shipId?' · ACTIVE':''}</strong><small>${ship.desc}</small><div class="ship-stats"><span>Hull ${ship.hull}</span><span>Speed ${Math.round(ship.speed*100)}%</span><span>Thrust ${Math.round(ship.accel*100)}%</span><span>DMG +${Math.round(ship.damageBonus*100)}%</span><span>Cargo ${ship.cargo>=0?'+':''}${ship.cargo}</span></div><small>${S.ownedShips[id]?'Owned · Ready for launch':costText(ship.cost)}</small></div><div class="inlineBtns"><button ${id===S.shipId?'disabled':''} ${S.ownedShips[id]?`data-equip-ship="${id}"`:`data-buy-ship="${id}"`}>${id===S.shipId?'Piloting':S.ownedShips[id]?'Deploy':'Purchase'}</button></div></div>`).join('');
  $('equipList').innerHTML=`<div class="rowItem"><div><strong>Primary weapons</strong><small>Equip a crafted weapon.</small></div><div></div></div>${Object.entries(GUNS).filter(([k])=>S.crafted.guns[k]).map(([k,v])=>`<div class="rowItem"><div><strong>${v.name}</strong><small>${v.desc}</small></div><div><button ${S.equipped.gun===k?'disabled':''} data-equip-cat="guns" data-equip="${k}">${S.equipped.gun===k?'Equipped':'Equip'}</button></div></div>`).join('')}<div class="rowItem"><div><strong>Utilities</strong><small>Equip one utility module.</small></div><div></div></div>${Object.entries(UTILS).filter(([k])=>S.crafted.utils[k]).map(([k,v])=>`<div class="rowItem"><div><strong>${v.name}</strong><small>${v.desc}</small></div><div><button ${S.equipped.utility===k?'disabled':''} data-equip-cat="utils" data-equip="${k}">${S.equipped.utility===k?'Equipped':'Equip'}</button></div></div>`).join('')}`;
  }
-function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt))return;updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt)}
+function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt))return;updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt);
+ if(performance.now()-warp20LastAudioTick>230){
+  warp20LastAudioTick=performance.now();
+  warpAudio?.update({cruising:warp18Cruising,speed:Math.hypot(S.vx,S.vy),
+   inDanger:drones.some(d=>Math.hypot(d.x-S.x,d.y-S.y)<700)});
+ }
+}
 let lastPersist=performance.now();function loop(ts){const dt=Math.min(.05,(ts-lastTime)/1000); lastTime=ts; update(dt); draw(); if((ts|0)%260<17) renderUI(false); if(ts-lastPersist>4000){lastPersist=ts;save();} requestAnimationFrame(loop)}
 function toggleDrawer(id){const d=$(id),opening=!d.classList.contains('open');document.querySelectorAll('.drawer').forEach(el=>el.classList.remove('open')); if(opening)d.classList.add('open');for(const [btn,panel] of Object.entries({toggleWallet:'walletDrawer',toggleCargo:'cargoDrawer',toggleMap:'mapDrawer',toggleGates:'gatesDrawer',toggleFaction:'factionDrawer'}))$(btn).setAttribute('aria-expanded',String($(panel).classList.contains('open')));}
 addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='h'&&!e.repeat)warp20ToggleDrive();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();else if(lower==='e'&&!e.repeat)warp19Claim();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
