@@ -38,6 +38,8 @@
 .warp19-actions button:disabled{opacity:.35}
 #frontierSignalsDrawer{width:min(360px,88vw)}
 #toggleFrontierSignals{border-color:rgba(166,227,255,.4)}
+#toggleFrontierSignals.warp19-alert{border-color:#e5b4ff;background:linear-gradient(115deg,rgba(73,44,107,.96),rgba(19,52,77,.96));box-shadow:0 0 18px rgba(189,128,255,.2)}
+@media(prefers-reduced-motion:reduce){#toggleFrontierSignals{transition:none}}
 .combat-readout{margin-top:10px;padding:7px 4px 0;border-top:1px solid rgba(107,206,225,.15);font-size:10px;letter-spacing:.45px;color:#a8e6f5;line-height:1.35}
 .fabricator-label{font-size:10px;letter-spacing:2px;color:#74dced;border-bottom:1px solid rgba(109,232,242,.22);padding:13px 1px 9px;margin:8px 0 5px;font-weight:900}
 .test-pill{color:#7ff4cf;border:1px solid rgba(127,244,207,.4);padding:3px 5px;border-radius:3px;font-size:8px;letter-spacing:1px;margin-left:7px}
@@ -750,6 +752,7 @@ function warp19BuildUI(){
 function warp19RenderPanel(){
  const el=$('frontierSignalsBody');if(!el)return;
  const a=S.roaming?.active;
+ const badge=$('toggleFrontierSignals');if(badge?.classList)badge.classList.toggle('warp19-alert',!!a);
  if(a){
   const local=a.system===S.system;
   const dist=local?Math.round(Math.hypot(a.x-S.x,a.y-S.y)):null;
