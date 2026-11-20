@@ -56,7 +56,7 @@
   }
   function drawBullet(g,b,view,quality='medium',reduced=false,time=0){
    if(!b||typeof view!=='function')return false;
-   const [x,y]=view(b.x,b.y),{w,h}=quality?.viewport||{};
+   const [x,y]=view(b.x,b.y);
    const p=colors(b),theta=Math.atan2(b.vy||0,b.vx||1);
    const ux=Math.cos(theta),uy=Math.sin(theta);
    const blur=quality==='high'?17:quality==='low'?0:9;
@@ -142,7 +142,7 @@
     const p=PALETTES[a.weapon]||PALETTES.pulse;
     const alpha=Math.max(0,a.life/a.max),theta=a.angle||0;
     const fx=Math.cos(theta),fy=Math.sin(theta),px=-fy,py=fx;
-    const len=(a.weapon==='siege'?36:21)*(1+(.14-alpha)*2);
+    const len=(a.weapon==='siege'?36:21)*(.78+(1-alpha)*.52);
     g.save();g.globalAlpha=alpha*.94;
     g.shadowColor=a.color||p.color;g.shadowBlur=reducedMotion?0:20;
     g.fillStyle=p.light;g.beginPath();
