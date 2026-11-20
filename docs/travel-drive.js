@@ -2,7 +2,7 @@
 (function installTravelDrive(root){
   'use strict';
   const CFG=Object.freeze({
-    minCruiseDistance:2600, maxCruiseSpeed:8200, minCruiseSpeed:3600,
+    minCruiseDistance:900, maxCruiseSpeed:8200, minCruiseSpeed:3600,
     pulseMaxRange:8500, pulseEndpointGap:650, pulseEnergy:28,
     pulseCooldownMs:9000
   });
@@ -18,7 +18,7 @@
   function pulseDestination(from,to){
     if(!finitePoint(from)||!finitePoint(to))return null;
     const d=distance(from,to);
-    if(d<CFG.minCruiseDistance)return null;
+    if(d<2600)return null;
     const travel=Math.min(CFG.pulseMaxRange,Math.max(0,d-CFG.pulseEndpointGap));
     if(travel<900)return null;
     const u=travel/d;

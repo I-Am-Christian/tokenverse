@@ -1,3 +1,19 @@
+# Warp Coin v0.20 — Hyperdrive & Living Galaxy
+
+**Play the game:** https://i-am-christian.github.io/tokenverse/
+
+**Deployment fix:** Both the repository root `index.html` and the `docs/index.html` version now contain the **same latest gameplay code** and load all six required scripts using correct relative paths. The previous GitHub Pages root had remained at v0.16.
+
+**New controls:** Tap **Warp Drive** for a plotted course, or click the Navigation chart to select any position; then Warp Drive's clear-corridor cruise engages automatically. Press **J** / **Pulse Jump** or click Warp Drive again to hop along safe autopilot waypoints (28 energy, nine-second cooldown). **H** opens/engages Warp Drive. The 192,000 × 115,200 map size is unchanged.
+
+**Visuals/audio:** Procedural parallax starfields, system-coloured nebula clouds, distant ringed planets, more detailed mineral asteroids, improved ship exhaust and warp streaks. Click **Sound OFF** in the right-side control rail to opt in to an original procedural ambient space soundscape plus effects for lasers, scans, alerts, warp and rewards. Volume is adjustable in the Twelve Bells settings; reduced-motion setting remains available.
+
+**No Supabase was accessed or modified.** This is still a browser-local solo game. Any multiplayer backend will use a brand-new, separate Supabase project, never the Hello Earth / Atlas AI database.
+
+[Release notes for v0.20](WARP_COIN_V020.md)
+
+---
+
 # Warp Coin v0.19 — The Living Frontier
 
 **Play:** https://i-am-christian.github.io/tokenverse/ (updates after the v0.19 branch is merged and GitHub Pages deploys).

@@ -25,7 +25,7 @@ const read=()=>fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
 
 test('Warp Coin v0.15 rebrands the browser and scales all five public galaxy maps',()=>{
  const html=read(),{api}=bootWarp(html);
- assert.match(html,/<title>Warp Coin v0\.16/);
+ assert.match(html,/<title>Warp Coin v0\.20/);
  assert.match(html,/WARP<span>COIN<\/span>/);
  assert.deepEqual([api.WORLD.w,api.WORLD.h],[192000,115200]);
  assert.equal(Object.keys(api.SHIPS).length,36);
@@ -34,7 +34,7 @@ test('Warp Coin v0.15 rebrands the browser and scales all five public galaxy map
  assert.equal(Object.keys(api.SYSTEMS).length,6);
  assert.equal(api.GATES.length,4);
  assert.equal(api.S.worldScaleVersion,4);
- assert.equal(api.S.saveVersion,16);
+ assert.equal(api.S.saveVersion,20);
  assert.ok(api.STATIONS.some(s=>s.id==='concord'&&s.x===96000&&s.y===57600));
  assert.ok(api.ZONES.some(z=>z.contested&&z.x1===84800));
 });

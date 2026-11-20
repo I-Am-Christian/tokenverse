@@ -34,7 +34,7 @@ test('v0.14 keeps existing ships, factions and 80% fullscreen game canvas',()=>{
  assert.equal(Object.keys(api.FACTIONS).length,4);
  assert.equal(Object.keys(api.SYSTEMS).length,6);
  assert.deepEqual([api.WORLD.w,api.WORLD.h],[192000,115200]);
- assert.equal(api.S.saveVersion,16);
+ assert.equal(api.S.saveVersion,20);
  assert.match(html, /id="v14BellButton"/);
  assert.match(html, /id="v14ShipPreview"/);
  assert.match(html, /data-section="logistics"/);
