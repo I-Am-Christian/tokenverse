@@ -480,6 +480,7 @@ const canvas=$('space'),ctx=canvas.getContext('2d');
 const warpAudio=window.WarpAudio?.create?.()||null;
 const warpCombatFX=window.WarpCombatFX?.create?.()||null;
 let touchFireHeld=false;
+let warp24Drops=[],warp24Trail=[],warp24DropId=0,warp24TrailTick=0;
 let warp20LastAudioTick=0,warp20PreviousCruise=false;
 function DPR(){return Math.min(2,window.devicePixelRatio||1)}
 function resize(){canvas.width=Math.floor(innerWidth*DPR());canvas.height=Math.floor(innerHeight*DPR());ctx.setTransform(DPR(),0,0,DPR(),0,0)} addEventListener('resize',resize); resize();
@@ -502,7 +503,7 @@ function spend(cost){if(cost.credits&&S.credits<cost.credits) return false; for(
 function costText(cost){const p=[]; if(cost.credits) p.push(cost.credits+' SC'); if(cost.ore) for(const k of KINDS) if(cost.ore[k]) p.push(cost.ore[k]+' '+OREDEF[k].name+' ore'); if(cost.tokens) for(const k of KINDS) if(cost.tokens[k]) p.push(cost.tokens[k]+' $'+OREDEF[k].ticker); return p.join(' · ')}
 function spawnWorld(){
  const rand=(a,b)=>a+Math.random()*(b-a);
- asteroids=[]; drones=[]; bullets=[]; particles=[];
+ asteroids=[]; drones=[]; bullets=[]; particles=[];warp24Drops.length=0;warp24Trail.length=0;
  if(S.system==='homestead'){
   // The player-owned system is a peaceful instanced map, saved locally.
   for(let i=0;i<190;i++){
@@ -884,6 +885,155 @@ function warp23DrawCombat(){
  ctx.restore();
 }
 
+
+/* v0.24 — pick-up salvage, short evasive dash and improved pirate dogfights. */
+function warp24Init(){
+ S.lastDashAt=Number.isFinite(S.lastDashAt)?Math.max(0,S.lastDashAt):0;
+ S.dashUntil=Number.isFinite(S.dashUntil)?Math.max(0,S.dashUntil):0;
+ S.stats.salvaged=Math.max(0,Math.floor(Number(S.stats.salvaged)||0));
+}
+function warp24SpawnSalvage(x,y,tier=1,{boss=false,patrol=false,pirate=false}={}){
+ if(S.rift?.inside||S.system==='homestead')return null;
+ const rules=window.WarpGameplay24;
+ if(!rules)return null;
+ const drop=rules.rollDrop({x,y,tier,boss,patrol,pirate});
+ if(!drop)return null;
+ drop.id=++warp24DropId;
+ // Keep drops ephemeral and bounded, never duplicate old save rewards.
+ if(warp24Drops.length>=48)warp24Drops.shift();
+ warp24Drops.push(drop);
+ return drop;
+}
+function warp24Dash(){
+ const rules=window.WarpGameplay24;
+ if(!rules)return;
+ const now=Date.now();
+ const blocked=!segmentClear(S.x,S.y,
+  S.x+Math.cos(S.angle)*260,S.y+Math.sin(S.angle)*260,null,48);
+ const action=rules.dash({energy:S.energy,lastDashAt:S.lastDashAt,
+  now,angle:S.angle,inSafeZone:factionSafeAt(S.x,S.y),
+  inRift:!!S.rift?.inside,blocked});
+ if(!action){
+  if(S.rift?.inside)return toast('Dash cannot be used in the Heart Chamber.');
+  if(factionSafeAt(S.x,S.y))return toast('Dash is disabled in protected ports.');
+  if(blocked)return toast('Unsafe dash corridor — steer clear of asteroids.');
+  if(S.energy<22)return toast('Evasive Dash requires 22 energy.');
+  const remain=Math.max(0,Math.ceil((13500-(now-S.lastDashAt))/1000));
+  return toast('Dash recharging · '+remain+'s');
+ }
+ autopilot=null;miningTarget=null;warp18Cruising=false;
+ S.energy-=action.energyCost;S.lastDashAt=action.lastDashAt;
+ S.dashUntil=action.dashUntil;
+ S.vx+=action.vx;S.vy+=action.vy;
+ warp24Trail.length=0;warp24TrailTick=0;
+ spawnParticles(S.x-Math.cos(S.angle)*18,S.y-Math.sin(S.angle)*18,'#d7acff',22,120);
+ warpAudio?.event('pulse');toast('EVASIVE DASH · '+Math.round(action.duration)+'ms thrust');
+ save();
+}
+function warp24Update(dt){
+ const rules=window.WarpGameplay24;
+ if(!rules||S.rift?.inside)return;
+ const now=Date.now();
+ if(S.dashUntil>now){
+  warp24TrailTick-=dt;
+  if(warp24TrailTick<=0){warp24TrailTick=.05;
+   warp24Trail.push({x:S.x,y:S.y,angle:S.angle,time:now});
+   if(warp24Trail.length>14)warp24Trail.shift();
+  }
+ }
+ for(let i=warp24Trail.length-1;i>=0;i--)if(now-warp24Trail[i].time>750)warp24Trail.splice(i,1);
+ for(let i=warp24Drops.length-1;i>=0;i--){
+  const drop=warp24Drops[i];
+  drop.life-=dt;
+  if(drop.life<=0){warp24Drops.splice(i,1);continue;}
+  if(!rules.near(drop,S,82))continue;
+  const reward=rules.pickup(drop,{cargo:cargoCount(),capacity:cargoCap()});
+  if(!reward)continue; // ore cargo full: pod remains accessible until it expires.
+  warp24Drops.splice(i,1);
+  if(reward.type==='credits')S.credits+=reward.amount;
+  else if(reward.type==='fragment')S.blueprintFragments=(S.blueprintFragments||0)+reward.amount;
+  else if(reward.type==='ore')S.ore[reward.kind]=(S.ore[reward.kind]||0)+reward.amount;
+  S.stats.salvaged++;
+  const label=reward.type==='credits'?'+'+reward.amount+' SC':
+   reward.type==='fragment'?'+'+reward.amount+' BLUEPRINTS':
+   '+'+reward.amount+' '+reward.kind.toUpperCase()+' ORE';
+  damagePopups.push({x:drop.x,y:drop.y-19,text:label,life:1.05});
+  spawnParticles(drop.x,drop.y,reward.type==='fragment'?'#c6a4ff':reward.type==='ore'?'#8affd8':'#ffd18b',12,100);
+  warpAudio?.event('reward');toast('SALVAGE RECOVERED · '+label);
+  save();renderUI(false);
+ }
+}
+function warp24TrackSalvage(){
+ if(S.rift?.inside)return toast('No floating salvage inside the Heart Chamber.');
+ const rules=window.WarpGameplay24;
+ if(!rules||!warp24Drops.length)return toast('No salvage here. Defeat pirates or drones to create wreckage.');
+ let nearest=null,min=Infinity;
+ for(const drop of warp24Drops){
+  const dist=Math.hypot(drop.x-S.x,drop.y-S.y);
+  if(dist<min){min=dist;nearest=drop;}
+ }
+ if(!nearest)return;
+ if(min<=82){warp24Update(.001);return;}
+ if(setAutopilot('point',nearest.x,nearest.y)){
+  toast('Salvage course plotted · '+Math.round(min)+' units');
+  warpAudio?.event('signal');
+ }
+}
+function warp24ClickSalvage(wx,wy){
+ if(!warp24Drops.length||S.rift?.inside)return false;
+ const target=warp24Drops.find(p=>Math.hypot(p.x-wx,p.y-wy)<30);
+ if(!target)return false;
+ setAutopilot('point',target.x,target.y);toast('Salvage beacon tracked');
+ return true;
+}
+function warp24UI(){
+ const now=Date.now(),remaining=Math.max(0,Math.ceil((13500-(now-(S.lastDashAt||0)))/1000));
+ const active=S.dashUntil>now;
+ $('dashBtn').classList.toggle('warp24-dashing',active);
+ $('dashState').textContent=active?'DASHING':remaining?remaining+'s':'READY';
+ $('dashBtn').disabled=active||remaining>0||S.energy<22||!!S.rift?.inside;
+ $('salvageCount').textContent=warp24Drops.length;
+ $('salvageBtn').disabled=!warp24Drops.length||!!S.rift?.inside;
+ const nearby=warp24Drops.filter(p=>Math.hypot(S.x-p.x,S.y-p.y)<1700);
+ $('salvageReadout').classList.toggle('hidden',nearby.length===0);
+ if(nearby.length)$('salvageReadout').textContent='◇ SALVAGE · '+nearby.length+' pod'+(nearby.length===1?'':'s')+' nearby · V to track';
+}
+function warp24DrawWorld(){
+ if(!warp24Drops.length&&!warp24Trail.length)return;
+ const now=Date.now(),t=performance.now()/1000,w=innerWidth,h=innerHeight;
+ ctx.save();
+ for(const tr of warp24Trail){
+  const [x,y]=worldToScreen(tr.x,tr.y);
+  if(x<-90||x>w+90||y<-90||y>h+90)continue;
+  const alpha=Math.max(0,1-(now-tr.time)/750);
+  ctx.globalAlpha=alpha*.42;
+  ctx.strokeStyle='#c3b0ff';ctx.fillStyle='#6be7ff';
+  ctx.lineWidth=2;ctx.save();ctx.translate(x,y);ctx.rotate(tr.angle);
+  ctx.beginPath();ctx.moveTo(24,0);ctx.lineTo(-18,-13);ctx.lineTo(-7,0);
+  ctx.lineTo(-18,13);ctx.closePath();ctx.stroke();ctx.restore();
+ }
+ ctx.globalAlpha=1;
+ for(const drop of warp24Drops){
+  const [x,y]=worldToScreen(drop.x,drop.y);
+  if(x<-90||x>w+90||y<-90||y>h+90)continue;
+  const col=drop.type==='fragment'?'#caa3ff':drop.type==='ore'?'#8dffcf':'#ffd18b';
+  const pulse=S.settings.reducedMotion?0:Math.sin(t*4+drop.id)*3;
+  ctx.save();ctx.translate(x,y);ctx.rotate(S.settings.reducedMotion?0:t*.22+drop.id);
+  ctx.shadowColor=col;ctx.shadowBlur=18;
+  ctx.strokeStyle=col;ctx.lineWidth=2.4;ctx.fillStyle='rgba(8,20,37,.86)';
+  const radius=17+pulse;
+  ctx.beginPath();
+  for(let j=0;j<6;j++){const a=j*Math.PI/3;const px=Math.cos(a)*radius,py=Math.sin(a)*radius;
+   if(j===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+  ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.fillStyle=col;ctx.beginPath();ctx.arc(0,0,4.5,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+  ctx.fillStyle=col;ctx.textAlign='center';ctx.font='bold 10px system-ui';
+  ctx.fillText(drop.type==='credits'?drop.amount+' SC':drop.type==='fragment'?'BLUEPRINT':'ORE CRATE',x,y-31);
+ }
+ ctx.restore();
+}
+
 function warp18SafeCorridor(goal,limit=950,pad=95){
  const dist=Math.hypot(goal.x-S.x,goal.y-S.y),engine=window.WarpTravelDrive;
  if(dist<950||!engine)return false;
@@ -1224,7 +1374,7 @@ function updateShip(dt){
  } else if(S.settings.assist&&!manual){ax-=S.vx*1.45;ay-=S.vy*1.45;}
  S.vx+=ax*dt;S.vy+=ay*dt;
  const maxSpeed=warp18Cruising&&autopilot?Math.max(warp18CruiseCap,(295+(S.upgrades.thrusters-1)*45)*drive):
-  (295+(S.upgrades.thrusters-1)*45)*drive+(boost>1?105:0);
+  (295+(S.upgrades.thrusters-1)*45)*drive+(boost>1?105:0)+(S.dashUntil>Date.now()?620:0);
  const speed=Math.hypot(S.vx,S.vy);
  if(speed>maxSpeed){S.vx*=maxSpeed/speed;S.vy*=maxSpeed/speed;}
  if(autopilot){S.x=clamp(S.x+S.vx*dt,16,WORLD.w-16);S.y=clamp(S.y+S.vy*dt,16,WORLD.h-16);}else{S.x=((S.x+S.vx*dt)%WORLD.w+WORLD.w)%WORLD.w;S.y=((S.y+S.vy*dt)%WORLD.h+WORLD.h)%WORLD.h;}
@@ -1361,6 +1511,7 @@ function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=in
  if(autopilot){const pts=[{x:S.x,y:S.y},...autopilot.path.slice(autopilot.step)];ctx.save();ctx.setLineDash([8,12]);ctx.strokeStyle='#79e6ff75';ctx.lineWidth=2;ctx.beginPath();pts.forEach((pt,i)=>{const [x,y]=worldToScreen(pt.x,pt.y);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.restore();}
  if(S.system!=='homestead'){drawFactionWorld();v14WorldOverlay();}else warpDrawSpace();for(const st of (S.system==='homestead'?[]:STATIONS)){const [x,y]=worldToScreen(st.x,st.y); if(x<-100||x>w+100||y<-100||y>h+100) continue; ctx.save(); ctx.translate(x,y); ctx.shadowColor=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#64dfff':'#b89cff'; ctx.shadowBlur=18; ctx.fillStyle=st.kind==='port'?'#153b71':'#302360'; ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#72efff':'#c6aeff'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,st.kind==='port'?28:18,0,7); ctx.fill(); ctx.stroke(); ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#8ef6ff':'#d4c2ff'; ctx.lineWidth=4; ctx.beginPath(); ctx.ellipse(0,0,42,10,t*.4,0,7); ctx.stroke(); ctx.restore();}
  for(const a of asteroids){if(a.ore<=0) continue; const [x,y]=worldToScreen(a.x,a.y); if(x<-70||x>w+70||y<-70||y>h+70) continue; ctx.save(); ctx.translate(x,y); ctx.rotate(a.rot+t*.06); const col=OREDEF[a.kind].color; ctx.shadowColor=col; ctx.shadowBlur=a.kind==='diam'?24:10; const gr=ctx.createRadialGradient(-a.r*.3,-a.r*.4,2,0,0,a.r*1.5); gr.addColorStop(0,'#ffffff'); gr.addColorStop(.2,col); gr.addColorStop(1,'#111a36'); ctx.fillStyle=gr; ctx.beginPath(); for(let i=0;i<7;i++){const aa=i*Math.PI*2/7, rr=a.r*(i%2?0.82:1), xx=Math.cos(aa)*rr, yy=Math.sin(aa)*rr; i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)} ctx.closePath(); ctx.fill(); v14AsteroidSurface(ctx,a);window.WarpVisuals?.oreGlint?.(ctx,{radius:a.r,kind:a.kind,time:t,quality:S.settings.quality||'medium'}); if(miningTarget===a||autopilot?.target===a){ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(0,0,a.r+8,0,7); ctx.stroke()} ctx.restore()}
+ warp24DrawWorld();
  for(const d of drones){const [x,y]=worldToScreen(d.x,d.y); if(x<-60||x>w+60||y<-60||y>h+60) continue;
  if(window.WarpVisuals?.drone?.(ctx,{x,y,angle:d.angle,tier:d.tier,ratio:d.hp/Math.max(1,d.maxHp),
     color:d.tier>2?'#ff9fe8':'#ff90a8',time:t,reducedMotion:!!S.settings.reducedMotion}))continue;
@@ -2652,7 +2803,7 @@ function warp16Transit(id){
  log('Meridian transit complete: '+to.name+' · 85 SC fare.');
  toast('Arrived at '+to.name);save();renderUI(true);
 }
-v14Init();v14SpawnConvoys();warpInit();warp16Init();warp17Init();warp18Init();warp19Init();warp20Init();warp23Init();factionInit();warpInitializeUI();warp19BuildUI();
+v14Init();v14SpawnConvoys();warpInit();warp16Init();warp17Init();warp18Init();warp19Init();warp20Init();warp23Init();warp24Init();factionInit();warpInitializeUI();warp19BuildUI();
 function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Chamber",tier:"EVENT"}:currentZone();$('systemTag').textContent=SYSTEMS[S.system].name;$('factionTag').textContent=S.faction?FACTIONS[S.faction].name:'Unaligned';$('factionTag').style.color=S.faction?FACTIONS[S.faction].color:'#dceafa'; $('zoneTag').textContent=zone.name+' · '+zone.tier; $('dockTag').textContent=dockedStation?('Dock: '+dockedStation.name):'Dock: no'; $('hostileTag').textContent=drones.filter(d=>Math.hypot(d.x-S.x,d.y-S.y)<700).length+' hostiles'; $('coordsTag').textContent='X '+Math.round(S.x)+' • Y '+Math.round(S.y); $('topCredits').innerHTML=S.credits+' <small>SC</small>'; $('hpText').textContent=Math.round(100*S.hp/S.maxHp)+'%'; $('energyText').textContent=Math.round(S.energy)+'%'; $('cargoText').textContent=cargoCount()+' / '+cargoCap(); $('speedText').textContent=Math.round(Math.hypot(S.vx,S.vy)); $('xpText').textContent=S.xp; $('gunText').textContent=GUNS[S.equipped.gun].name.replace(' Blaster','').replace(' Cannon','');$('damageBonusText').textContent='+'+damagePercent()+'%';$('combatReadout').textContent=activeShip().name+' · '+actualDamage()+' DMG / hit · '+gunDps()+' DPS · Mk-'+gunLevel(); $('assistBtnState').textContent=S.settings.assist?'ON':'OFF'; $('hpBar').style.width=(100*S.hp/S.maxHp)+'%'; $('energyBar').style.width=S.energy+'%'; $('cargoBar').style.width=(100*cargoCount()/cargoCap())+'%'; $('stationBtn').disabled=!dockedStation; $('stationPrompt').classList.toggle('hidden', !!dockedStation); $('stationSubtitle').textContent=dockedStation?('Docked at '+dockedStation.name):'Dock first'; $('stationTitle').textContent=dockedStation?(dockedStation.name+' • Ship console'):'Station services'; if(!dockedStation)$('stationModal').classList.remove('open'); $('toggleSound').setAttribute('aria-pressed',String(S.settings.sound)); $('toggleSound').title=S.settings.sound?'Mute audio':'Enable space ambience and effects';
  $('audioToggleLabel').textContent=S.settings.sound?'Sound ON':'Sound OFF';
  $('toggleSound').classList.toggle('warp20-sound-on',!!S.settings.sound);
@@ -2660,7 +2811,7 @@ function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Cha
  $('warpDriveState').textContent=S.settings.warpDriveEnabled?(autopilot?'ON':'READY'):'OFF';
  $('cruiseTag').textContent=warp18Cruising?'WARP DRIVE ENGAGED · '+Math.round(Math.hypot(S.vx,S.vy)).toLocaleString()+' units/s':
    autopilot?'Autopilot engaged · J for Pulse Jump':'Plot a long route for automatic Warp Cruise';
- warp23UIUpdate();
+ warp23UIUpdate();warp24UI();
  $('pulseJumpBtn').disabled=!autopilot||S.energy<(window.WarpTravelDrive?.CFG.pulseEnergy||28)||!!S.rift?.inside;
  if(!includePanels)return;warp23RenderContracts();renderGates();extRenderUI();renderFactionUI();v14RenderUI();warpRenderIfOpen();warp16FrontierRender();
  $('walletGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small>$${OREDEF[k].ticker}</small><b style="color:${OREDEF[k].color}">${S.tokens[k]}</b><small>${k==='moon'||k==='neon'?'Controlled flow':'Rare reserve'}</small></div>`).join(''); $('oreGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small style="color:${OREDEF[k].color}">${OREDEF[k].name}</small><b>${S.ore[k]}</b><small>${OREDEF[k].oreForToken} ore → ${OREDEF[k].tokenOut} $${OREDEF[k].ticker}</small></div>`).join('');
@@ -2675,7 +2826,7 @@ function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Cha
 function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt)){
  if(pressed.f||touchFireHeld)fireGun();
  warpCombatFX?.tick(dt);return;
-}updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim();if(pressed.f||touchFireHeld)fireGun(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt);
+}updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim();if(pressed.f||touchFireHeld)fireGun(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt);warp24Update(dt);
  if(performance.now()-warp20LastAudioTick>230){
   warp20LastAudioTick=performance.now();
   warpAudio?.update({cruising:warp18Cruising,speed:Math.hypot(S.vx,S.vy),
@@ -2684,12 +2835,12 @@ function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt)){
 }
 let lastPersist=performance.now();function loop(ts){const dt=Math.min(.05,(ts-lastTime)/1000); lastTime=ts; update(dt); draw(); if((ts|0)%260<17) renderUI(false); if(ts-lastPersist>4000){lastPersist=ts;save();} requestAnimationFrame(loop)}
 function toggleDrawer(id){const d=$(id),opening=!d.classList.contains('open');document.querySelectorAll('.drawer').forEach(el=>el.classList.remove('open')); if(opening)d.classList.add('open');for(const [btn,panel] of Object.entries({toggleWallet:'walletDrawer',toggleCargo:'cargoDrawer',toggleMap:'mapDrawer',toggleGates:'gatesDrawer',toggleFaction:'factionDrawer'}))$(btn).setAttribute('aria-expanded',String($(panel).classList.contains('open')));}
-addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='q'&&!e.repeat)warp23ShieldPulse();if(lower==='h'&&!e.repeat)warp20ToggleDrive();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();else if(lower==='e'&&!e.repeat)warp19Claim();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
+addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='q'&&!e.repeat)warp23ShieldPulse();if(lower==='z'&&!e.repeat)warp24Dash();if(lower==='v'&&!e.repeat)warp24TrackSalvage();if(lower==='h'&&!e.repeat)warp20ToggleDrive();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();else if(lower==='e'&&!e.repeat)warp19Claim();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
 addEventListener('keyup',e=>{pressed[e.key]=false; pressed[e.key.toLowerCase()]=false});
-canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const wx=S.x+(e.clientX-innerWidth/2), wy=S.y+(e.clientY-innerHeight/2);if(S.rift?.inside){v14RiftClick(wx,wy);return;} if(warp19Click(wx,wy))return;if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
+canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const wx=S.x+(e.clientX-innerWidth/2), wy=S.y+(e.clientY-innerHeight/2);if(S.rift?.inside){v14RiftClick(wx,wy);return;} if(warp19Click(wx,wy))return;if(warp24ClickSalvage(wx,wy))return;if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
 $('toggleContracts').onclick=()=>{warp23RenderContracts();toggleDrawer('contractsDrawer');};
 $('contractsList').addEventListener('click',e=>{const b=e.target.closest('[data-contract-claim]');if(b)warp23Claim(b.dataset.contractClaim);});
-$('shieldPulseBtn').onclick=warp23ShieldPulse;
+$('shieldPulseBtn').onclick=warp23ShieldPulse;$('dashBtn').onclick=warp24Dash;$('salvageBtn').onclick=warp24TrackSalvage;
 $('toggleWallet').onclick=()=>toggleDrawer('walletDrawer'); $('toggleCargo').onclick=()=>toggleDrawer('cargoDrawer'); $('toggleMap').onclick=()=>toggleDrawer('mapDrawer'); $('toggleGates').onclick=()=>{renderGates();toggleDrawer('gatesDrawer')};$('toggleFaction').onclick=()=>{renderFactionUI();toggleDrawer('factionDrawer')}; $('gateList').addEventListener('click',e=>{const b=e.target.closest('[data-gate]');if(b){routeGate(b.dataset.gate);$('gatesDrawer').classList.remove('open');}}); $('toggleLog').onclick=()=>{const hidden=$('quickLog').classList.toggle('hidden');$('toggleLog').setAttribute('aria-expanded',String(!hidden));}; $('toggleSound').onclick=()=>{
  S.settings.sound=!S.settings.sound;
  if(S.settings.sound){
@@ -2781,7 +2932,7 @@ $('factionDrawer').addEventListener('click',e=>{const b=e.target.closest('button
 $('factionSelectModal').addEventListener('click',e=>{const b=e.target.closest('[data-faction-join]');if(b)factionJoin(b.dataset.factionJoin);});
 $('factionHomeBtn').onclick=factionHomeRoute;
 $('hullColor').value=S.ship.hull; $('accentColor').value=S.ship.accent;
-renderLog();renderUI();setTab('market');save();log('Warp Coin v0.23 · Living 2D Galaxy · daily contracts, combat chains and defensive Shield Pulse.');requestAnimationFrame(loop);
+renderLog();renderUI();setTab('market');save();log('Warp Coin v0.24 · Salvage Wars: floating loot, evasive dash and tactical pirate AI.');requestAnimationFrame(loop);
 })();
 </script>
 </body>
