@@ -212,11 +212,15 @@ function create(canvas){
  function pick(screenX,screenY,x,y){
   return state.failed||!state.camera?null:M.pickRay(state.camera,screenX,screenY,x,y);
  }
+ function project(worldX,worldY,altitude,shipX,shipY){
+  return state.failed||!state.camera?null:
+    M.project(state.camera,worldX-shipX,altitude,worldY-shipY);
+ }
  function dispose(){
   try{for(const b of bufs)gl.deleteBuffer(b);gl.deleteVertexArray(vao);gl.deleteProgram(program);}catch{}
   state.failed=true;
  }
- return {available:true,render,resize,pick,dispose,get failed(){return state.failed},get error(){return state.error}};
+ return {available:true,render,resize,pick,project,dispose,get failed(){return state.failed},get error(){return state.error}};
 }
 root.Warp3D=Object.freeze({create});
 })(typeof window!=='undefined'?window:typeof globalThis!=='undefined'?globalThis:this);
