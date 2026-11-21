@@ -14,6 +14,11 @@
 #viewModeBtn{border-color:rgba(151,190,255,.6);background:linear-gradient(125deg,rgba(41,57,120,.83),rgba(24,75,97,.83))}
 #viewModeBtn.view-3d-active{border-color:#8deff4;box-shadow:0 0 20px rgba(59,197,249,.2)}
 #viewModeLabel{font-size:10px;letter-spacing:.8px}
+#v22MobileFlight{display:none}
+#v22MobileFlight button{touch-action:none;user-select:none;-webkit-user-select:none;min-height:42px;border:1px solid rgba(106,214,239,.55);background:rgba(13,60,83,.82);border-radius:7px;color:#d3faff;font-weight:800;font-size:12px;padding:8px 12px}
+#v22MobileFlight button:active{background:rgba(36,128,155,.98)}
+@media(max-width:860px){#gameShell.warp-3d-mode #v22MobileFlight{display:flex;gap:5px;align-items:center;justify-content:center;left:12px;bottom:75px;padding:5px;border-radius:9px;background:rgba(5,15,35,.7)}}
+@media(max-width:440px){#v22MobileFlight button{padding:8px 9px}#v22MobileFlight{bottom:69px!important}}
 @media(max-width:620px){#viewModeBtn{min-width:64px;width:64px;padding:6px 4px}#viewModeBtn span{display:inline!important;font-size:9px;line-height:1.1;letter-spacing:0;text-align:center}}
 #gameShell{position:relative;width:100vw;height:100dvh;min-height:400px;overflow:hidden;background:radial-gradient(ellipse at 60% 40%,#1c265b,#030817 65%)}#space{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
 #gameShell::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:1;background:linear-gradient(180deg,rgba(5,12,28,.26) 0%,transparent 18%,transparent 78%,rgba(3,8,19,.4) 100%)}#gameShell::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:9;opacity:.15;background:repeating-linear-gradient(to bottom,transparent 0,transparent 4px,rgba(150,202,255,.08) 5px,transparent 6px)}
@@ -272,6 +277,11 @@
  <div class="gate-entry"><div><strong>Support drones</strong><small>Deploy or recall owned mining and escort drones.</small></div><button id="deployDronesBtn">Toggle</button></div>
 </div></div>
 
+  <div id="v22MobileFlight" class="hud" aria-label="3D touch flight controls">
+    <button id="v22TurnLeft" aria-label="Turn ship left" title="Turn left">◀</button>
+    <button id="v22Thrust" aria-label="Thrust ship forward" title="Hold to thrust">THRUST</button>
+    <button id="v22TurnRight" aria-label="Turn ship right" title="Turn right">▶</button>
+  </div>
   <div id="stationPrompt" class="hud"><b>Tap space</b> to plot a course · <b>Tap ore</b> to mine</div>
 
   <div id="actionBar" class="hud">
@@ -1196,6 +1206,7 @@ function warp22RefreshMode(){
  const on=warp22Enabled();
  $('space3d').style.display=on?'block':'none';
  $('viewModeLabel').textContent=on?'◆ 3D ON':'▧ 2D VIEW';
+ $('gameShell').classList.toggle('warp-3d-mode',on);
  $('viewModeBtn').setAttribute('aria-pressed',String(on));
  $('viewModeBtn').classList.toggle('view-3d-active',on);
  $('stationPrompt').innerHTML=on?
@@ -2615,12 +2626,26 @@ function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt)){
 }
 let lastPersist=performance.now();function loop(ts){const dt=Math.min(.05,(ts-lastTime)/1000); lastTime=ts; update(dt); draw(); if((ts|0)%260<17) renderUI(false); if(ts-lastPersist>4000){lastPersist=ts;save();} requestAnimationFrame(loop)}
 function toggleDrawer(id){const d=$(id),opening=!d.classList.contains('open');document.querySelectorAll('.drawer').forEach(el=>el.classList.remove('open')); if(opening)d.classList.add('open');for(const [btn,panel] of Object.entries({toggleWallet:'walletDrawer',toggleCargo:'cargoDrawer',toggleMap:'mapDrawer',toggleGates:'gatesDrawer',toggleFaction:'factionDrawer'}))$(btn).setAttribute('aria-expanded',String($(panel).classList.contains('open')));}
-addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='h'&&!e.repeat)warp20ToggleDrive();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();else if(lower==='e'&&!e.repeat)warp19Claim();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
+addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower)||(warp22Enabled()&&['q','r'].includes(lower)))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='h'&&!e.repeat)warp20ToggleDrive();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();else if(lower==='e'&&!e.repeat)warp19Claim();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
 addEventListener('keyup',e=>{pressed[e.key]=false; pressed[e.key.toLowerCase()]=false});
  canvas.addEventListener('pointerup',e=>{if(e.pointerType==='touch'||e.pointerType==='pen')pointer.inside=false;});
 canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const picked=warp22Enabled()?scene3d.pick(e.clientX,e.clientY,S.x,S.y):null;
  const wx=picked?.x??(S.x+(e.clientX-innerWidth/2)),wy=picked?.y??(S.y+(e.clientY-innerHeight/2));if(S.rift?.inside){v14RiftClick(wx,wy);return;} if(warp19Click(wx,wy))return;if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
 $('viewModeBtn').onclick=warp22ToggleMode;
+function warp22BindTouchButton(id,key){
+ const btn=$(id),stop=()=>{pressed[key]=false;};
+ btn.addEventListener('pointerdown',e=>{
+  e.preventDefault();manualOverride();pressed[key]=true;
+  try{btn.setPointerCapture?.(e.pointerId);}catch{}
+ });
+ btn.addEventListener('pointerup',stop);
+ btn.addEventListener('pointercancel',stop);
+ btn.addEventListener('lostpointercapture',stop);
+ addEventListener('blur',stop);
+}
+warp22BindTouchButton('v22TurnLeft','q');
+warp22BindTouchButton('v22Thrust','w');
+warp22BindTouchButton('v22TurnRight','r');
 $('toggleWallet').onclick=()=>toggleDrawer('walletDrawer'); $('toggleCargo').onclick=()=>toggleDrawer('cargoDrawer'); $('toggleMap').onclick=()=>toggleDrawer('mapDrawer'); $('toggleGates').onclick=()=>{renderGates();toggleDrawer('gatesDrawer')};$('toggleFaction').onclick=()=>{renderFactionUI();toggleDrawer('factionDrawer')}; $('gateList').addEventListener('click',e=>{const b=e.target.closest('[data-gate]');if(b){routeGate(b.dataset.gate);$('gatesDrawer').classList.remove('open');}}); $('toggleLog').onclick=()=>{const hidden=$('quickLog').classList.toggle('hidden');$('toggleLog').setAttribute('aria-expanded',String(!hidden));}; $('toggleSound').onclick=()=>{
  S.settings.sound=!S.settings.sound;
  if(S.settings.sound){
