@@ -1,3 +1,22 @@
+# Warp Coin v0.24 — Salvage Wars
+
+**Play:** https://i-am-christian.github.io/tokenverse/ (after merging to the main branch and GitHub Pages publishing).
+
+### New features
+
+- **Recoverable enemy salvage** — defeated drones, pirates, rival patrols and boss ships leave glowing collectible pods. Fly within 82 units to recover Scrap Credits, ore, or occasionally blueprint fragments. Ore waits if your hold is full. Pods expire after a few minutes to keep the galaxy fast. The **◇ Salvage** button or **V** plots a safe route to the nearest drop, and you can click directly on a pod. The HUD shows how many pods are nearby, and your lifetime collected-pod count is saved.
+- **Evasive Dash** — press **Z** or use **↯ Dash** for a brief 400-unit/s velocity burst. Costs 22 energy, lasts 650 milliseconds, and recharges for 13.5 seconds. The dash checks the forward corridor, respects normal asteroid collision and restricted/safe zones, cancels autopilot, and generates fading ship afterimages. No teleporting through hazards.
+- **Smarter enemy pilots** — pirates and advanced drones now strafe and circle rather than flying directly into you. Their shots can lead moving targets a little, while beginner drones remain easier. Existing damage and enemy rewards remain unchanged; drops provide extra small pickups.
+- **Visual polish and discoverability** — neon salvage crates, rarity-specific colors, animated pickup flashes, temporary bonus labels, on-screen loot count, dash trails and ability cooldowns. All built for the existing Canvas 2D renderer with the 2D map, faction economy, sound and Warp Drive intact.
+
+**Controls:** W/A/S/D fly, hold **F** to shoot, **Q** Shield Pulse, **Z** Evasive Dash, **V** nearest Salvage, **H** Warp Drive, **J** Pulse Jump, and **M** nearest ore. Existing mouse/touch firing, navigation and mining controls still work.
+
+**Compatibility and data:** Your 192,000 × 115,200 world, five public star systems, personal solar system, ship inventory, credits, tokens, factions, daily contracts and local save remain. Salvage crates are temporary world objects (not saved between sessions); recovered rewards and lifetime salvage total are saved to the existing local pilot profile. No Supabase project or account was connected.
+
+[Full v0.24 release notes](WARP_COIN_V024.md)
+
+---
+
 # Warp Coin v0.23 — Living 2D Galaxy
 
 **Play:** https://i-am-christian.github.io/tokenverse/
