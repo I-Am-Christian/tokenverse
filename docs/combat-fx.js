@@ -12,6 +12,11 @@
   siege:{color:'#f6a9ff',light:'#fff4ff',r:12,tail:69,width:5.2},
   ion:{color:'#80e8ff',light:'#efffff',r:5,tail:51,width:3.6},
   flak:{color:'#ffc67b',light:'#fff0ce',r:6,tail:29,width:3},
+  barrage:{color:'#ffc67b',light:'#fff0ce',r:3.2,tail:22,width:2.8},
+  autocannon:{color:'#fbd18a',light:'#ffffff',r:2.35,tail:42,width:2.7},
+  prism:{color:'#7ef4ff',light:'#e5ffff',r:3.6,tail:118,width:3.6},
+  ionstorm:{color:'#b29eff',light:'#f5efff',r:5.1,tail:60,width:3.5},
+  torpedo:{color:'#ffa7db',light:'#fff1ff',r:8.2,tail:72,width:4.8},
   enemy:{color:'#ff8eaa',light:'#ffe1e8',r:3.2,tail:23,width:2.1}
  };
  const maxFX=70;
@@ -71,7 +76,7 @@
     }
    }
    g.globalAlpha=1;
-   if(p.type==='arc'&&!reduced){
+   if((p.type==='arc'||p.type==='ionstorm')&&!reduced){
     const count=5,len=p.tail;
     g.strokeStyle=p.color;g.lineWidth=p.width;
     g.beginPath();g.moveTo(x,y);
@@ -90,27 +95,38 @@
     g.strokeStyle=p.color;g.lineWidth=p.width;
     g.beginPath();g.moveTo(x-ux*p.tail,y-uy*p.tail);g.lineTo(x,y);g.stroke();
    }
-   if(p.type==='rail'&&!reduced){
+   if((p.type==='rail'||p.type==='prism')&&!reduced){
     g.shadowBlur=0;g.strokeStyle='#f3ffffcc';g.lineWidth=1.6;g.beginPath();
     g.moveTo(x-ux*(p.tail+35),y-uy*(p.tail+35));g.lineTo(x+ux*4,y+uy*4);g.stroke();
    }
-   if(p.type==='plasma'||p.type==='siege'){
+   if(p.type==='plasma'||p.type==='siege'||p.type==='torpedo'){
     g.fillStyle=p.color;g.globalAlpha=.18;
-    g.beginPath();g.arc(x,y,p.r*(p.type==='siege'?2.7:2.3)+Math.sin(time*15)*1.4,0,Math.PI*2);g.fill();
+    g.beginPath();g.arc(x,y,p.r*(p.type==='siege'?2.7:p.type==='torpedo'?2.8:2.3)+Math.sin(time*15)*1.4,0,Math.PI*2);g.fill();
     g.globalAlpha=1;
    }
-   g.fillStyle=p.light;g.beginPath();g.arc(x,y,p.r*(reduced?.78:1),0,Math.PI*2);g.fill();
+   if(p.type==='torpedo'){
+    g.save();g.translate(x,y);g.rotate(theta);
+    g.fillStyle='#4f2c5d';g.strokeStyle=p.color;g.lineWidth=2;
+    g.beginPath();g.moveTo(12,0);g.lineTo(-6,-6);g.lineTo(-12,-4);
+    g.lineTo(-12,4);g.lineTo(-6,6);g.closePath();g.fill();g.stroke();
+    g.fillStyle='#fff0ff';g.beginPath();g.arc(4,0,3.1,0,Math.PI*2);g.fill();g.restore();
+   }else{
+    g.fillStyle=p.light;g.beginPath();g.arc(x,y,p.r*(reduced?.78:1),0,Math.PI*2);g.fill();
+   }
    g.restore();return true;
   }
-  function draw(g,bullets,view,{quality='medium',reducedMotion=false,time=0,width=1920,height=1080}={}){
+  function draw(g,bullets,view,{quality='medium',reducedMotion=false,time=0,width=1920,height=1080,zoom=1}={}){
    if(!g||typeof view!=='function')return;
+   const cameraZoom=Math.max(.35,Number(zoom)||1);
+   const visible=(x,y)=>Math.abs(x-width/2)<width/(2*cameraZoom)+145&&
+    Math.abs(y-height/2)<height/(2*cameraZoom)+145;
    for(const b of bullets||[]){
     const pt=view(b.x,b.y);
-    if(nearScreen(pt[0],pt[1],width,height))drawBullet(g,b,view,quality,reducedMotion,time);
+    if(visible(pt[0],pt[1]))drawBullet(g,b,view,quality,reducedMotion,time);
    }
    for(const a of training){
     const p=PALETTES[a.weapon]||PALETTES.pulse,[x,y]=view(a.x,a.y);
-    if(!nearScreen(x,y,width,height))continue;
+    if(!visible(x,y))continue;
     const fade=a.life/a.max,dx=Math.cos(a.angle),dy=Math.sin(a.angle);
     g.save();g.globalAlpha=fade*.75;g.strokeStyle=a.color||p.color;
     g.shadowColor=a.color||p.color;g.shadowBlur=reducedMotion?0:12;
@@ -119,7 +135,7 @@
    }
    for(const a of bursts){
     const [x,y]=view(a.x,a.y);
-    if(!nearScreen(x,y,width,height))continue;
+    if(!visible(x,y))continue;
     const p=PALETTES[a.weapon]||PALETTES.pulse;
     const alpha=Math.max(0,a.life/a.max),progress=1-alpha;
     const radius=(a.killed?61:a.weapon==='siege'?35:19)*(progress*.84+.16);
@@ -138,7 +154,7 @@
    }
    for(const a of flashes){
     const [x,y]=view(a.x,a.y);
-    if(!nearScreen(x,y,width,height))continue;
+    if(!visible(x,y))continue;
     const p=PALETTES[a.weapon]||PALETTES.pulse;
     const alpha=Math.max(0,a.life/a.max),theta=a.angle||0;
     const fx=Math.cos(theta),fy=Math.sin(theta),px=-fy,py=fx;
