@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#050b19" />
-<title>Warp Coin v0.23 — Living 2D Galaxy</title>
+<title>Warp Coin v0.24 — Salvage Wars</title>
 <style>
 
 :root{color-scheme:dark;--ink:#040a18;--glass:rgba(5,15,35,.72);--panel:rgba(7,19,42,.92);--stroke:rgba(99,171,215,.25);--text:#e9f6ff;--muted:#7e9db4;--ice:#6de8f2;--mint:#70f4cd;--violet:#9684ff;--amber:#ffca7a;--danger:#ff788d;font-family:Inter, 'Segoe UI',system-ui,sans-serif}
@@ -207,6 +207,12 @@
 .warp23-count{margin-left:auto;font-size:10px;color:#9bffe4}
 .warp23-explain,.warp23-hint{font-size:10px;color:#8fb9d4;line-height:1.5}
 @media(max-width:640px){#shieldPulseBtn{min-width:91px}}
+#dashBtn{border-color:rgba(240,180,255,.55);background:linear-gradient(135deg,rgba(87,45,128,.9),rgba(36,60,120,.86))}
+#dashBtn.warp24-dashing{border-color:#dcb6ff;box-shadow:0 0 18px rgba(188,129,255,.4)}
+#dashState,#salvageCount{font-size:9px;color:#d2c6ff}
+#salvageBtn{border-color:rgba(245,198,113,.52);background:linear-gradient(135deg,rgba(104,68,31,.85),rgba(40,56,99,.91))}
+#salvageReadout{color:#ffe2ab!important;border:1px solid rgba(240,200,129,.29);box-shadow:0 0 10px rgba(255,209,105,.08)}
+@media(max-width:640px){#dashBtn,#salvageBtn{min-width:91px}}
 </style>
 </head>
 <body>
@@ -216,7 +222,7 @@
   <div id="topBar" class="hud">
     <div id="brand">
       <div class="brand-mark"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true"><circle cx="16" cy="16" r="4" fill="#6fe8f2"/><ellipse cx="16" cy="16" rx="15" ry="6" stroke="#6fe8f2" fill="none" stroke-width="1.2" transform="rotate(-37 16 16)"/><path d="M7 26 25 6" stroke="#fff" stroke-width="1.1"/></svg></div>
-      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Living Galaxy 0.23</div></div>
+      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Salvage Wars 0.24</div></div>
     </div>
     <div id="topCenter"><span class="sector-signal"><i class="signal-dot"></i>Solo sector</span><i class="sector-divider"></i><span id="systemTag" class="pill">Orion Belt</span><span id="factionTag" class="pill">Choose faction</span><button id="v14BellButton" class="pill" aria-label="Open the Twelve Bells event console">BELL · COUNTDOWN</button><span id="v14BellBadge" class="pill" aria-hidden="true">NEXT BELL</span><span id="zoneTag" class="pill">Frontier</span><i class="sector-divider"></i><span id="dockTag" class="pill">In flight</span><span id="hostileTag" class="pill">0 hostiles</span><span id="coordsTag" class="pill">X 0 • Y 0</span></div>
     <div id="topRight"><div class="top-credit"><div class="credit-caption">Credit balance</div><div id="topCredits">0 <small>SC</small></div></div></div>
@@ -234,7 +240,8 @@
       <div class="mini-stat"><small>Weapon bonus</small><b id="damageBonusText" style="font-size:14px;color:var(--mint)">+0%</b></div>
     </div>
     <div id="combatReadout" class="combat-readout">Pulse Blaster · 14 DMG · 54 DPS</div>
-    <div id="combatStreak" class="combat-readout hidden" aria-live="polite">Combat chain ready</div><div id="cruiseTag" class="combat-readout" aria-live="off">Plot a long route to activate Warp Cruise.</div>
+    <div id="combatStreak" class="combat-readout hidden" aria-live="polite">Combat chain ready</div>
+    <div id="salvageReadout" class="combat-readout hidden" aria-live="polite">✦ Salvage nearby · 0 crates</div><div id="cruiseTag" class="combat-readout" aria-live="off">Plot a long route to activate Warp Cruise.</div>
   </div>
 
   <div id="drawerArea">
@@ -290,6 +297,8 @@
   <div id="actionBar" class="hud">
     <button id="shootBtn" title="Fire weapons — hold F or hold this button" aria-label="Fire weapons (hold to repeat)" class="dock-action primary">✦ FIRE</button>
     <button id="shieldPulseBtn" title="Shield Pulse (Q): protect your ship for 6 seconds, costing 28 energy; 32 second recharge" aria-label="Activate defensive Shield Pulse, shortcut Q" class="dock-action">◉ Shield <span id="shieldStatus">READY</span></button>
+    <button id="dashBtn" title="Evasive Dash (Z) — 22 energy and 13.5 second cooldown" aria-label="Evasive Dash, shortcut Z" class="dock-action">↯ Dash <span id="dashState">READY</span></button>
+    <button id="salvageBtn" title="Plot a course to nearby floating salvage (V)" aria-label="Track nearby salvage pods, shortcut V" class="dock-action">◇ Salvage <span id="salvageCount">0</span></button>
     <button id="warpDriveBtn" title="Engage Warp Drive, shortcut H" aria-label="Engage Warp Drive" class="dock-action primary">✦ Warp Drive <span id="warpDriveState">READY</span></button>
     <button id="stationBtn" title="Open dock console" aria-label="Open dock console" class="dock-action primary"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="9"/></svg>Dock console</button>
     <button id="mineNearestBtn" title="Scan for nearby ore" aria-label="Scan for nearby ore" class="dock-action"><svg viewBox="0 0 24 24"><path d="m3 21 6-6M3 10l7-7 11 11-7 7L3 10ZM10 3l7 7"/></svg>Scan ore</button><button id="scanBtn" title="Pulse scanner" aria-label="Scan nearby anomalies" class="dock-action">◉ Scan</button><button id="opsBtn" title="Open station and drone operations" class="dock-action">⚙ Ops</button>
@@ -389,6 +398,7 @@
 <script src="./space-visuals.js"></script>
 <script src="./combat-fx.js"></script>
 <script src="./field-contracts.js"></script>
+<script src="./space-upgrades.js"></script>
 <script>
 (()=>{
 'use strict';
