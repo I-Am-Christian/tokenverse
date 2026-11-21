@@ -189,6 +189,24 @@
  #actionBar::-webkit-scrollbar{height:3px}
  #actionBar::-webkit-scrollbar-thumb{background:#62cae1;border-radius:10px}
 }
+
+/* v0.23 polished 2D combat and daily contracts */
+#shieldPulseBtn{min-width:112px;border-color:rgba(111,203,253,.68);background:linear-gradient(110deg,rgba(21,73,109,.9),rgba(29,48,120,.88));color:#dcfaff}
+#shieldPulseBtn.warp23-shield-on{border-color:#adffe6;box-shadow:0 0 18px rgba(103,240,235,.4);background:linear-gradient(90deg,#1d7e93,#285b9b)}
+#shieldStatus{font-size:9px;letter-spacing:.4px;color:#9ff4ed}
+#combatStreak{font-weight:850;color:#ffd490!important;border-color:rgba(248,199,93,.4)!important;box-shadow:0 0 10px rgba(245,179,76,.1)}
+.warp23-contract-list{display:grid;gap:9px}
+.warp23-contract{padding:12px;border:1px solid rgba(120,189,230,.24);background:linear-gradient(105deg,rgba(37,75,109,.25),rgba(26,32,69,.25));border-radius:7px}
+.warp23-contract strong{display:block;color:#defaff;letter-spacing:.35px;font-size:12px}
+.warp23-contract small{display:block;margin:6px 0 11px;color:#9cbdd3;line-height:1.45;font-size:10px}
+.warp23-contract-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:10px;color:#d1eafa}
+.warp23-progress{height:5px;border-radius:99px;overflow:hidden;margin:10px 0;background:#132e4c}
+.warp23-progress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#4cb7e8,#8df5ce)}
+.warp23-contract button{padding:7px 9px;border:1px solid #74d3ea;background:rgba(17,96,120,.55);border-radius:5px;color:#e2ffff;font-size:10px;font-weight:800}
+.warp23-contract button:disabled{opacity:.42;border-color:#55788c}
+.warp23-count{margin-left:auto;font-size:10px;color:#9bffe4}
+.warp23-explain,.warp23-hint{font-size:10px;color:#8fb9d4;line-height:1.5}
+@media(max-width:640px){#shieldPulseBtn{min-width:91px}}
 </style>
 </head>
 <body>
@@ -215,7 +233,8 @@
       <div class="mini-stat"><small>XP</small><b id="xpText">0</b></div>
       <div class="mini-stat"><small>Weapon bonus</small><b id="damageBonusText" style="font-size:14px;color:var(--mint)">+0%</b></div>
     </div>
-    <div id="combatReadout" class="combat-readout">Pulse Blaster · 14 DMG · 54 DPS</div><div id="cruiseTag" class="combat-readout" aria-live="off">Plot a long route to activate Warp Cruise.</div>
+    <div id="combatReadout" class="combat-readout">Pulse Blaster · 14 DMG · 54 DPS</div>
+    <div id="combatStreak" class="combat-readout hidden" aria-live="polite">Combat chain ready</div><div id="cruiseTag" class="combat-readout" aria-live="off">Plot a long route to activate Warp Cruise.</div>
   </div>
 
   <div id="drawerArea">
@@ -223,10 +242,16 @@
       <button class="console-btn" id="toggleWallet" aria-label="Token wallet" aria-expanded="false" title="Token wallet"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M3 10h18M16 14h3"/><path d="m6 6 9-4 2 4"/></svg><span>Ledger</span></button>
       <button class="console-btn" id="toggleCargo" aria-label="Cargo manifest" aria-expanded="false" title="Cargo manifest"><svg viewBox="0 0 24 24"><path d="m3 7 9-4 9 4-9 5-9-5ZM3 7v11l9 4 9-4V7M12 12v10M8 5l9 5"/></svg><span>Cargo</span></button>
       <button class="console-btn" id="toggleMap" aria-label="Navigation map" aria-expanded="false" title="Navigation map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 2 2 4 4-6ZM12 2v4M12 18v4M2 12h4M18 12h4"/></svg><span>Navigation</span></button><button class="console-btn" id="toggleGates" aria-label="Star gates" aria-expanded="false" title="Star gates"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="10"/><path d="M4 12h16"/></svg><span>Gates</span></button>
-      <button class="console-btn" id="toggleFaction" aria-label="Faction territories" aria-expanded="false" title="Faction territories"><svg viewBox="0 0 24 24"><path d="M5 21V4h10l-2.2 4L15 12H5M5 4V2M4 21h3"/><path d="M9 16h11M9 19h8"/></svg><span>Factions</span></button><button class="console-btn" id="toggleLog" aria-label="Comms log" aria-expanded="false" title="Comms log"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h12M4 17h8"/><rect x="2" y="2" width="20" height="20" rx="3"/></svg><span>Comms</span></button>
+      <button class="console-btn" id="toggleFaction" aria-label="Faction territories" aria-expanded="false" title="Faction territories"><svg viewBox="0 0 24 24"><path d="M5 21V4h10l-2.2 4L15 12H5M5 4V2M4 21h3"/><path d="M9 16h11M9 19h8"/></svg><span>Factions</span></button><button class="console-btn" id="toggleContracts" aria-label="Daily field contracts" aria-expanded="false" title="Earn local Scrap Credits and XP"><span>✦ Contracts</span><b id="contractsReady" class="warp23-count"></b></button>
+      <button class="console-btn" id="toggleLog" aria-label="Comms log" aria-expanded="false" title="Comms log"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h12M4 17h8"/><rect x="2" y="2" width="20" height="20" rx="3"/></svg><span>Comms</span></button>
       <button class="console-btn" id="toggleSound" aria-label="Enable or disable space audio" aria-expanded="false" title="Toggle sound"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4ZM17 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg><span id="audioToggleLabel">Sound OFF</span></button>
     </div>
     <div id="walletDrawer" class="hud drawer"><h3>Asset ledger <span class="test-pill">LOCAL TEST</span></h3><div id="walletGrid" class="grid2"></div><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px"><span style="font-size:10px;color:var(--muted)">SIMULATED ASSETS · NO CASH VALUE</span><button id="resetInLedger" class="dock-action" style="min-width:0;height:30px;font-size:9px">Reset pilot</button></div></div>
+    <div id="contractsDrawer" class="hud drawer" aria-label="Daily field contracts">
+      <h3>Field contracts <span class="warp23-hint">DAILY</span></h3>
+      <p class="warp23-explain">Complete solo missions to earn Scrap Credits and experience. Missions reset each UTC day.</p>
+      <div id="contractsList" class="warp23-contract-list"></div>
+    </div>
     <div id="cargoDrawer" class="hud drawer"><h3 >Cargo manifest</h3><div id="oreGrid" class="grid2"></div></div>
     <div id="mapDrawer" class="hud drawer"><h3>Galactic chart · 192k × 115.2k</h3>
 <canvas id="navigationChart" width="440" height="264" role="img" aria-label="Galaxy chart with current ship position, gates and stations"></canvas>
@@ -264,6 +289,7 @@
 
   <div id="actionBar" class="hud">
     <button id="shootBtn" title="Fire weapons — hold F or hold this button" aria-label="Fire weapons (hold to repeat)" class="dock-action primary">✦ FIRE</button>
+    <button id="shieldPulseBtn" title="Shield Pulse (Q): protect your ship for 6 seconds, costing 28 energy; 32 second recharge" aria-label="Activate defensive Shield Pulse, shortcut Q" class="dock-action">◉ Shield <span id="shieldStatus">READY</span></button>
     <button id="warpDriveBtn" title="Engage Warp Drive, shortcut H" aria-label="Engage Warp Drive" class="dock-action primary">✦ Warp Drive <span id="warpDriveState">READY</span></button>
     <button id="stationBtn" title="Open dock console" aria-label="Open dock console" class="dock-action primary"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="9"/></svg>Dock console</button>
     <button id="mineNearestBtn" title="Scan for nearby ore" aria-label="Scan for nearby ore" class="dock-action"><svg viewBox="0 0 24 24"><path d="m3 21 6-6M3 10l7-7 11 11-7 7L3 10ZM10 3l7 7"/></svg>Scan ore</button><button id="scanBtn" title="Pulse scanner" aria-label="Scan nearby anomalies" class="dock-action">◉ Scan</button><button id="opsBtn" title="Open station and drone operations" class="dock-action">⚙ Ops</button>
@@ -362,6 +388,7 @@
 <script src="./space-audio.js"></script>
 <script src="./space-visuals.js"></script>
 <script src="./combat-fx.js"></script>
+<script src="./field-contracts.js"></script>
 <script>
 (()=>{
 'use strict';
