@@ -12,6 +12,7 @@
   siege:{color:'#f6a9ff',light:'#fff4ff',r:12,tail:69,width:5.2},
   ion:{color:'#80e8ff',light:'#efffff',r:5,tail:51,width:3.6},
   flak:{color:'#ffc67b',light:'#fff0ce',r:6,tail:29,width:3},
+  barrage:{color:'#ffc67b',light:'#fff0ce',r:3.2,tail:22,width:2.8},
   autocannon:{color:'#fbd18a',light:'#ffffff',r:2.35,tail:42,width:2.7},
   prism:{color:'#7ef4ff',light:'#e5ffff',r:3.6,tail:118,width:3.6},
   ionstorm:{color:'#b29eff',light:'#f5efff',r:5.1,tail:60,width:3.5},
