@@ -1,14 +1,22 @@
-# Warp Coin v0.22 — Immersive 3D Galaxy
+# Warp Coin v0.23 — Living 2D Galaxy
 
-**Play:** https://i-am-christian.github.io/tokenverse/ (the 3D build becomes available when the main-branch changes are deployed).
+**Play:** https://i-am-christian.github.io/tokenverse/
 
-Warp Coin now has a **real-time third-person 3D space view**, built with WebGL2 and **no third-party runtime or CDN**. Ships, asteroids, distant planets, jump gates, stations, faction patrols, pirates, bullets, and signal beacons are rendered as actual lit polygonal 3D objects in a perspective chase camera. The large **192,000 × 115,200** systems, fast Warp Drive, shooting, mining, factions, economy, ship upgrades and browser saves remain in place.
+Warp Coin is back to a **beautiful 2D space game**. The native WebGL2 3D renderer, 3D canvas, camera controls, 3D assets and 3D mode switches have been removed. Both the root game entry and `docs/index.html` now load the same 2D-only build.
 
-**Controls:** On the right-side console select **3D ON / 2D VIEW** to toggle. Move with **W/A/S/D**, steer in 3D by moving or dragging left/right across the background or by using **Q/R**, hold **F** or **FIRE** to shoot, click open space to plot a course, press **H** for Warp Drive and **J** for Pulse Jump. The Navigation drawer keeps the original full-galaxy map. Use the **mouse wheel** or the **3D camera distance** slider under Twelve Bells → Graphics & access to zoom the chase camera. The 3D HUD labels nearby stations, jump gates and distress signals.
+### What's new
 
-**Compatibility:** The existing flight simulation still operates on its familiar 2D navigation plane (3D is a new *renderer and camera*, not six-degrees-of-freedom physics yet). If WebGL2 is unavailable or loses its context, gameplay automatically continues in the original 2D view. No saved assets or accounts are reset. No Supabase project was accessed or connected.
+- **Visuals overhauled:** richer system-specific nebulae and atmospheric light, multilayer parallax stars, subtle scenic shooting stars, better ringed planets, crystalline mineral glints, more elaborate pirate drone ships and multiple glowing engine plumes. All procedural; no image downloads or dependencies. Quality and reduced-motion settings are respected.
+- **Daily Field Contracts:** open **Contracts** on the right console to see repeatable NPC bounty, mining and scanning missions. Claim Scrap Credits and XP when completed. Each contract refreshes once per UTC day; progress and claimed rewards are stored in your existing local save.
+- **Shield Pulse:** press **Q** or use the **Shield** button to consume 28 energy and reduce incoming damage by 65% for 6 seconds, with a 32-second cooldown. A glowing shield ring and ability countdown provide clear feedback.
+- **Combat chains:** consecutive enemy kills within 12 seconds build a chain; 3+ consecutive kills award a limited extra Scrap Credits and XP bonus.
+- **Tactical HUD:** subtle nearest-hostile targeting ring and a new expanding scanner wave on Scan. Existing weapon-specific projectiles, damage feedback, sounds, warp effects and portable save remain intact.
 
-[Full 3D implementation notes](WARP_COIN_V022.md)
+**Controls:** W/A/S/D to fly, point with mouse, hold **F** or **FIRE** to shoot, **Q** for Shield Pulse, **H** for Warp Drive, **J** for Pulse Jump. The galaxy chart remains usable for click-to-plot routes.
+
+**Preserved:** 192,000 × 115,200 world units per system, factions, ships, inventories, solo economy, mining, Rift events, Warp Drive, weapon upgrades and local browser saves. **No Supabase database connected or changed.**
+
+[Detailed release notes](WARP_COIN_V023.md)
 
 ---
 
