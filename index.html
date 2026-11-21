@@ -741,6 +741,8 @@ function warp20ToggleDrive(){
 /* Warp Coin v0.23: Daily contracts, chain bonuses, defensive Shield Pulse and tactical HUD. */
 let warp23Chain={kills:0,last:0},warp23ScanAt=-Infinity,warp23LastRefresh=0;
 function warp23Init(){
+ // Drop retired 3D preference keys when old pilots return to the 2D-only game.
+ if(S.settings){delete S.settings.view3D;delete S.settings.cameraZoom;}
  const rules=window.WarpContracts;
  if(rules)S.fieldContracts=rules.restore(S.fieldContracts,Date.now(),S.level);
  S.shieldEndsAt=Math.max(0,Number(S.shieldEndsAt)||0);
