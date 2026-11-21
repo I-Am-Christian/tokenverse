@@ -28,7 +28,7 @@ function typeFor(id,role=''){
  if(/titan|leviathan|battlecruiser|starcarrier|ark|capital|fortress|dread|carrier/.test(key))return 'capital';
  if(/marauder|gunship|fighter|raider|outlaw|viper|raptor|cerberus/.test(key))return 'raider';
  if(/hauler|freighter|barge|cargo|mule|convoy/.test(key))return 'freighter';
- if(/miner|ore|prospector|drill|rockhopper/.test(key))return 'miner';
+ if(/miner|orewhale|ore-hopper|prospector|drill|rockhopper/.test(key))return 'miner';
  if(/scout|kestrel|interceptor|phantom|swift|whisper|ghost/.test(key))return 'interceptor';
  if(/explorer|nomad|wanderer|wayfarer|voyager|skiff/.test(key))return 'explorer';
  if(/security|escort/.test(key))return 'interceptor';
