@@ -48,7 +48,7 @@ function smokeBrowser(html){
 const html=readFileSync(new URL('../index.html', import.meta.url),'utf8');
 const result=smokeBrowser(html);
 test('Tokenverse v0.12 boots with the complete fleet and connected systems',()=>{
- assert.equal(result.shipCount,36);
+ assert.equal(result.shipCount,40);
  assert.equal(result.guns,9);
  assert.equal(result.systemCount,6);
  assert.equal(result.gates,4);
