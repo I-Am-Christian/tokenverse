@@ -1,8 +1,8 @@
 {
   "name": "warp-coin",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "private": true,
-  "description": "Warp Coin galaxy game with native WebGL2 third-person 3D view and original 2D fallbacks",
+  "description": "Warp Coin polished 2D space adventure with daily contracts, combat chains and defensive Shield Pulse",
   "type": "module",
   "scripts": {
     "start": "node server.js",

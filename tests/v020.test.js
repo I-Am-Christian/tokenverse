@@ -34,8 +34,8 @@ const readRoot=()=>fs.readFileSync(new URL('../index.html',import.meta.url),'utf
 const readDocs=()=>fs.readFileSync(new URL('../docs/index.html',import.meta.url),'utf8');
 test('public GitHub Pages root and docs both serve v0.20 and resolve every required module',()=>{
  const root=readRoot(),docs=readDocs();
- assert.match(root,/<title>Warp Coin v0\.22/);
- assert.match(docs,/<title>Warp Coin v0\.22/);
+ assert.match(root,/<title>Warp Coin v0\.23/);
+ assert.match(docs,/<title>Warp Coin v0\.23/);
  for(const module of ['trade-route-engine','travel-drive','frontier-encounters','warp-route','space-audio','space-visuals']){
   assert.ok(root.includes('src="./docs/'+module+'.js"'),module+' available from root');
   assert.ok(docs.includes('src="./'+module+'.js"'),module+' available from docs');
@@ -108,7 +108,7 @@ test('audio and graphics engines parse and export the expected features',()=>{
  assert.equal(typeof gfx.WarpVisuals.backdrop,'function');
  assert.equal(typeof gfx.WarpVisuals.thruster,'function');
  const base={save(){},restore(){},fillRect(){},beginPath(){},arc(){},fill(){},stroke(){},moveTo(){},
-    lineTo(){},translate(){},rotate(){},ellipse(){},closePath(){},
+    lineTo(){},bezierCurveTo(){},translate(){},rotate(){},ellipse(){},closePath(){},
     createRadialGradient(){return {addColorStop(){}}},createLinearGradient(){return {addColorStop(){}}}};
  assert.equal(gfx.WarpVisuals.starfield(base,{w:1280,h:720,x:24000,y:40000,quality:'low'}),true);
  assert.equal(gfx.WarpVisuals.backdrop(base,{w:1280,h:720,quality:'low'}),false);
