@@ -1,3 +1,17 @@
+# Warp Coin v0.22 — Immersive 3D Galaxy
+
+**Play:** https://i-am-christian.github.io/tokenverse/ (the 3D build becomes available when the main-branch changes are deployed).
+
+Warp Coin now has a **real-time third-person 3D space view**, built with WebGL2 and **no third-party runtime or CDN**. Ships, asteroids, distant planets, jump gates, stations, faction patrols, pirates, bullets, and signal beacons are rendered as actual lit polygonal 3D objects in a perspective chase camera. The large **192,000 × 115,200** systems, fast Warp Drive, shooting, mining, factions, economy, ship upgrades and browser saves remain in place.
+
+**Controls:** On the right-side console select **3D ON / 2D VIEW** to toggle. Move with **W/A/S/D**, steer in 3D by moving or dragging left/right across the background or by using **Q/R**, hold **F** or **FIRE** to shoot, click open space to plot a course, press **H** for Warp Drive and **J** for Pulse Jump. The Navigation drawer keeps the original full-galaxy map. Use the **mouse wheel** or the **3D camera distance** slider under Twelve Bells → Graphics & access to zoom the chase camera. The 3D HUD labels nearby stations, jump gates and distress signals.
+
+**Compatibility:** The existing flight simulation still operates on its familiar 2D navigation plane (3D is a new *renderer and camera*, not six-degrees-of-freedom physics yet). If WebGL2 is unavailable or loses its context, gameplay automatically continues in the original 2D view. No saved assets or accounts are reset. No Supabase project was accessed or connected.
+
+[Full 3D implementation notes](WARP_COIN_V022.md)
+
+---
+
 # Warp Coin v0.21 — Weapons Reforged
 
 **Play:** https://i-am-christian.github.io/tokenverse/ (new version appears after the main branch deploys).
