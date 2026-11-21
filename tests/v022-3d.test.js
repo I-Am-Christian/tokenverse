@@ -85,7 +85,8 @@ test('real WebGL2-style context renders a complete space scene with depth and mu
   outposts:[],patrols:[],convoys:[],signal:{system:'orion',x:96090,y:56150,kind:'wreck'},
   autopilot:{step:0,path:[{x:96075,y:56150}]}
  };
- assert.equal(renderer.render(objects),true);
+ const rendered=renderer.render(objects);
+ assert.equal(rendered,true,renderer.error||'WebGL draw did not complete');
  assert.ok(calls.triangles>=12,'ships, asteroids, stations and gates are actual triangles');
  assert.ok(calls.points>=1,'the scene uses true perspective star points');
  assert.ok(calls.viewport>=2);
