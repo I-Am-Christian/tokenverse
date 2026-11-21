@@ -69,7 +69,7 @@ test('four factions, protected home regions, reputation, docking, and world expa
  const result=factionSmoke(html);
  assert.equal(result.factions.length,4);
  assert.equal(result.ships,40);
- assert.equal(result.guns,9);
+ assert.equal(result.guns,14);
  assert.equal(result.patrols,28);
  assert.deepEqual(result.world,[192000,115200]);
  assert.ok(result.longRoute>0);
