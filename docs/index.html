@@ -369,7 +369,7 @@
       </section>
       <section class="stationSection" data-section="shipyard">
         <div class="notice">Purchase and pilot new ships. Each hull changes speed, damage, durability and cargo.</div>
-        <div class="ship-summary">Scrap Credits (SC) purchase ordinary ships. Material tokens are reserved for specialist crafting and existing premium hulls.</div><select id="shipFilter" class="ship-filter" aria-label="Filter ship dealership"><option value="all">All 36 ships</option><option value="scout">Scouts</option><option value="miner">Miners</option><option value="fighter">Fighters</option><option value="hauler">Haulers</option><option value="explorer">Explorers</option><option value="premium">Premium originals</option></select><div id="shipList"></div>
+        <div class="ship-summary">Scrap Credits (SC) purchase ordinary ships. Material tokens are reserved for specialist crafting and existing premium hulls.</div><select id="shipFilter" class="ship-filter" aria-label="Filter ship dealership"><option value="all">All 40 ships</option><option value="scout">Scouts</option><option value="miner">Miners</option><option value="fighter">Fighters</option><option value="hauler">Haulers</option><option value="explorer">Explorers</option><option value="capital">Capital ships</option><option value="premium">Premium originals</option></select><div id="shipList"></div>
         <div class="fabricator-label">EQUIPMENT & PAINT</div>
         <div class="rowItem"><div><strong>Paint</strong><small>Customize hull and accent color.</small></div><div class="inlineBtns"><input type="color" id="hullColor" value="#d9e8ff"><input type="color" id="accentColor" value="#71e8ff"><button id="savePaint">Save paint</button></div></div>
         <div id="equipList"></div><h4 class="v14-caption">Cosmetic ship skins — local preview</h4><canvas id="v14ShipPreview" width="440" height="168" role="img" aria-label="Preview of faction ship appearance"></canvas><div id="v14SkinDescription" class="v14-sub"></div><div id="v14SkinRows"></div><button id="v14SkinNone">Remove cosmetic</button>
@@ -1843,7 +1843,7 @@ function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=in
  if(window.WarpVisuals?.drone?.(ctx,{x,y,angle:d.angle,tier:d.tier,ratio:d.hp/Math.max(1,d.maxHp),
     color:d.tier>2?'#ff9fe8':'#ff90a8',time:t,reducedMotion:!!S.settings.reducedMotion}))continue;
  ctx.save(); ctx.translate(x,y); ctx.rotate(d.angle); ctx.shadowColor=d.tier>2?'#ff9fe8':'#ff94a8'; ctx.shadowBlur=10; ctx.fillStyle=d.tier>2?'#702f79':'#66243c'; ctx.strokeStyle=d.tier>2?'#ffc5fb':'#ffb4c3'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(16,0); ctx.lineTo(0,-12); ctx.lineTo(-15,0); ctx.lineTo(0,12); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore(); ctx.fillStyle='#ffd5de'; ctx.fillRect(x-16,y-24,32,4); ctx.fillStyle='#ff4f77'; ctx.fillRect(x-16,y-24,32*(d.hp/d.maxHp),4)}
- if(warpCombatFX)warpCombatFX.draw(ctx,bullets,worldToScreen,{quality:S.settings.quality||'medium',reducedMotion:!!S.settings.reducedMotion,time:t,width:w,height:h});
+ if(warpCombatFX)warpCombatFX.draw(ctx,bullets,worldToScreen,{quality:S.settings.quality||'medium',reducedMotion:!!S.settings.reducedMotion,time:t,width:w,height:h,zoom:warp25Zoom()});
  else for(const b of bullets){const [x,y]=worldToScreen(b.x,b.y);ctx.strokeStyle=b.color;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-b.vx*.02,y-b.vy*.02);ctx.stroke()}
  for(const p of particles){const [x,y]=worldToScreen(p.x,p.y); ctx.globalAlpha=Math.max(0,p.life); ctx.fillStyle=p.color; ctx.fillRect(x,y,p.size,p.size); ctx.globalAlpha=1}
  for(const n of damagePopups){const [dx,dy]=worldToScreen(n.x,n.y);if(dx>0&&dx<w&&dy>0&&dy<h){ctx.fillStyle='rgba(255,222,153,'+Math.min(1,n.life/.45)+')';ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText(n.text||('-'+n.amount),dx,dy);ctx.textAlign='left';}}
@@ -3282,7 +3282,7 @@ $('factionDrawer').addEventListener('click',e=>{const b=e.target.closest('button
 $('factionSelectModal').addEventListener('click',e=>{const b=e.target.closest('[data-faction-join]');if(b)factionJoin(b.dataset.factionJoin);});
 $('factionHomeBtn').onclick=factionHomeRoute;
 $('hullColor').value=S.ship.hull; $('accentColor').value=S.ship.accent;
-renderLog();renderUI();setTab('market');save();log('Warp Coin v0.24 · Salvage Wars: floating loot, evasive dash and tactical pirate AI.');requestAnimationFrame(loop);
+renderLog();renderUI();setTab('market');save();log('Warp Coin v0.25 · Galactic Armada: camera zoom, capital ships, living NPC fleets and new weapons.');requestAnimationFrame(loop);
 })();
 </script>
 </body>
