@@ -69,7 +69,7 @@ test('v0.25 loads zoom/fleet module from public root and docs, no WebGL or Supab
   assert.match(html,/id="fleetList"/);
   assert.doesNotMatch(html,/scene-3d|space3d|Warp3D/);
  }
- assert.doesNotMatch(read('docs/galaxy-life.js'),/fetch\(|https?:\/\/|supabase/);
+ assert.doesNotMatch(fs.readFileSync(new URL('../docs/galaxy-life.js',import.meta.url),'utf8'),/fetch\(|https?:\/\/|supabase/);
 });
 test('camera zoom is clamped, reversible and click picking respects zoom',()=>{
  assert.equal(life.zoom(.05),.36);
@@ -119,14 +119,14 @@ test('four capital ships are much larger and have real high-end costs and physic
 });
 test('five new guns are craftable with distinct recoil, cooldowns, pellets and guidance',()=>{
  const {api}=boot25(readRoot());
- const ids=['autocannon','flak','prism','ionstorm','torpedo'];
+ const ids=['autocannon','barrage','prism','ionstorm','torpedo'];
  for(const id of ids){
   assert.ok(api.GUNS[id].cost,'weapon '+id+' has real crafting costs');
   assert.equal(api.S.crafted.guns[id],false);
   assert.equal(api.S.weaponLevels[id],1);
  }
  assert.ok(api.GUNS.autocannon.fireRate<.10);
- assert.equal(api.GUNS.flak.pellets,6);
+ assert.equal(api.GUNS.barrage.pellets,6);
  assert.equal(api.GUNS.prism.pellets,2);
  assert.equal(api.GUNS.ionstorm.pellets,3);
  assert.equal(api.GUNS.torpedo.guided,true);
@@ -149,7 +149,7 @@ test('new NPCs populate the actual 2D simulation with multiple classes',()=>{
 });
 test('NPC traffic moves, escorts target raiders and hostile leading works',()=>{
  const ship={x:10000,y:10000,vx:80,vy:0};
- const raider={role:'raider',x:10400,y:10000,anchorX:10400,anchorY:10000,phase:1,vx:0,vy:0};
+ const raider={role:'raider',hp:100,x:10400,y:10000,anchorX:10400,anchorY:10000,phase:1,vx:0,vy:0};
  const escort={role:'escort',x:10050,y:9950,anchorX:10050,anchorY:9950,phase:1,vx:0,vy:0};
  const aim=life.trafficIntent(raider,ship,[raider,escort],.016);
  assert.equal(aim.fire,true);
