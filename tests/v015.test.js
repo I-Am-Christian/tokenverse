@@ -28,7 +28,7 @@ test('Warp Coin v0.15 rebrands the browser and scales all five public galaxy map
  assert.match(html,/<title>Warp Coin v0\.25/);
  assert.match(html,/WARP<span>COIN<\/span>/);
  assert.deepEqual([api.WORLD.w,api.WORLD.h],[192000,115200]);
- assert.equal(Object.keys(api.SHIPS).length,36);
+ assert.equal(Object.keys(api.SHIPS).length,40);
  assert.equal(Object.keys(api.GUNS).length,9);
  assert.equal(Object.keys(api.FACTIONS).length,4);
  assert.equal(Object.keys(api.SYSTEMS).length,6);
