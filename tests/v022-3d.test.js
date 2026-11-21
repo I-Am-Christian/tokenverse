@@ -21,7 +21,7 @@ function fakeGL(){
   COLOR_BUFFER_BIT:0x4000,DEPTH_BUFFER_BIT:0x0100,
   getParameter:()=> 'WebGL 2.0 Mock',
   createShader:f,shaderSource(){},compileShader(){},getShaderParameter:()=>true,getShaderInfoLog:()=>'',deleteShader(){},
-  createProgram:f,attachShader(){},bindAttribLocation(){},linkProgram(){},getProgramParameter:()=>true,
+  createProgram:f,attachShader(){},bindAttribLocation(){},linkProgram(){},useProgram(){},getProgramParameter:()=>true,
   getProgramInfoLog:()=>'',deleteProgram(){},createVertexArray:f,bindVertexArray(){},enableVertexAttribArray(){},
   createBuffer:f,bindBuffer(){},bufferData(){},vertexAttribPointer(){},
   getUniformLocation:f,uniformMatrix4fv(){},uniform3fv(){},uniform1f(){},
