@@ -135,3 +135,51 @@ test('existing save, account model, economy, warp and combat rules stay intact',
  assert.match(root,/function fireGun\(\)/);
  assert.match(root,/function warp19Create\(\)/);
 });
+
+function boot3D(html, starting=null, runtimeRenderer=null){
+ const raw=html.slice(html.indexOf('<script>')+8,html.lastIndexOf('</script>'));
+ new Function(raw);
+ const modified=raw.replace('(()=>{','return (()=>{').replace(/\}\)\(\);\s*$/,`return {S,draw,warp22Enabled,warp22ToggleMode,warp20ToggleDrive,get autopilot(){return autopilot},warp18PulseJump,warp18SystemDiscovery,warp18StationDiscovery,warp18SafeCorridor,setAutopilot,get warp18Cruising(){return warp18Cruising},WORLD,SHIPS,GUNS,SYSTEMS,FACTIONS,WARP_HUB,WARP_STAR,WARP_COLONY_MODS,STATIONS,GATES,ZONES,DEEP_RIM_STATIONS,warp16Transit,warp16Init,warpClaim,warpHomeWarp,warpLeave,warpUpgrade,warpRename,warpPlanetChange,warpProduction,warpLoad,warpDeposit,warpStoredCount,warpStoreCap,warpRenderEconomy,currentStation,updateShip,renderUI,planRoute,draw,spawnWorld,warpRadar,get dockedStation(){return dockedStation},get asteroids(){return asteroids},get drones(){return drones}};})();`);
+ let seq=0;const elements=new Map(),store=new Map(starting?Object.entries(starting):[]),nop=()=>{};
+ const graph=new Proxy({createLinearGradient(){return {addColorStop(){}}},createRadialGradient(){return {addColorStop(){}}}}, {get(o,k){return o[k]||nop},set(o,k,v){o[k]=v;return true}});
+ function elem(id){if(!elements.has(id)){
+  const states=new Set(),cls={contains:k=>states.has(k),add:k=>states.add(k),remove:k=>states.delete(k),toggle(k,v){if(v===undefined?!states.has(k):v)states.add(k);else states.delete(k);return states.has(k)}};
+  elements.set(id,{id,style:{},innerHTML:'',textContent:'',value:'',checked:false,disabled:false,children:[],classList:cls,
+   addEventListener:nop,setAttribute:nop,getAttribute:()=>'',hasAttribute:()=>false,appendChild:nop,removeChild:nop,prepend:nop,click:nop,closest:()=>null,
+   insertBefore:nop,querySelector:()=>null,getBoundingClientRect:()=>({left:0,right:1500,top:0,bottom:1080,width:1920,height:1080}),getContext:()=>graph});
+ }return elements.get(id)}
+ const document={getElementById:elem,querySelectorAll:()=>[],createElement:()=>elem('new-'+(++seq))};
+ const localStorage={getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)};
+ const current={now:Date.parse('2026-11-18T12:00:00Z')};const ODate=Date;
+ class FakeDate extends ODate{static now(){return current.now;}}
+ const api=new Function('document','window','localStorage','requestAnimationFrame','addEventListener','innerWidth','innerHeight','setTimeout','clearTimeout','performance','crypto','confirm','Date',modified)(document,{devicePixelRatio:1,Warp3D:{create:()=>runtimeRenderer}},localStorage,nop,nop,1920,1080,nop,nop,{now:()=>2000},{randomUUID:()=>String(++seq)},()=>true,FakeDate);
+ return {api,elem,current,store};
+}
+
+
+
+
+test('the real in-page game enters active 3D, draws a camera frame, toggles to 2D and back',()=>{
+ let frames=0,resizes=0;
+ const renderer={
+  available:true,failed:false,
+  render(scene){frames++;assert.ok(scene.ship&&scene.asteroids&&scene.stations);return true;},
+  resize(){resizes++;},pick(){return null;},project(){return null;}
+ };
+ const {api,elem,store}=boot3D(read('index.html'),null,renderer);
+ assert.equal(api.warp22Enabled(),true);
+ assert.ok(resizes>=1);
+ assert.equal(elem('space3d').style.display,'block');
+ assert.equal(elem('viewModeLabel').textContent,'◆ 3D ON');
+ assert.equal(elem('gameShell').classList.contains('warp-3d-mode'),true);
+ api.draw();
+ assert.equal(frames,1,'game invokes the native 3D renderer rather than its 2D background');
+ api.warp22ToggleMode();
+ assert.equal(api.warp22Enabled(),false);
+ assert.equal(elem('space3d').style.display,'none');
+ assert.equal(api.S.settings.view3D,false);
+ api.warp22ToggleMode();
+ assert.equal(api.warp22Enabled(),true);
+ assert.equal(elem('space3d').style.display,'block');
+ assert.ok(store.has('tokenverse-deep-space-v10'),'3D preference is stored in existing save key');
+});
