@@ -221,6 +221,13 @@
 #zoomResetBtn{font-size:10px;min-width:31px}
 #fleetReadout{color:#9fc9f6!important;border:1px solid rgba(113,163,222,.2)}
 @media(max-width:620px){.zoom-controls{margin-top:7px;gap:2px;padding:3px}.zoom-controls button{min-width:22px;height:23px;font-size:12px}#zoomValue{font-size:9px;min-width:27px}#zoomResetBtn{font-size:8px;min-width:24px}#fleetReadout{font-size:9px}}
+
+.warp25-fleet-list{display:grid;gap:7px}
+.warp25-fleet-card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:10px;background:rgba(22,52,78,.78);border:1px solid rgba(113,164,215,.2);border-radius:6px}
+.warp25-fleet-card strong{display:block;font-size:11px;letter-spacing:.45px}
+.warp25-fleet-card small{display:block;font-size:10px;color:#8eb1c8;margin-top:5px}
+.warp25-fleet-card button{font-size:9px;font-weight:800;padding:7px;border:1px solid #71b6d7;border-radius:5px;background:#244967;color:#d9f8ff}
+.warp25-fleet-card button:hover{background:#31688a}
 </style>
 </head>
 <body>
@@ -264,11 +271,17 @@
       <button class="console-btn" id="toggleWallet" aria-label="Token wallet" aria-expanded="false" title="Token wallet"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M3 10h18M16 14h3"/><path d="m6 6 9-4 2 4"/></svg><span>Ledger</span></button>
       <button class="console-btn" id="toggleCargo" aria-label="Cargo manifest" aria-expanded="false" title="Cargo manifest"><svg viewBox="0 0 24 24"><path d="m3 7 9-4 9 4-9 5-9-5ZM3 7v11l9 4 9-4V7M12 12v10M8 5l9 5"/></svg><span>Cargo</span></button>
       <button class="console-btn" id="toggleMap" aria-label="Navigation map" aria-expanded="false" title="Navigation map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 2 2 4 4-6ZM12 2v4M12 18v4M2 12h4M18 12h4"/></svg><span>Navigation</span></button><button class="console-btn" id="toggleGates" aria-label="Star gates" aria-expanded="false" title="Star gates"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="10"/><path d="M4 12h16"/></svg><span>Gates</span></button>
-      <button class="console-btn" id="toggleFaction" aria-label="Faction territories" aria-expanded="false" title="Faction territories"><svg viewBox="0 0 24 24"><path d="M5 21V4h10l-2.2 4L15 12H5M5 4V2M4 21h3"/><path d="M9 16h11M9 19h8"/></svg><span>Factions</span></button><button class="console-btn" id="toggleContracts" aria-label="Daily field contracts" aria-expanded="false" title="Earn local Scrap Credits and XP"><span>✦ Contracts</span><b id="contractsReady" class="warp23-count"></b></button>
+      <button class="console-btn" id="toggleFaction" aria-label="Faction territories" aria-expanded="false" title="Faction territories"><svg viewBox="0 0 24 24"><path d="M5 21V4h10l-2.2 4L15 12H5M5 4V2M4 21h3"/><path d="M9 16h11M9 19h8"/></svg><span>Factions</span></button><button class="console-btn" id="toggleFleet" title="Hail merchants, recruit escorts and track hostiles" aria-label="Living galaxy NPC traffic" aria-expanded="false"><span>🚀 Fleets</span><b id="fleetCount" class="warp23-count"></b></button>
+      <button class="console-btn" id="toggleContracts" aria-label="Daily field contracts" aria-expanded="false" title="Earn local Scrap Credits and XP"><span>✦ Contracts</span><b id="contractsReady" class="warp23-count"></b></button>
       <button class="console-btn" id="toggleLog" aria-label="Comms log" aria-expanded="false" title="Comms log"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h12M4 17h8"/><rect x="2" y="2" width="20" height="20" rx="3"/></svg><span>Comms</span></button>
       <button class="console-btn" id="toggleSound" aria-label="Enable or disable space audio" aria-expanded="false" title="Toggle sound"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4ZM17 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg><span id="audioToggleLabel">Sound OFF</span></button>
     </div>
     <div id="walletDrawer" class="hud drawer"><h3>Asset ledger <span class="test-pill">LOCAL TEST</span></h3><div id="walletGrid" class="grid2"></div><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px"><span style="font-size:10px;color:var(--muted)">SIMULATED ASSETS · NO CASH VALUE</span><button id="resetInLedger" class="dock-action" style="min-width:0;height:30px;font-size:9px">Reset pilot</button></div></div>
+    <div id="fleetDrawer" class="hud drawer" aria-label="Galactic traffic and fleets">
+      <h3>Living Galaxy · Nearby Fleets</h3>
+      <p class="warp23-explain">Approach and hail merchants to repair, prospectors for ore, freighters for energy or security ships to hire an escort. Hostile raiders can be attacked and salvaged.</p>
+      <div id="fleetList" class="warp25-fleet-list"></div>
+    </div>
     <div id="contractsDrawer" class="hud drawer" aria-label="Daily field contracts">
       <h3>Field contracts <span class="warp23-hint">DAILY</span></h3>
       <p class="warp23-explain">Complete solo missions to earn Scrap Credits and experience. Missions reset each UTC day.</p>
@@ -513,6 +526,7 @@ const warpAudio=window.WarpAudio?.create?.()||null;
 const warpCombatFX=window.WarpCombatFX?.create?.()||null;
 let touchFireHeld=false;
 let warp24Drops=[],warp24Trail=[],warp24DropId=0,warp24TrailTick=0;
+let warp25Bots=[],warp25Scenery=[],warp25Center={x:NaN,y:NaN,system:''},warp25FleetLast=0;
 let warp20LastAudioTick=0,warp20PreviousCruise=false;
 function DPR(){return Math.min(2,window.devicePixelRatio||1)}
 function resize(){canvas.width=Math.floor(innerWidth*DPR());canvas.height=Math.floor(innerHeight*DPR());ctx.setTransform(DPR(),0,0,DPR(),0,0)} addEventListener('resize',resize); resize();
@@ -535,7 +549,7 @@ function spend(cost){if(cost.credits&&S.credits<cost.credits) return false; for(
 function costText(cost){const p=[]; if(cost.credits) p.push(cost.credits+' SC'); if(cost.ore) for(const k of KINDS) if(cost.ore[k]) p.push(cost.ore[k]+' '+OREDEF[k].name+' ore'); if(cost.tokens) for(const k of KINDS) if(cost.tokens[k]) p.push(cost.tokens[k]+' $'+OREDEF[k].ticker); return p.join(' · ')}
 function spawnWorld(){
  const rand=(a,b)=>a+Math.random()*(b-a);
- asteroids=[]; drones=[]; bullets=[]; particles=[];warp24Drops.length=0;warp24Trail.length=0;
+ asteroids=[]; drones=[]; bullets=[]; particles=[];warp24Drops.length=0;warp24Trail.length=0;warp25Bots.length=0;warp25Scenery.length=0;warp25Center.system='';
  if(S.system==='homestead'){
   // The player-owned system is a peaceful instanced map, saved locally.
   for(let i=0;i<190;i++){
@@ -1068,6 +1082,231 @@ function warp24DrawWorld(){
 
 
 /* v0.25 camera zoom — world physics, collision and economy coordinates never scale. */
+
+/* v0.25 living traffic: independent bots have roles and predictable local collision. */
+function warp25Populate(){
+ const life=window.WarpGalaxyLife;
+ if(!life)return;
+ warp25Bots=life.spawnTraffic(S,{count:29,quality:S.settings.quality||'medium',system:S.system,
+  world:WORLD,isSafe:(x,y)=>factionSafeAt(x,y)});
+ warp25Scenery=[];
+ for(let i=0;i<75;i++){
+  const angle=Math.random()*Math.PI*2,dist=160+Math.random()*3500;
+  const x=clamp(S.x+Math.cos(angle)*dist,40,WORLD.w-40),
+   y=clamp(S.y+Math.sin(angle)*dist,40,WORLD.h-40);
+  warp25Scenery.push({x,y,kind:i%8===0?'probe':i%5===0?'wreck':i%3===0?'crystal':'dust',
+   rotation:Math.random()*Math.PI*2,r:5+Math.random()*20});
+ }
+ warp25Center={x:S.x,y:S.y,system:S.system};
+ warp25FleetLast=performance.now();
+}
+function warp25Tick(dt){
+ const life=window.WarpGalaxyLife;
+ if(!life||S.rift?.inside)return;
+ const moved=Math.hypot(S.x-warp25Center.x,S.y-warp25Center.y);
+ if(warp25Center.system!==S.system||
+  (!warp25Bots.length&&performance.now()-warp25FleetLast>20000)||
+  (moved>2600&&performance.now()-warp25FleetLast>2200)){warp25Populate();}
+ for(const bot of warp25Bots){
+  if(bot.hp<=0)continue;
+  bot.phase+=dt*.44;bot.fire-=dt;bot.oreBeam=Math.max(0,(bot.oreBeam||0)-dt);
+  if(bot.hiredUntil>Date.now()&&bot.role==='escort'){
+   bot.anchorX=S.x+Math.cos(bot.phase)*160;
+   bot.anchorY=S.y+Math.sin(bot.phase)*160;
+  }
+  const steering=life.trafficIntent(bot,S,warp25Bots,dt);
+  bot.angle=steering.angle;
+  bot.vx+=(steering.ax-bot.vx*.9)*dt;
+  bot.vy+=(steering.ay-bot.vy*.9)*dt;
+  const max=life.role(bot.role).speed,mag=Math.hypot(bot.vx,bot.vy);
+  if(mag>max){bot.vx*=max/mag;bot.vy*=max/mag;}
+  bot.x=clamp(bot.x+bot.vx*dt,30,WORLD.w-30);
+  bot.y=clamp(bot.y+bot.vy*dt,30,WORLD.h-30);
+  if(bot.role==='miner'&&Math.random()<dt*.4)bot.oreBeam=.45;
+  if(bot.fire>0||!steering.fire||bullets.length>280)continue;
+  if(bot.role==='raider'){
+   if(factionSafeAt(S.x,S.y))continue;
+   bot.fire=1.7+Math.random()*.6;
+   const angle=life.role(bot.role).id==='raider'?
+    (window.WarpGameplay24?.leadAngle?.(bot,S,380,1.3)||bot.angle):bot.angle;
+   bullets.push({from:'drone',x:bot.x+Math.cos(angle)*22,y:bot.y+Math.sin(angle)*22,
+    vx:Math.cos(angle)*390,vy:Math.sin(angle)*390,
+    life:1.7,damage:8+(SYSTEMS[S.system]?.tier||1),color:'#ff9fb7',weapon:'enemy'});
+  }else if(bot.role==='escort'&&steering.target){
+   bot.fire=.85;
+   const other=steering.target,a=Math.atan2(other.y-bot.y,other.x-bot.x);
+   bullets.push({from:'bot_escort',x:bot.x+Math.cos(a)*18,y:bot.y+Math.sin(a)*18,
+    vx:Math.cos(a)*530,vy:Math.sin(a)*530,life:1.6,damage:18,color:'#96f7e5',weapon:'prism'});
+  }
+ }
+}
+function warp25HitBot(b){
+ for(let i=warp25Bots.length-1;i>=0;i--){
+  const bot=warp25Bots[i];
+  if(bot.role!=='raider'||bot.hp<=0)continue;
+  if(Math.hypot(bot.x-b.x,bot.y-b.y)>27*bot.size)continue;
+  bot.hp-=Math.max(1,b.damage||8);
+  warpCombatFX?.impact({x:b.x,y:b.y,weapon:b.weapon||'pulse',color:b.color,killed:bot.hp<=0});
+  spawnParticles(b.x,b.y,bot.color,5,65);
+  if(bot.hp<=0){
+   warp24SpawnSalvage(bot.x,bot.y,(SYSTEMS[S.system]?.tier||1)+1,{pirate:true});
+   spawnParticles(bot.x,bot.y,'#ff8ba5',18,125);
+   if(b.from==='player'){
+    S.stats.kills=(S.stats.kills||0)+1;warp23RegisterKill();
+    S.credits+=35;S.xp+=18;
+    damagePopups.push({x:bot.x,y:bot.y-40,text:'OUTLAW DEFEATED +35 SC',life:1.1});
+   }
+   warp25Bots.splice(i,1);
+   warpAudio?.event('blast');
+  }
+  return true;
+ }
+ return false;
+}
+function warp25BotClick(wx,wy){
+ if(S.rift?.inside)return false;
+ const bot=warp25Bots.find(b=>Math.hypot(b.x-wx,b.y-wy)<39*b.size);
+ if(!bot)return false;
+ warp25Hail(bot.id);
+ return true;
+}
+function warp25Hail(id){
+ const bot=warp25Bots.find(b=>b.id===id&&b.hp>0);
+ if(!bot)return toast('That ship has already left the sector.');
+ const dist=Math.hypot(bot.x-S.x,bot.y-S.y);
+ if(bot.role==='raider'){
+  setAutopilot('point',bot.x,bot.y);
+  return toast('Hostile target plotted · engage your weapons.');
+ }
+ if(dist>205){
+  setAutopilot('point',bot.x,bot.y);
+  return toast('Approach '+bot.role.toUpperCase()+' to hail · '+Math.round(dist)+' units');
+ }
+ let cost=0,message='';
+ if(bot.role==='trader'){
+  if(S.hp>=S.maxHp)return toast('Merchant repair drones: your hull is already full.');
+  cost=75;if(S.credits<cost)return toast('Merchant repair requires 75 SC.');
+  S.hp=Math.min(S.maxHp,S.hp+65);message='Merchant repaired 65 hull';
+ }else if(bot.role==='freighter'){
+  if(S.energy>=100)return toast('Fuel cells already charged.');
+  cost=50;if(S.credits<cost)return toast('Freighter refuel costs 50 SC.');
+  S.energy=Math.min(100,S.energy+55);message='Freighter refueled +55 energy';
+ }else if(bot.role==='miner'){
+  if(cargoCount()>=cargoCap())return toast('Cargo full; cannot buy miner stock.');
+  cost=28;if(S.credits<cost)return toast('Prospector ore costs 28 SC.');
+  S.ore.neon++;message='Prospector delivered one Neonite ore';
+ }else if(bot.role==='escort'){
+  if(bot.hiredUntil>Date.now())return toast('Escort already assigned to your ship.');
+  cost=230;if(S.credits<cost)return toast('Hiring security escort costs 230 SC.');
+  bot.hiredUntil=Date.now()+90000;message='Security escort hired for 90 seconds';
+ }
+ S.credits-=cost;
+ spawnParticles(bot.x,bot.y,bot.color,12,65);
+ log(message+' · -'+cost+' SC.');toast(message);
+ warpAudio?.event('reward');save();renderUI(false);
+}
+function warp25RenderFleet(){
+ const life=window.WarpGalaxyLife;
+ if(!life)return;
+ const nearby=warp25Bots.slice().sort((a,b)=>
+  Math.hypot(a.x-S.x,a.y-S.y)-Math.hypot(b.x-S.x,b.y-S.y)).slice(0,10);
+ $('fleetList').innerHTML=nearby.map(bot=>{
+  const descriptor=life.role(bot.role);
+  const distance=Math.round(Math.hypot(bot.x-S.x,bot.y-S.y));
+  const hired=bot.hiredUntil>Date.now();
+  return '<div class="warp25-fleet-card" style="border-left:3px solid '+descriptor.color+'">'+
+   '<div><strong style="color:'+descriptor.color+'">'+descriptor.title+(hired?' · HIRED':'')+
+   '</strong><small>'+distance+' units · '+Math.ceil(bot.hp)+' hull</small></div>'+
+   '<button data-fleet-hail="'+bot.id+'">'+(bot.role==='raider'?'TRACK':distance>205?'APPROACH':'HAIL')+'</button></div>';
+ }).join('')||'<p class="warp23-explain">No traffic in this region yet. Fly into the galaxy.</p>';
+}
+function warp25FleetUI(){
+ const within=warp25Bots.filter(b=>Math.hypot(b.x-S.x,b.y-S.y)<2500);
+ $('fleetCount').textContent=within.length||'';
+ const hostile=within.filter(b=>b.role==='raider').length;
+ $('fleetReadout').textContent=within.length+' BOT SHIPS · '+hostile+' OUTLAWS · CLICK TO HAIL';
+}
+function warp25DrawFleet(){
+ if(S.rift?.inside)return;
+ const w=innerWidth,h=innerHeight,t=performance.now()/1000;
+ ctx.save();
+ for(const piece of warp25Scenery){
+  const [x,y]=worldToScreen(piece.x,piece.y);
+  if(!warp25VisibleScreen(x,y,piece.r+35))continue;
+  ctx.save();ctx.translate(x,y);ctx.rotate(piece.rotation);
+  const r=piece.r;
+  if(piece.kind==='dust'){
+   ctx.fillStyle='rgba(138,194,219,.14)';
+   ctx.beginPath();ctx.ellipse(0,0,r*2.8,r*.6,0,0,Math.PI*2);ctx.fill();
+  }else if(piece.kind==='crystal'){
+   ctx.fillStyle='#5278a4';ctx.strokeStyle='#95e9ef';ctx.lineWidth=1;
+   ctx.beginPath();ctx.moveTo(0,-r);ctx.lineTo(r*.75,-r*.23);ctx.lineTo(0,r);
+   ctx.lineTo(-r*.7,-r*.23);ctx.closePath();ctx.fill();ctx.stroke();
+  }else if(piece.kind==='wreck'){
+   ctx.strokeStyle='#808eab';ctx.lineWidth=2.4;
+   ctx.strokeRect(-r,-r*.35,r*2,r*.7);ctx.beginPath();
+   ctx.moveTo(-r,-r*.8);ctx.lineTo(r,r*.8);ctx.stroke();
+  }else{
+   ctx.shadowColor='#b4fff4';ctx.shadowBlur=7;ctx.strokeStyle='#8be5f0';ctx.lineWidth=1;
+   ctx.beginPath();ctx.arc(0,0,r*.6,0,Math.PI*2);ctx.stroke();
+   ctx.beginPath();ctx.moveTo(-r,0);ctx.lineTo(r,0);ctx.stroke();
+  }
+  ctx.restore();
+ }
+ for(const bot of warp25Bots){
+  if(bot.hp<=0)continue;
+  const [x,y]=worldToScreen(bot.x,bot.y);
+  if(!warp25VisibleScreen(x,y,110*bot.size))continue;
+  const desc=window.WarpGalaxyLife?.role?.(bot.role);
+  const col=desc?.color||'#9abff5';
+  ctx.save();ctx.translate(x,y);ctx.rotate(bot.angle);ctx.scale(bot.size,bot.size);
+  ctx.shadowColor=col;ctx.shadowBlur=S.settings.quality==='low'?0:9;
+  ctx.fillStyle=bot.role==='raider'?'#492239':bot.role==='freighter'?'#393d47':'#203852';
+  ctx.strokeStyle=col;ctx.lineWidth=2;
+  ctx.beginPath();
+  if(bot.role==='freighter'){
+   ctx.moveTo(38,0);ctx.lineTo(24,-12);ctx.lineTo(-30,-15);
+   ctx.lineTo(-38,-9);ctx.lineTo(-38,9);ctx.lineTo(-30,15);ctx.lineTo(24,12);
+  }else if(bot.role==='miner'){
+   ctx.moveTo(25,0);ctx.lineTo(6,-18);ctx.lineTo(-24,-14);
+   ctx.lineTo(-31,0);ctx.lineTo(-24,14);ctx.lineTo(6,18);
+  }else if(bot.role==='raider'){
+   ctx.moveTo(26,0);ctx.lineTo(-10,-11);ctx.lineTo(-26,-22);
+   ctx.lineTo(-18,-3);ctx.lineTo(-27,8);ctx.lineTo(-8,17);
+  }else{
+   ctx.moveTo(24,0);ctx.lineTo(4,-9);ctx.lineTo(-20,-19);
+   ctx.lineTo(-15,-4);ctx.lineTo(-23,10);ctx.lineTo(2,12);
+  }
+  ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.shadowBlur=0;ctx.fillStyle='#b6fcff';
+  ctx.beginPath();ctx.ellipse(8,0,8,3,0,0,Math.PI*2);ctx.fill();
+  if(bot.role==='freighter'){
+   ctx.fillStyle='#d7ac75';for(let k=-1;k<=1;k++)ctx.fillRect(-27,k*9-3,22,6);
+  }else if(bot.role==='miner'){
+   ctx.strokeStyle='#8cffe8';ctx.beginPath();ctx.moveTo(-7,-17);ctx.lineTo(11,-22);
+   ctx.moveTo(-7,17);ctx.lineTo(11,22);ctx.stroke();
+  }
+  if(bot.role==='miner'&&bot.oreBeam>0){
+   ctx.strokeStyle='rgba(142,248,194,.7)';ctx.lineWidth=1.5;
+   ctx.beginPath();ctx.moveTo(24,0);ctx.lineTo(62,9*Math.sin(t*6));ctx.stroke();
+  }
+  ctx.restore();
+  ctx.save();ctx.textAlign='center';ctx.font='bold 10px system-ui';ctx.fillStyle=col;
+  if(Math.hypot(bot.x-S.x,bot.y-S.y)<1400||warp25Zoom()>1)
+    ctx.fillText(desc?.title||'BOT',x,y-30*bot.size);
+  if(bot.hp<bot.maxHp||bot.role==='raider'){
+   ctx.fillStyle='rgba(15,30,49,.87)';ctx.fillRect(x-23,y-22*bot.size-10,46,4);
+   ctx.fillStyle=bot.role==='raider'?'#ff9da9':'#92f1c4';
+   ctx.fillRect(x-23,y-22*bot.size-10,46*Math.max(0,bot.hp/bot.maxHp),4);
+  }
+  if(bot.hiredUntil>Date.now()){
+   ctx.strokeStyle='#a0ffe6';ctx.beginPath();ctx.arc(x,y,37*bot.size,0,Math.PI*2);ctx.stroke();
+  }
+  ctx.restore();
+ }
+ ctx.restore();
+}
+
 function warp25Zoom(){return window.WarpGalaxyLife?.zoom?.(S.settings.zoom2D)||1;}
 function warp25VisibleScreen(x,y,pad=100){
  const life=window.WarpGalaxyLife;
@@ -1574,6 +1813,7 @@ function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=in
  if(S.system!=='homestead'){drawFactionWorld();v14WorldOverlay();}else warpDrawSpace();for(const st of (S.system==='homestead'?[]:STATIONS)){const [x,y]=worldToScreen(st.x,st.y); if(!warp25VisibleScreen(x,y,120))continue; ctx.save(); ctx.translate(x,y); ctx.shadowColor=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#64dfff':'#b89cff'; ctx.shadowBlur=18; ctx.fillStyle=st.kind==='port'?'#153b71':'#302360'; ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#72efff':'#c6aeff'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,st.kind==='port'?28:18,0,7); ctx.fill(); ctx.stroke(); ctx.strokeStyle=st.kind==='faction'?FACTIONS[st.faction].color:st.kind==='hub'?'#8ff8ed':st.kind==='port'?'#8ef6ff':'#d4c2ff'; ctx.lineWidth=4; ctx.beginPath(); ctx.ellipse(0,0,42,10,t*.4,0,7); ctx.stroke(); ctx.restore();}
  for(const a of asteroids){if(a.ore<=0) continue; const [x,y]=worldToScreen(a.x,a.y); if(!warp25VisibleScreen(x,y,85))continue; ctx.save(); ctx.translate(x,y); ctx.rotate(a.rot+t*.06); const col=OREDEF[a.kind].color; ctx.shadowColor=col; ctx.shadowBlur=a.kind==='diam'?24:10; const gr=ctx.createRadialGradient(-a.r*.3,-a.r*.4,2,0,0,a.r*1.5); gr.addColorStop(0,'#ffffff'); gr.addColorStop(.2,col); gr.addColorStop(1,'#111a36'); ctx.fillStyle=gr; ctx.beginPath(); for(let i=0;i<7;i++){const aa=i*Math.PI*2/7, rr=a.r*(i%2?0.82:1), xx=Math.cos(aa)*rr, yy=Math.sin(aa)*rr; i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)} ctx.closePath(); ctx.fill(); v14AsteroidSurface(ctx,a);window.WarpVisuals?.oreGlint?.(ctx,{radius:a.r,kind:a.kind,time:t,quality:S.settings.quality||'medium'}); if(miningTarget===a||autopilot?.target===a){ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(0,0,a.r+8,0,7); ctx.stroke()} ctx.restore()}
  warp24DrawWorld();
+ warp25DrawFleet();
  for(const d of drones){const [x,y]=worldToScreen(d.x,d.y); if(!warp25VisibleScreen(x,y,80))continue;
  if(window.WarpVisuals?.drone?.(ctx,{x,y,angle:d.angle,tier:d.tier,ratio:d.hp/Math.max(1,d.maxHp),
     color:d.tier>2?'#ff9fe8':'#ff90a8',time:t,reducedMotion:!!S.settings.reducedMotion}))continue;
@@ -2890,9 +3130,9 @@ function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Cha
  $('warpDriveState').textContent=S.settings.warpDriveEnabled?(autopilot?'ON':'READY'):'OFF';
  $('cruiseTag').textContent=warp18Cruising?'WARP DRIVE ENGAGED · '+Math.round(Math.hypot(S.vx,S.vy)).toLocaleString()+' units/s':
    autopilot?'Autopilot engaged · J for Pulse Jump':'Plot a long route for automatic Warp Cruise';
- warp23UIUpdate();warp24UI();
+ warp23UIUpdate();warp24UI();warp25FleetUI();
  $('pulseJumpBtn').disabled=!autopilot||S.energy<(window.WarpTravelDrive?.CFG.pulseEnergy||28)||!!S.rift?.inside;
- if(!includePanels)return;warp23RenderContracts();renderGates();extRenderUI();renderFactionUI();v14RenderUI();warpRenderIfOpen();warp16FrontierRender();
+ if(!includePanels)return;warp25RenderFleet();warp23RenderContracts();renderGates();extRenderUI();renderFactionUI();v14RenderUI();warpRenderIfOpen();warp16FrontierRender();
  $('walletGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small>$${OREDEF[k].ticker}</small><b style="color:${OREDEF[k].color}">${S.tokens[k]}</b><small>${k==='moon'||k==='neon'?'Controlled flow':'Rare reserve'}</small></div>`).join(''); $('oreGrid').innerHTML=KINDS.map(k=>`<div class="tokenbox"><small style="color:${OREDEF[k].color}">${OREDEF[k].name}</small><b>${S.ore[k]}</b><small>${OREDEF[k].oreForToken} ore → ${OREDEF[k].tokenOut} $${OREDEF[k].ticker}</small></div>`).join('');
  $('zoneList').innerHTML=ZONES.slice(1).map(z=>`<div class="zone-card" style="border-left-color:${z.color}"><b>${z.name} · ${z.tier}</b><br>${z.desc}</div>`).join('');$('marketList').innerHTML=KINDS.map(k=>`<div class="rowItem"><div><strong style="color:${OREDEF[k].color}">${OREDEF[k].name}</strong><small>Buy ${OREDEF[k].buy} · Sell ${OREDEF[k].sell} · Refine ${OREDEF[k].oreForToken} ore + ${Math.max(0,OREDEF[k].fee-(S.equipped.utility==='autorefiner'?1:0))} fee → ${OREDEF[k].tokenOut} $${OREDEF[k].ticker}</small></div><div class="inlineBtns"><button data-buy="${k}">Buy</button><button data-sell="${k}">Sell</button><button data-refine="${k}">Refine</button></div></div>`).join('');
  const upDefs=[{id:'thrusters',name:'Thrusters',lv:S.upgrades.thrusters,desc:'Acceleration and top speed. No zone locks.',cost:(()=>{const l=S.upgrades.thrusters; if(l>=5) return null; return {credits:120*l,tokens:{neon:l}}})()},{id:'mining',name:'Mining rig',lv:S.upgrades.mining,desc:'Mine faster; high-tier enemies are still dangerous.',cost:(()=>{const l=S.upgrades.mining; if(l>=5) return null; if(l<3) return {credits:120*l,tokens:{neon:1+l}}; if(l===3) return {credits:120*l,tokens:{dust:2}}; return {credits:120*l,tokens:{diam:1}}})()},{id:'cargo',name:'Cargo frame',lv:S.upgrades.cargo,desc:'Increase cargo capacity.',cost:(()=>{const l=S.upgrades.cargo; if(l>=5) return null; if(l<3) return {credits:120*l,tokens:{moon:1+l}}; if(l===3) return {credits:120*l,tokens:{neon:2}}; return {credits:120*l,tokens:{dust:2}}})()}];
@@ -2905,7 +3145,7 @@ function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Cha
 function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt)){
  if(pressed.f||touchFireHeld)fireGun();
  warpCombatFX?.tick(dt);return;
-}updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim();if(pressed.f||touchFireHeld)fireGun(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt);warp24Update(dt);
+}updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim();if(pressed.f||touchFireHeld)fireGun(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt);warp25Tick(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt);warp24Update(dt);
  if(performance.now()-warp20LastAudioTick>230){
   warp20LastAudioTick=performance.now();
   warpAudio?.update({cruising:warp18Cruising,speed:Math.hypot(S.vx,S.vy),
@@ -2916,7 +3156,7 @@ let lastPersist=performance.now();function loop(ts){const dt=Math.min(.05,(ts-la
 function toggleDrawer(id){const d=$(id),opening=!d.classList.contains('open');document.querySelectorAll('.drawer').forEach(el=>el.classList.remove('open')); if(opening)d.classList.add('open');for(const [btn,panel] of Object.entries({toggleWallet:'walletDrawer',toggleCargo:'cargoDrawer',toggleMap:'mapDrawer',toggleGates:'gatesDrawer',toggleFaction:'factionDrawer'}))$(btn).setAttribute('aria-expanded',String($(panel).classList.contains('open')));}
 addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='q'&&!e.repeat)warp23ShieldPulse();if(lower==='z'&&!e.repeat)warp24Dash();if(lower==='v'&&!e.repeat)warp24TrackSalvage();if((lower==='-'||lower==='_')&&!e.repeat)warp25ZoomBy(.8);if((lower==='='||lower==='+')&&!e.repeat)warp25ZoomBy(1.25);if(lower==='0'&&!e.repeat)warp25SetZoom(1);if(lower==='h'&&!e.repeat)warp20ToggleDrive();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();else if(lower==='e'&&!e.repeat)warp19Claim();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
 addEventListener('keyup',e=>{pressed[e.key]=false; pressed[e.key.toLowerCase()]=false});
-canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const picked=warp25PointerToWorld(e.clientX,e.clientY),wx=picked.x,wy=picked.y;if(S.rift?.inside){v14RiftClick(wx,wy);return;} if(warp19Click(wx,wy))return;if(warp24ClickSalvage(wx,wy))return;if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
+canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const picked=warp25PointerToWorld(e.clientX,e.clientY),wx=picked.x,wy=picked.y;if(S.rift?.inside){v14RiftClick(wx,wy);return;} if(warp19Click(wx,wy))return;if(warp24ClickSalvage(wx,wy))return;if(warp25BotClick(wx,wy))return;if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
 $('toggleContracts').onclick=()=>{warp23RenderContracts();toggleDrawer('contractsDrawer');};
 $('contractsList').addEventListener('click',e=>{const b=e.target.closest('[data-contract-claim]');if(b)warp23Claim(b.dataset.contractClaim);});
 $('shieldPulseBtn').onclick=warp23ShieldPulse;$('dashBtn').onclick=warp24Dash;$('salvageBtn').onclick=warp24TrackSalvage;
@@ -2924,6 +3164,8 @@ $('zoomOutBtn').onclick=()=>warp25ZoomBy(.8);
 $('zoomInBtn').onclick=()=>warp25ZoomBy(1.25);
 $('zoomResetBtn').onclick=()=>warp25SetZoom(1);
 canvas.addEventListener('wheel',e=>{e.preventDefault();warp25SetZoom(window.WarpGalaxyLife?.wheelZoom?.(warp25Zoom(),e.deltaY)||warp25Zoom());},{passive:false});
+$('toggleFleet').onclick=()=>{warp25RenderFleet();toggleDrawer('fleetDrawer');};
+$('fleetList').addEventListener('click',e=>{const b=e.target.closest('[data-fleet-hail]');if(b)warp25Hail(b.dataset.fleetHail);});
 $('toggleWallet').onclick=()=>toggleDrawer('walletDrawer'); $('toggleCargo').onclick=()=>toggleDrawer('cargoDrawer'); $('toggleMap').onclick=()=>toggleDrawer('mapDrawer'); $('toggleGates').onclick=()=>{renderGates();toggleDrawer('gatesDrawer')};$('toggleFaction').onclick=()=>{renderFactionUI();toggleDrawer('factionDrawer')}; $('gateList').addEventListener('click',e=>{const b=e.target.closest('[data-gate]');if(b){routeGate(b.dataset.gate);$('gatesDrawer').classList.remove('open');}}); $('toggleLog').onclick=()=>{const hidden=$('quickLog').classList.toggle('hidden');$('toggleLog').setAttribute('aria-expanded',String(!hidden));}; $('toggleSound').onclick=()=>{
  S.settings.sound=!S.settings.sound;
  if(S.settings.sound){
