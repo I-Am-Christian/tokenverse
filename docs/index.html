@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#050b19" />
-<title>Warp Coin v0.24 — Salvage Wars</title>
+<title>Warp Coin v0.25 — Galactic Armada</title>
 <style>
 
 :root{color-scheme:dark;--ink:#040a18;--glass:rgba(5,15,35,.72);--panel:rgba(7,19,42,.92);--stroke:rgba(99,171,215,.25);--text:#e9f6ff;--muted:#7e9db4;--ice:#6de8f2;--mint:#70f4cd;--violet:#9684ff;--amber:#ffca7a;--danger:#ff788d;font-family:Inter, 'Segoe UI',system-ui,sans-serif}
@@ -213,6 +213,14 @@
 #salvageBtn{border-color:rgba(245,198,113,.52);background:linear-gradient(135deg,rgba(104,68,31,.85),rgba(40,56,99,.91))}
 #salvageReadout{color:#ffe2ab!important;border:1px solid rgba(240,200,129,.29);box-shadow:0 0 10px rgba(255,209,105,.08)}
 @media(max-width:640px){#dashBtn,#salvageBtn{min-width:91px}}
+
+.zoom-controls{display:flex;justify-content:space-between;align-items:center;gap:5px;margin-top:10px;padding:5px;background:rgba(9,37,67,.8);border:1px solid rgba(116,219,245,.25);border-radius:7px}
+.zoom-controls button{flex:0 0 auto;border:1px solid rgba(109,215,242,.33);border-radius:5px;background:#1a4967;color:#d2f7ff;font-size:14px;font-weight:850;min-width:25px;height:24px}
+.zoom-controls button:hover{border-color:#a5f5ff;background:#245d80}
+#zoomValue{min-width:36px;text-align:center;font-size:10px;font-weight:800;color:#a0f5e8}
+#zoomResetBtn{font-size:10px;min-width:31px}
+#fleetReadout{color:#9fc9f6!important;border:1px solid rgba(113,163,222,.2)}
+@media(max-width:620px){.zoom-controls{margin-top:7px;gap:2px;padding:3px}.zoom-controls button{min-width:22px;height:23px;font-size:12px}#zoomValue{font-size:9px;min-width:27px}#zoomResetBtn{font-size:8px;min-width:24px}#fleetReadout{font-size:9px}}
 </style>
 </head>
 <body>
@@ -222,7 +230,7 @@
   <div id="topBar" class="hud">
     <div id="brand">
       <div class="brand-mark"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true"><circle cx="16" cy="16" r="4" fill="#6fe8f2"/><ellipse cx="16" cy="16" rx="15" ry="6" stroke="#6fe8f2" fill="none" stroke-width="1.2" transform="rotate(-37 16 16)"/><path d="M7 26 25 6" stroke="#fff" stroke-width="1.1"/></svg></div>
-      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Salvage Wars 0.24</div></div>
+      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Galactic Armada 0.25</div></div>
     </div>
     <div id="topCenter"><span class="sector-signal"><i class="signal-dot"></i>Solo sector</span><i class="sector-divider"></i><span id="systemTag" class="pill">Orion Belt</span><span id="factionTag" class="pill">Choose faction</span><button id="v14BellButton" class="pill" aria-label="Open the Twelve Bells event console">BELL · COUNTDOWN</button><span id="v14BellBadge" class="pill" aria-hidden="true">NEXT BELL</span><span id="zoneTag" class="pill">Frontier</span><i class="sector-divider"></i><span id="dockTag" class="pill">In flight</span><span id="hostileTag" class="pill">0 hostiles</span><span id="coordsTag" class="pill">X 0 • Y 0</span></div>
     <div id="topRight"><div class="top-credit"><div class="credit-caption">Credit balance</div><div id="topCredits">0 <small>SC</small></div></div></div>
@@ -239,9 +247,16 @@
       <div class="mini-stat"><small>XP</small><b id="xpText">0</b></div>
       <div class="mini-stat"><small>Weapon bonus</small><b id="damageBonusText" style="font-size:14px;color:var(--mint)">+0%</b></div>
     </div>
+    <div class="zoom-controls" aria-label="Galaxy zoom controls">
+      <button id="zoomOutBtn" type="button" title="Zoom out (-)" aria-label="Zoom out">−</button>
+      <span id="zoomValue">100%</span>
+      <button id="zoomInBtn" type="button" title="Zoom in (+)" aria-label="Zoom in">+</button>
+      <button id="zoomResetBtn" type="button" title="Reset zoom to 100%" aria-label="Reset zoom">1:1</button>
+    </div>
     <div id="combatReadout" class="combat-readout">Pulse Blaster · 14 DMG · 54 DPS</div>
     <div id="combatStreak" class="combat-readout hidden" aria-live="polite">Combat chain ready</div>
-    <div id="salvageReadout" class="combat-readout hidden" aria-live="polite">✦ Salvage nearby · 0 crates</div><div id="cruiseTag" class="combat-readout" aria-live="off">Plot a long route to activate Warp Cruise.</div>
+    <div id="salvageReadout" class="combat-readout hidden" aria-live="polite">✦ Salvage nearby · 0 crates</div>
+    <div id="fleetReadout" class="combat-readout" aria-live="polite">○ Fleet traffic initializing</div><div id="cruiseTag" class="combat-readout" aria-live="off">Plot a long route to activate Warp Cruise.</div>
   </div>
 
   <div id="drawerArea">
@@ -399,6 +414,7 @@
 <script src="./combat-fx.js"></script>
 <script src="./field-contracts.js"></script>
 <script src="./space-upgrades.js"></script>
+<script src="./galaxy-life.js"></script>
 <script>
 (()=>{
 'use strict';
@@ -449,6 +465,13 @@ const DEEP_RIM_STATIONS=[
 ];
 STATIONS.push(...DEEP_RIM_STATIONS);
 const GUNS={pulse:{name:'Pulse Blaster',desc:'Balanced starter blaster.',crafted:true,cost:null,fireRate:.26,damage:14,speed:640,color:'#79dfff'},scatter:{name:'Scatter Cannon',desc:'Three-shot spread.',crafted:false,cost:{ore:{moon:18,neon:8},tokens:{moon:2}},fireRate:.52,damage:9,speed:560,pellets:3,spread:.26,color:'#ffd27a'},rail:{name:'Railgun',desc:'Fast accurate shot.',crafted:false,cost:{ore:{neon:16,dust:7},tokens:{neon:3,dust:2}},fireRate:.62,damage:28,speed:880,color:'#71ffe0'},plasma:{name:'Plasma Lance',desc:'Heavy plasma bolt.',crafted:false,cost:{ore:{dust:12,void:4},tokens:{dust:3,void:1}},fireRate:.7,damage:42,speed:500,color:'#c498ff'},diamond:{name:'Diamond Repeater',desc:'Rapid endgame gun.',crafted:false,cost:{ore:{diam:10,void:3},tokens:{diam:2,void:1}},fireRate:.17,damage:13,speed:760,color:'#78f6ff'},arc:{name:'Arc Emitter',desc:'Fast ion bolts with high accuracy.',crafted:false,cost:{ore:{neon:20,dust:10},tokens:{neon:4,dust:2}},fireRate:.21,damage:18,speed:780,color:'#84ffe8'},siege:{name:'Nova Cannon',desc:'Slow-firing siege blast.',crafted:false,cost:{ore:{diam:16,void:9},tokens:{diam:5,void:3}},fireRate:.95,damage:85,speed:440,color:'#f6a9ff'}};
+Object.assign(GUNS,{
+ autocannon:{name:'Vulcan Autocannon',desc:'Ultra-fast kinetic rounds; excellent for close chases.',crafted:false,cost:{ore:{moon:14,neon:11},tokens:{neon:3,moon:1}},fireRate:.095,damage:10,speed:930,color:'#fbd18a'},
+ flak:{name:'Flak Barrage',desc:'Wide six-pellet spread to repel swarms.',crafted:false,cost:{ore:{moon:22,dust:9},tokens:{dust:3,neon:2}},fireRate:.72,damage:12,speed:560,pellets:6,spread:.19,color:'#ffb678'},
+ prism:{name:'Prism Twin-Laser',desc:'Paired high-velocity energy lances.',crafted:false,cost:{ore:{neon:20,void:6},tokens:{neon:3,void:2}},fireRate:.39,damage:28,speed:1050,pellets:2,spread:.055,color:'#7ef4ff'},
+ ionstorm:{name:'Ion Storm Projector',desc:'Three arcs of volatile shield-piercing plasma.',crafted:false,cost:{ore:{void:13,dust:9},tokens:{void:4,dust:2}},fireRate:.49,damage:22,speed:690,pellets:3,spread:.15,color:'#b29eff'},
+ torpedo:{name:'Stellar Seeker Torpedo',desc:'Guided explosive torpedo with a modest splash radius.',crafted:false,cost:{ore:{diam:14,void:12},tokens:{diam:4,void:4}},fireRate:1.3,damage:95,speed:430,guided:true,splash:92,color:'#ffa7db'}
+});
 // Each ship has meaningful tradeoffs; damageBonus is a fraction of base damage.
 const SHIPS={
   skiff:{name:'Explorer Skiff',desc:'Reliable starter ship.',cost:null,accel:1,speed:1,hull:100,cargo:0,damageBonus:0,miningBonus:0,wing:18},
@@ -459,8 +482,17 @@ const SHIPS={
   leviathan:{name:'Leviathan Dreadnought',desc:'An endgame fortress with huge guns.',cost:{credits:32000,tokens:{diam:10,void:9,dust:8}},accel:.68,speed:.78,hull:300,cargo:150,damageBonus:.5,miningBonus:.10,wing:34}
 };
 Object.assign(SHIPS,{"scout_1":{"name":"Swiftling","role":"scout","tier":1,"desc":"Tier 1 scout hull. Bought with ordinary Scrap Credits.","cost":{"credits":280},"accel":1.24,"speed":1.2,"hull":80,"cargo":0,"damageBonus":0.01,"miningBonus":0,"wing":12},"scout_2":{"name":"Whisper","role":"scout","tier":2,"desc":"Tier 2 scout hull. Bought with ordinary Scrap Credits.","cost":{"credits":590},"accel":1.296,"speed":1.254,"hull":88,"cargo":3,"damageBonus":0.035,"miningBonus":0.025,"wing":14},"scout_3":{"name":"Kestrel Scout","role":"scout","tier":3,"desc":"Tier 3 scout hull. Bought with ordinary Scrap Credits.","cost":{"credits":1260},"accel":1.352,"speed":1.308,"hull":96,"cargo":6,"damageBonus":0.06,"miningBonus":0.05,"wing":16},"scout_4":{"name":"Ghostwing","role":"scout","tier":4,"desc":"Tier 4 scout hull. Bought with ordinary Scrap Credits.","cost":{"credits":2670},"accel":1.407,"speed":1.362,"hull":104,"cargo":9,"damageBonus":0.085,"miningBonus":0.075,"wing":18},"scout_5":{"name":"Comet","role":"scout","tier":5,"desc":"Tier 5 scout hull. Bought with ordinary Scrap Credits.","cost":{"credits":5660},"accel":1.463,"speed":1.416,"hull":112,"cargo":12,"damageBonus":0.11,"miningBonus":0.1,"wing":20},"scout_6":{"name":"Starglider","role":"scout","tier":6,"desc":"Tier 6 scout hull. Bought with ordinary Scrap Credits.","cost":{"credits":11990},"accel":1.519,"speed":1.47,"hull":120,"cargo":15,"damageBonus":0.135,"miningBonus":0.125,"wing":22},"miner_1":{"name":"Pioneer Miner","role":"miner","tier":1,"desc":"Tier 1 miner hull. Bought with ordinary Scrap Credits.","cost":{"credits":300},"accel":0.86,"speed":0.87,"hull":110,"cargo":10,"damageBonus":0,"miningBonus":0.29,"wing":22},"miner_2":{"name":"Rockhopper","role":"miner","tier":2,"desc":"Tier 2 miner hull. Bought with ordinary Scrap Credits.","cost":{"credits":640},"accel":0.899,"speed":0.909,"hull":121,"cargo":13,"damageBonus":0.025,"miningBonus":0.315,"wing":24},"miner_3":{"name":"Prospector II","role":"miner","tier":3,"desc":"Tier 3 miner hull. Bought with ordinary Scrap Credits.","cost":{"credits":1350},"accel":0.937,"speed":0.948,"hull":132,"cargo":16,"damageBonus":0.05,"miningBonus":0.34,"wing":26},"miner_4":{"name":"Orewhale","role":"miner","tier":4,"desc":"Tier 4 miner hull. Bought with ordinary Scrap Credits.","cost":{"credits":2860},"accel":0.976,"speed":0.987,"hull":143,"cargo":19,"damageBonus":0.075,"miningBonus":0.365,"wing":28},"miner_5":{"name":"Deepcore","role":"miner","tier":5,"desc":"Tier 5 miner hull. Bought with ordinary Scrap Credits.","cost":{"credits":6060},"accel":1.015,"speed":1.027,"hull":154,"cargo":22,"damageBonus":0.1,"miningBonus":0.39,"wing":30},"miner_6":{"name":"Colossus Drill","role":"miner","tier":6,"desc":"Tier 6 miner hull. Bought with ordinary Scrap Credits.","cost":{"credits":12850},"accel":1.054,"speed":1.066,"hull":165,"cargo":25,"damageBonus":0.125,"miningBonus":0.415,"wing":32},"fighter_1":{"name":"Viper","role":"fighter","tier":1,"desc":"Tier 1 fighter hull. Bought with ordinary Scrap Credits.","cost":{"credits":400},"accel":1.07,"speed":1.06,"hull":107,"cargo":0,"damageBonus":0.16,"miningBonus":0,"wing":23},"fighter_2":{"name":"Wasp","role":"fighter","tier":2,"desc":"Tier 2 fighter hull. Bought with ordinary Scrap Credits.","cost":{"credits":850},"accel":1.118,"speed":1.108,"hull":118,"cargo":3,"damageBonus":0.185,"miningBonus":0.025,"wing":25},"fighter_3":{"name":"Falcon","role":"fighter","tier":3,"desc":"Tier 3 fighter hull. Bought with ordinary Scrap Credits.","cost":{"credits":1800},"accel":1.166,"speed":1.155,"hull":128,"cargo":6,"damageBonus":0.21,"miningBonus":0.05,"wing":27},"fighter_4":{"name":"Raptor","role":"fighter","tier":4,"desc":"Tier 4 fighter hull. Bought with ordinary Scrap Credits.","cost":{"credits":3810},"accel":1.214,"speed":1.203,"hull":139,"cargo":9,"damageBonus":0.235,"miningBonus":0.075,"wing":29},"fighter_5":{"name":"Cerberus","role":"fighter","tier":5,"desc":"Tier 5 fighter hull. Bought with ordinary Scrap Credits.","cost":{"credits":8080},"accel":1.263,"speed":1.251,"hull":150,"cargo":12,"damageBonus":0.26,"miningBonus":0.1,"wing":31},"fighter_6":{"name":"Dreadwing","role":"fighter","tier":6,"desc":"Tier 6 fighter hull. Bought with ordinary Scrap Credits.","cost":{"credits":17130},"accel":1.311,"speed":1.299,"hull":161,"cargo":15,"damageBonus":0.285,"miningBonus":0.125,"wing":33},"hauler_1":{"name":"Cargo Finch","role":"hauler","tier":1,"desc":"Tier 1 hauler hull. Bought with ordinary Scrap Credits.","cost":{"credits":320},"accel":0.73,"speed":0.77,"hull":135,"cargo":35,"damageBonus":0,"miningBonus":0,"wing":29},"hauler_2":{"name":"Mule","role":"hauler","tier":2,"desc":"Tier 2 hauler hull. Bought with ordinary Scrap Credits.","cost":{"credits":680},"accel":0.763,"speed":0.805,"hull":149,"cargo":38,"damageBonus":0.025,"miningBonus":0.025,"wing":31},"hauler_3":{"name":"Caravan","role":"hauler","tier":3,"desc":"Tier 3 hauler hull. Bought with ordinary Scrap Credits.","cost":{"credits":1440},"accel":0.796,"speed":0.839,"hull":162,"cargo":41,"damageBonus":0.05,"miningBonus":0.05,"wing":33},"hauler_4":{"name":"Atlas Barge","role":"hauler","tier":4,"desc":"Tier 4 hauler hull. Bought with ordinary Scrap Credits.","cost":{"credits":3050},"accel":0.829,"speed":0.874,"hull":176,"cargo":44,"damageBonus":0.075,"miningBonus":0.075,"wing":35},"hauler_5":{"name":"Stronghold","role":"hauler","tier":5,"desc":"Tier 5 hauler hull. Bought with ordinary Scrap Credits.","cost":{"credits":6460},"accel":0.861,"speed":0.909,"hull":189,"cargo":47,"damageBonus":0.1,"miningBonus":0.1,"wing":37},"hauler_6":{"name":"Titan Freighter","role":"hauler","tier":6,"desc":"Tier 6 hauler hull. Bought with ordinary Scrap Credits.","cost":{"credits":13700},"accel":0.894,"speed":0.943,"hull":203,"cargo":50,"damageBonus":0.125,"miningBonus":0.125,"wing":39},"explorer_1":{"name":"Wanderer","role":"explorer","tier":1,"desc":"Tier 1 explorer hull. Bought with ordinary Scrap Credits.","cost":{"credits":350},"accel":1.1,"speed":1.08,"hull":98,"cargo":8,"damageBonus":0.04,"miningBonus":0.06,"wing":18},"explorer_2":{"name":"Pathfinder","role":"explorer","tier":2,"desc":"Tier 2 explorer hull. Bought with ordinary Scrap Credits.","cost":{"credits":730},"accel":1.149,"speed":1.129,"hull":108,"cargo":11,"damageBonus":0.065,"miningBonus":0.085,"wing":20},"explorer_3":{"name":"Starling","role":"explorer","tier":3,"desc":"Tier 3 explorer hull. Bought with ordinary Scrap Credits.","cost":{"credits":1550},"accel":1.199,"speed":1.177,"hull":118,"cargo":14,"damageBonus":0.09,"miningBonus":0.11,"wing":22},"explorer_4":{"name":"Nomad","role":"explorer","tier":4,"desc":"Tier 4 explorer hull. Bought with ordinary Scrap Credits.","cost":{"credits":3290},"accel":1.249,"speed":1.226,"hull":127,"cargo":17,"damageBonus":0.115,"miningBonus":0.135,"wing":24},"explorer_5":{"name":"Wayfarer","role":"explorer","tier":5,"desc":"Tier 5 explorer hull. Bought with ordinary Scrap Credits.","cost":{"credits":6970},"accel":1.298,"speed":1.274,"hull":137,"cargo":20,"damageBonus":0.14,"miningBonus":0.16,"wing":26},"explorer_6":{"name":"Voyager Prime","role":"explorer","tier":6,"desc":"Tier 6 explorer hull. Bought with ordinary Scrap Credits.","cost":{"credits":14770},"accel":1.348,"speed":1.323,"hull":147,"cargo":23,"damageBonus":0.165,"miningBonus":0.185,"wing":28}});
+Object.assign(SHIPS,{
+ starcarrier:{name:'Orion Starcarrier',role:'capital',tier:7,desc:'A broad-beam carrier with glowing twin hangars and huge cargo hold.',cost:{credits:48500,tokens:{moon:11,neon:14,dust:8}},accel:.65,speed:.77,hull:365,cargo:180,damageBonus:.30,miningBonus:.1,wing:52,visualScale:2.05},
+ battlecruiser:{name:'Aegis Battlecruiser',role:'capital',tier:8,desc:'A colossal long-range gun platform built to survive fleet wars.',cost:{credits:74000,tokens:{dust:16,void:12,diam:6}},accel:.64,speed:.72,hull:480,cargo:95,damageBonus:.58,miningBonus:0,wing:62,visualScale:2.4},
+ ark:{name:'Exodus Star Ark',role:'capital',tier:8,desc:'A city-sized scientific explorer with storage bays and laboratories.',cost:{credits:88000,tokens:{neon:16,void:12,diam:7}},accel:.59,speed:.69,hull:510,cargo:310,damageBonus:.25,miningBonus:.33,wing:68,visualScale:2.8},
+ titan:{name:'Titan Fleet Fortress',role:'capital',tier:9,desc:'The largest player-owned fortress in the galaxy; slow and heavily armored.',cost:{credits:145000,tokens:{diam:16,void:18,dust:20}},accel:.47,speed:.59,hull:720,cargo:260,damageBonus:.73,miningBonus:.12,wing:82,visualScale:3.35}
+});
+SHIPS.leviathan.visualScale=1.85;
+SHIPS.hauler_6.visualScale=1.38;
+SHIPS.miner_6.visualScale=1.35;
 const UTILS={none:{name:'None',desc:'No utility equipped.',crafted:true,cost:null},shield:{name:'Shield Booster',desc:'+20 max hull and faster repair.',crafted:false,cost:{ore:{moon:10,neon:6},tokens:{moon:2}}},overdrive:{name:'Overdrive Kit',desc:'+18% boost efficiency.',crafted:false,cost:{ore:{neon:10,dust:4},tokens:{neon:2}}},cargorig:{name:'Cargo Rig',desc:'+10 cargo capacity.',crafted:false,cost:{ore:{moon:16,dust:4},tokens:{dust:1}}},autorefiner:{name:'Auto-Refiner',desc:'Refining fees reduced by 1.',crafted:false,cost:{ore:{dust:8,void:2},tokens:{void:1}}}};
-function fresh(){return {x:900,y:900,vx:0,vy:0,angle:0,hp:100,maxHp:100,energy:100,credits:460,xp:0,level:1,ore:{moon:0,neon:0,dust:0,void:0,diam:0},tokens:{moon:0,neon:0,dust:0,void:0,diam:0},upgrades:{thrusters:1,mining:1,cargo:1},ship:{hull:'#d9e8ff',accent:'#71e8ff'},crafted:{guns:{pulse:true,scatter:false,rail:false,plasma:false,diamond:false,arc:false,siege:false},utils:{none:true,shield:false,overdrive:false,cargorig:false,autorefiner:false}},equipped:{gun:'pulse',utility:'none'},shipId:'skiff',ownedShips:{skiff:true},weaponLevels:{pulse:1,scatter:1,rail:1,plasma:1,diamond:1,arc:1,siege:1},recycledVault:{moon:0,neon:0,dust:0,void:0,diam:0},testGrantV10Applied:false,testHoldBonus:0,settings:{assist:true,sound:false},stats:{refined:0,kills:0,mined:0,scans:0},faction:null,factionReputation:{solar:0,crimson:0,verdant:0,void:0},factionMissionStart:null,factionCompletions:0,system:"orion",daily:{day:new Date().toISOString().slice(0,10),minted:{moon:0,neon:0,dust:0,void:0,diam:0}},rewardReserve:{moon:300,neon:120,dust:50,void:16,diam:8}};}
+function fresh(){return {x:900,y:900,vx:0,vy:0,angle:0,hp:100,maxHp:100,energy:100,credits:460,xp:0,level:1,ore:{moon:0,neon:0,dust:0,void:0,diam:0},tokens:{moon:0,neon:0,dust:0,void:0,diam:0},upgrades:{thrusters:1,mining:1,cargo:1},ship:{hull:'#d9e8ff',accent:'#71e8ff'},crafted:{guns:{pulse:true,scatter:false,rail:false,plasma:false,diamond:false,arc:false,siege:false,autocannon:false,flak:false,prism:false,ionstorm:false,torpedo:false},utils:{none:true,shield:false,overdrive:false,cargorig:false,autorefiner:false}},equipped:{gun:'pulse',utility:'none'},shipId:'skiff',ownedShips:{skiff:true},weaponLevels:{pulse:1,scatter:1,rail:1,plasma:1,diamond:1,arc:1,siege:1,autocannon:1,flak:1,prism:1,ionstorm:1,torpedo:1},recycledVault:{moon:0,neon:0,dust:0,void:0,diam:0},testGrantV10Applied:false,testHoldBonus:0,settings:{assist:true,sound:false},stats:{refined:0,kills:0,mined:0,scans:0},faction:null,factionReputation:{solar:0,crimson:0,verdant:0,void:0},factionMissionStart:null,factionCompletions:0,system:"orion",daily:{day:new Date().toISOString().slice(0,10),minted:{moon:0,neon:0,dust:0,void:0,diam:0}},rewardReserve:{moon:300,neon:120,dust:50,void:16,diam:8}};}
 function migrate(){try{const v=JSON.parse(localStorage.getItem('tokenverse-deep-space-v10'));if(v)return {...fresh(),...v,ore:{...fresh().ore,...(v.ore||{})},tokens:{...fresh().tokens,...(v.tokens||{})},upgrades:{...fresh().upgrades,...(v.upgrades||{})},ship:{...fresh().ship,...(v.ship||{})},crafted:{guns:{...fresh().crafted.guns,...((v.crafted||{}).guns||{})},utils:{...fresh().crafted.utils,...((v.crafted||{}).utils||{})}},equipped:{...fresh().equipped,...(v.equipped||{})},settings:{...fresh().settings,...(v.settings||{})},stats:{...fresh().stats,...(v.stats||{})},ownedShips:{...fresh().ownedShips,...(v.ownedShips||{})},weaponLevels:{...fresh().weaponLevels,...(v.weaponLevels||{})},recycledVault:{...fresh().recycledVault,...(v.recycledVault||{})}};}catch{}
  try{const v=JSON.parse(localStorage.getItem('tokenverse-fullscreen-v08')); if(v) return {...fresh(),...v,ore:{...fresh().ore,...(v.ore||{})},tokens:{...fresh().tokens,...(v.tokens||{})},upgrades:{...fresh().upgrades,...(v.upgrades||{})},ship:{...fresh().ship,...(v.ship||{})},crafted:{guns:{...fresh().crafted.guns,...((v.crafted||{}).guns||{})},utils:{...fresh().crafted.utils,...((v.crafted||{}).utils||{})}},equipped:{...fresh().equipped,...(v.equipped||{})},settings:{...fresh().settings,...(v.settings||{})},stats:{...fresh().stats,...(v.stats||{})}};}catch{}
  try{const v=JSON.parse(localStorage.getItem('tokenverse-simplified-v06')); if(v) return {...fresh(),...v,ore:{...fresh().ore,...(v.ore||{})},tokens:{...fresh().tokens,...(v.tokens||{})},upgrades:{...fresh().upgrades,...(v.upgrades||{})},ship:{...fresh().ship,...(v.ship||{})},crafted:{guns:{...fresh().crafted.guns,...((v.crafted||{}).guns||{})},utils:{...fresh().crafted.utils,...((v.crafted||{}).utils||{})}},equipped:{...fresh().equipped,...(v.equipped||{})},settings:{...fresh().settings,...(v.settings||{})},stats:{...fresh().stats,...(v.stats||{})}};}catch{}
@@ -2298,8 +2330,8 @@ function v14SkinPalette(previewId=null){const id=previewId||S.cosmetics.equipped
 }
 function v14FittedHue(value){return typeof value==='string'&&/^#[\da-f]{6}$/i.test(value)?value:'#a0d8ee';}
 function v14DrawFactionHull(g,x,y,angle=0,scale=1,preview=null){const f=S.faction||'solar',p=v14SkinPalette(preview);
- const sp=activeShip(),wing=Math.min(34,Math.max(18,sp.wing||21));
- g.save();g.translate(x,y);g.rotate(angle);g.scale(scale,scale);
+ const sp=activeShip(),wing=Math.min(44,Math.max(18,sp.wing||21));
+ g.save();g.translate(x,y);g.rotate(angle);g.scale(scale*(sp.visualScale||1),scale*(sp.visualScale||1));
  const engineGlow=p.trail;
  if(S.settings.quality!=='low'){g.shadowColor=engineGlow;g.shadowBlur=S.settings.quality==='high'?22:11;}
  const thrust=!!(pressed.w||autopilot||S.rift?.waypoint);
@@ -2312,6 +2344,21 @@ function v14DrawFactionHull(g,x,y,angle=0,scale=1,preview=null){const f=S.factio
  else if(f==='verdant'){g.moveTo(25,0);g.lineTo(13,-10);g.lineTo(-3,-10);g.lineTo(-4,-wing);g.lineTo(-25,-wing);g.lineTo(-25,-7);g.lineTo(-32,-7);g.lineTo(-32,7);g.lineTo(-25,7);g.lineTo(-25,wing);g.lineTo(-4,wing);g.lineTo(-3,10);g.lineTo(13,10);}
  else{g.moveTo(36,0);g.bezierCurveTo(7,-8,2,-wing,-23,-wing+3);g.lineTo(-11,-7);g.lineTo(-18,0);g.lineTo(-11,7);g.lineTo(-23,wing-3);g.bezierCurveTo(2,wing,7,8,36,0);}
  g.closePath();g.fill();g.stroke();
+ if(sp.role==='capital'){
+  // Carrier-scale side decks, hangars and broadside turrets; one unit is a giant hull.
+  g.fillStyle='#13223a';g.strokeStyle=p.trim;g.lineWidth=1.6;
+  for(const side of [-1,1]){
+   g.beginPath();g.roundRect(-24,side*wing*.79-8,40,16,5);g.fill();g.stroke();
+   g.fillStyle=p.trail;g.globalAlpha=.58;
+   for(let i=0;i<3;i++)g.fillRect(-16+i*11,side*wing*.79-3,5,6);
+   g.globalAlpha=1;g.fillStyle='#13223a';
+   g.beginPath();g.arc(-7,side*wing*.5,6,0,Math.PI*2);g.fill();g.stroke();
+   g.strokeStyle=p.trail;g.beginPath();g.moveTo(-7,side*wing*.5);
+   g.lineTo(11,side*wing*.5);g.stroke();
+  }
+  g.fillStyle=p.trim;g.globalAlpha=.8;
+  g.fillRect(-25,-5,19,10);g.globalAlpha=1;
+ }
  g.shadowBlur=0;g.strokeStyle='rgba(15,28,43,.85)';g.lineWidth=1.4;
  g.beginPath();g.moveTo(10,-7);g.lineTo(-5,0);g.lineTo(10,7);g.moveTo(-14,-4);g.lineTo(10,-4);g.moveTo(-14,4);g.lineTo(10,4);g.stroke();
  if(f==='verdant'){g.fillStyle='#c4bb82';g.fillRect(-23,-wing+5,10,6);g.fillRect(-23,wing-11,10,6);}
