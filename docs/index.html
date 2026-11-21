@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#050b19" />
-<title>Warp Coin v0.25 — Galactic Armada</title>
+<title>Warp Coin v0.26 — Persistent Frontier</title>
 <style>
 
 :root{color-scheme:dark;--ink:#040a18;--glass:rgba(5,15,35,.72);--panel:rgba(7,19,42,.92);--stroke:rgba(99,171,215,.25);--text:#e9f6ff;--muted:#7e9db4;--ice:#6de8f2;--mint:#70f4cd;--violet:#9684ff;--amber:#ffca7a;--danger:#ff788d;font-family:Inter, 'Segoe UI',system-ui,sans-serif}
@@ -237,7 +237,7 @@
   <div id="topBar" class="hud">
     <div id="brand">
       <div class="brand-mark"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true"><circle cx="16" cy="16" r="4" fill="#6fe8f2"/><ellipse cx="16" cy="16" rx="15" ry="6" stroke="#6fe8f2" fill="none" stroke-width="1.2" transform="rotate(-37 16 16)"/><path d="M7 26 25 6" stroke="#fff" stroke-width="1.1"/></svg></div>
-      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Galactic Armada 0.25</div></div>
+      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Persistent Frontier 0.26</div></div>
     </div>
     <div id="topCenter"><span class="sector-signal"><i class="signal-dot"></i>Solo sector</span><i class="sector-divider"></i><span id="systemTag" class="pill">Orion Belt</span><span id="factionTag" class="pill">Choose faction</span><button id="v14BellButton" class="pill" aria-label="Open the Twelve Bells event console">BELL · COUNTDOWN</button><span id="v14BellBadge" class="pill" aria-hidden="true">NEXT BELL</span><span id="zoneTag" class="pill">Frontier</span><i class="sector-divider"></i><span id="dockTag" class="pill">In flight</span><span id="hostileTag" class="pill">0 hostiles</span><span id="coordsTag" class="pill">X 0 • Y 0</span></div>
     <div id="topRight"><div class="top-credit"><div class="credit-caption">Credit balance</div><div id="topCredits">0 <small>SC</small></div></div></div>
@@ -428,6 +428,8 @@
 <script src="./field-contracts.js"></script>
 <script src="./space-upgrades.js"></script>
 <script src="./galaxy-life.js"></script>
+<script src="./persistent-world.js"></script>
+<script src="./ship-designs.js"></script>
 <script>
 (()=>{
 'use strict';
@@ -547,41 +549,49 @@ function currentStation(){if(S.system==='homestead'){const st=warpColonyStation(
 function canDock(st){return st && Math.hypot(S.vx,S.vy)<65}
 function spend(cost){if(cost.credits&&S.credits<cost.credits) return false; for(const k of KINDS){if(cost.ore&&(cost.ore[k]||0)>S.ore[k]) return false; if(cost.tokens&&(cost.tokens[k]||0)>S.tokens[k]) return false;} if(cost.credits) S.credits-=cost.credits; for(const k of KINDS){if(cost.ore&&cost.ore[k]) S.ore[k]-=cost.ore[k]; if(cost.tokens&&cost.tokens[k]){S.tokens[k]-=cost.tokens[k];S.recycledVault[k]=(S.recycledVault[k]||0)+cost.tokens[k];}} return true}
 function costText(cost){const p=[]; if(cost.credits) p.push(cost.credits+' SC'); if(cost.ore) for(const k of KINDS) if(cost.ore[k]) p.push(cost.ore[k]+' '+OREDEF[k].name+' ore'); if(cost.tokens) for(const k of KINDS) if(cost.tokens[k]) p.push(cost.tokens[k]+' $'+OREDEF[k].ticker); return p.join(' · ')}
+
+/* Persistent sparse changes to fixed asteroid fields: only mined ore amounts are stored. */
+function warp26RestoreOre(){
+ const ore=S.asteroidOre?.[S.system]||{};
+ window.WarpPersistentWorld?.applyOre?.(asteroids,ore);
+}
+
 function spawnWorld(){
- const rand=(a,b)=>a+Math.random()*(b-a);
- asteroids=[]; drones=[]; bullets=[]; particles=[];warp24Drops.length=0;warp24Trail.length=0;warp25Bots.length=0;warp25Scenery.length=0;warp25Center.system='';
+ const warp26Random=window.WarpPersistentWorld?.rng?.('warp26-asteroids-'+S.system)||Math.random;
+ const rand=(a,b)=>a+warp26Random()*(b-a);
+ asteroids=[]; drones=[]; bullets=[]; particles=[];warp24Drops.length=0;warp24Trail.length=0;warp25Bots=[];warp25Scenery=[];warp25Center.system='';
  if(S.system==='homestead'){
   // The player-owned system is a peaceful instanced map, saved locally.
   for(let i=0;i<190;i++){
-   const angle=Math.random()*Math.PI*2,radius=1600+Math.random()*7900;
+   const angle=warp26Random()*Math.PI*2,radius=1600+warp26Random()*7900;
    const x=WORLD.w/2+Math.cos(angle)*radius,y=WORLD.h/2+Math.sin(angle)*radius*.8;
    const dist=Math.hypot(x-(WORLD.w/2+8200),y-WORLD.h/2);
    if(dist<550)continue;
    const kinds=['moon','moon','neon','dust'];const kind=kinds[i%4];
-   asteroids.push({id:i+1,x,y,kind,r:13+Math.random()*15,ore:1+Math.floor(Math.random()*3),rot:Math.random()*7});
+   asteroids.push({id:i+1,x,y,kind,r:13+warp26Random()*15,ore:1+Math.floor(warp26Random()*3),rot:warp26Random()*7});
   }
-  factionPatrols=[];return;
+  warp26RestoreOre();factionPatrols=[];return;
  }
- function addAsteroid(x,y,kind,boost=0){if(factionSafeAt(x,y)||GATES.some(g=>Math.hypot(x-g.x,y-g.y)<240))return;asteroids.push({id:asteroids.length+1,x,y,kind,r:12+Math.random()*18,ore:1+Math.floor(Math.random()*(boost>=4?4:3)),rot:Math.random()*7});}
+ function addAsteroid(x,y,kind,boost=0){if(factionSafeAt(x,y)||GATES.some(g=>Math.hypot(x-g.x,y-g.y)<240))return;asteroids.push({id:asteroids.length+1,x,y,kind,r:12+warp26Random()*18,ore:1+Math.floor(warp26Random()*(boost>=4?4:3)),rot:warp26Random()*7});}
  function material(z,r){if(S.system==='orion'&&z.contested)return r<.08?'dust':r<.38?'void':'diam';if(S.system==='orion'&&z.faction==='solar')return r<.60?'moon':r<.86?'neon':r<.97?'dust':'void';if(S.system==='orion'&&z.faction==='crimson')return r<.15?'moon':r<.40?'neon':r<.76?'dust':r<.94?'void':'diam';if(S.system==='orion'&&z.faction==='verdant')return r<.50?'moon':r<.87?'neon':r<.99?'dust':'void';if(S.system==='orion'&&z.faction==='void')return r<.1?'moon':r<.23?'neon':r<.54?'dust':r<.94?'void':'diam';if(S.system==='borealis')return r<.1?'moon':r<.64?'neon':r<.9?'dust':'void';if(S.system==='helios')return r<.1?'neon':r<.81?'dust':'void';if(S.system==='forge')return r<.12?'neon':r<.45?'dust':r<.94?'void':'diam';if(S.system==='umbra')return r<.09?'dust':r<.37?'void':'diam';if(z.name==='Frontier')return r<.59?'moon':r<.86?'neon':r<.98?'dust':'void';if(z.name==='Ember Expanse')return r<.13?'moon':r<.53?'neon':r<.91?'dust':'void';if(z.name==='Abyssal Rift')return r<.05?'moon':r<.18?'neon':r<.57?'dust':r<.93?'void':'diam';if(z.name==='Diamond Exclusion')return r<.10?'dust':r<.35?'void':'diam';return r<.35?'moon':r<.65?'neon':r<.87?'dust':r<.97?'void':'diam';}
  // Baseline universe coverage (10x the previous playable map area).
- for(let i=0;i<3000;i++){const x=rand(90,WORLD.w-90),y=rand(90,WORLD.h-90);const z=currentZone({x,y});addAsteroid(x,y,material(z,Math.random()),z.danger);}
+ for(let i=0;i<3000;i++){const x=rand(90,WORLD.w-90),y=rand(90,WORLD.h-90);const z=currentZone({x,y});addAsteroid(x,y,material(z,warp26Random()),z.danger);}
  // Higher-tier nebulae have meaningfully denser resources.
- for(const [idx,num] of [[2,640],[3,670],[4,650],[5,680],[6,850]]){const z=ZONES[idx];for(let i=0;i<num;i++){const x=rand(z.x1+80,z.x2-80),y=rand(z.y1+80,z.y2-80);if(currentZone({x,y}).name!==z.name)continue;addAsteroid(x,y,material(z,Math.random()),z.danger+1);}}
+ for(const [idx,num] of [[2,640],[3,670],[4,650],[5,680],[6,850]]){const z=ZONES[idx];for(let i=0;i<num;i++){const x=rand(z.x1+80,z.x2-80),y=rand(z.y1+80,z.y2-80);if(currentZone({x,y}).name!==z.name)continue;addAsteroid(x,y,material(z,warp26Random()),z.danger+1);}}
  for(const f of Object.values(FACTIONS))for(let j=0;j<14;j++){
    const a=j*Math.PI/7,rad=1450+(j%4)*115,x=f.home.x+Math.cos(a)*rad,y=f.home.y+Math.sin(a)*rad;
    if(!asteroids.some(b=>Math.hypot(x-b.x,y-b.y)<100))addAsteroid(x,y,f.id==='void'?(j%4===0?'void':'dust'):f.id==='crimson'?(j%4===0?'dust':'neon'):f.id==='verdant'?(j%4===0?'neon':'moon'):'moon',1);
  }
  for(let i=0;i<10;i++){const a=i*Math.PI/5+.19,rad=WORLD.safeRadius+190+(i%3)*35;const x=clamp(WORLD.port.x+Math.cos(a)*rad,90,WORLD.w-90),y=clamp(WORLD.port.y+Math.sin(a)*rad,90,WORLD.h-90);if(!asteroids.some(b=>Math.hypot(x-b.x,y-b.y)<90))asteroids.push({id:40000+i,x,y,kind:i%5===0?'neon':'moon',r:16+i%3,ore:1+i%2,rot:a});}
- if(S.system!=='orion')for(let n=0;n<2000;n++){const x=rand(110,WORLD.w-110),y=rand(110,WORLD.h-110);addAsteroid(x,y,material(currentZone({x,y}),Math.random()),SYSTEMS[S.system].tier+1);}
- function addDrone(x,y,tier,region){if(factionSafeAt(x,y)||Object.values(FACTIONS).some(f=>Math.hypot(x-f.home.x,y-f.home.y)<1450)||GATES.some(g=>Math.hypot(x-g.x,y-g.y)<260))return;const hp=42+tier*26;drones.push({id:Math.random().toString(36).slice(2),x,y,vx:0,vy:0,angle:0,hp,maxHp:hp,tier,region,cooldown:.4+Math.random()*.8});}
+ if(S.system!=='orion')for(let n=0;n<2000;n++){const x=rand(110,WORLD.w-110),y=rand(110,WORLD.h-110);addAsteroid(x,y,material(currentZone({x,y}),warp26Random()),SYSTEMS[S.system].tier+1);}
+ function addDrone(x,y,tier,region){if(factionSafeAt(x,y)||Object.values(FACTIONS).some(f=>Math.hypot(x-f.home.x,y-f.home.y)<1450)||GATES.some(g=>Math.hypot(x-g.x,y-g.y)<260))return;const hp=42+tier*26;drones.push({id:warp26Random().toString(36).slice(2),x,y,vx:0,vy:0,angle:0,hp,maxHp:hp,tier,region,cooldown:.4+warp26Random()*.8});}
  for(const [idx,num,minTier,maxTier] of [[2,20,1,3],[3,23,2,4],[4,22,1,4],[5,28,3,5],[6,55,5,8],[1,24,3,6]]){const z=ZONES[idx];for(let i=0;i<num;i++){let x=rand(z.x1+200,z.x2-200),y=rand(z.y1+200,z.y2-200);if(idx===1&&S.system==='orion'&&currentZone({x,y}).name!==ZONES[1].name){continue;}const tier=Math.floor(rand(minTier,maxTier+1));addDrone(x,y,tier,idx);}}
 
  // Outer Meridian: distant high-value belts, with safe neutral stations in each corridor.
  for(const port of DEEP_RIM_STATIONS){
   for(let j=0;j<165;j++){
-   const angle=(j/165)*Math.PI*2+(Math.random()-.5)*.16;
-   const radius=1500+Math.sqrt(Math.random())*7600;
+   const angle=(j/165)*Math.PI*2+(warp26Random()-.5)*.16;
+   const radius=1500+Math.sqrt(warp26Random())*7600;
    const x=port.x+Math.cos(angle)*radius,y=port.y+Math.sin(angle)*radius;
    if(x<120||y<120||x>WORLD.w-120||y>WORLD.h-120)continue;
    const kind=j%29===0?'diam':j%7===0?'void':j%4===0?'dust':port.ore;
@@ -593,7 +603,7 @@ function spawnWorld(){
      Math.min(7,2+(n%3)+(SYSTEMS[S.system]?.tier||1)),7);
   }
  }
- spawnFactionPatrols();
+ warp26RestoreOre();spawnFactionPatrols();
 }
 spawnWorld();
 function renderLog(){const box=$('quickLog'); box.innerHTML='<div style="font-size:13px;font-weight:700;margin-bottom:8px">Transmission Log</div>'+logs.map(x=>`<div class="entry"><time>${x.t}</time>${x.msg}</div>`).join('')}
@@ -1085,18 +1095,14 @@ function warp24DrawWorld(){
 
 /* v0.25 living traffic: independent bots have roles and predictable local collision. */
 function warp25Populate(){
- const life=window.WarpGalaxyLife;
- if(!life)return;
- warp25Bots=life.spawnTraffic(S,{count:29,quality:S.settings.quality||'medium',system:S.system,
-  world:WORLD,isSafe:(x,y)=>factionSafeAt(x,y)});
- warp25Scenery=[];
- for(let i=0;i<75;i++){
-  const angle=Math.random()*Math.PI*2,dist=160+Math.random()*3500;
-  const x=clamp(S.x+Math.cos(angle)*dist,40,WORLD.w-40),
-   y=clamp(S.y+Math.sin(angle)*dist,40,WORLD.h-40);
-  warp25Scenery.push({x,y,kind:i%8===0?'probe':i%5===0?'wreck':i%3===0?'crystal':'dust',
-   rotation:Math.random()*Math.PI*2,r:5+Math.random()*20});
- }
+ const persistent=window.WarpPersistentWorld;
+ if(!persistent)return;
+ // One small fleet for the *whole star system*, not a fresh fleet near every player position.
+ // Save references remain stable: moving, warping away and coming back never re-roll ships.
+ const ports=S.system==='homestead'?[warpColonyStation()]:STATIONS;
+ warp25Bots=persistent.fleetFor(S,{system:S.system,world:WORLD,origin:S,stations:ports,
+  isSafe:(x,y)=>factionSafeAt(x,y)});
+ warp25Scenery=persistent.debrisFor({system:S.system,origin:S,range:2850});
  warp25Center={x:S.x,y:S.y,system:S.system};
  warp25FleetLast=performance.now();
 }
@@ -1104,9 +1110,15 @@ function warp25Tick(dt){
  const life=window.WarpGalaxyLife;
  if(!life||S.rift?.inside)return;
  const moved=Math.hypot(S.x-warp25Center.x,S.y-warp25Center.y);
- if(warp25Center.system!==S.system||
-  (!warp25Bots.length&&performance.now()-warp25FleetLast>20000)||
-  (moved>2600&&performance.now()-warp25FleetLast>2200)){warp25Populate();}
+ if(warp25Center.system!==S.system){warp25Populate();}
+ // Decorative debris is tied to absolute world-space cells. Refresh which cells are visible,
+ // not where any NPC exists; revisited debris always has the same world coordinates.
+ else if(moved>1150){
+  warp25Scenery=window.WarpPersistentWorld?.debrisFor?.({
+   system:S.system,origin:S,range:2850})||warp25Scenery;
+  warp25Center={x:S.x,y:S.y,system:S.system};
+ }
+
  for(const bot of warp25Bots){
   if(bot.hp<=0)continue;
   bot.phase+=dt*.44;bot.fire-=dt;bot.oreBeam=Math.max(0,(bot.oreBeam||0)-dt);
@@ -1259,7 +1271,15 @@ function warp25DrawFleet(){
   if(!warp25VisibleScreen(x,y,110*bot.size))continue;
   const desc=window.WarpGalaxyLife?.role?.(bot.role);
   const col=desc?.color||'#9abff5';
-  ctx.save();ctx.translate(x,y);ctx.rotate(bot.angle);ctx.scale(bot.size,bot.size);
+  if(window.WarpShipDesigns?.draw){
+   const kind=window.WarpShipDesigns.typeFor(bot.id,bot.role);
+   window.WarpShipDesigns.draw(ctx,{x,y,angle:bot.angle,
+    scale:bot.size,kind,hull:bot.role==='raider'?'#855365':
+     bot.role==='miner'?'#648e89':bot.role==='freighter'?'#8c8b88':'#779aba',
+    accent:col,trim:'#d5e6f4',quality:S.settings.quality||'medium',
+    thrust:Math.hypot(bot.vx||0,bot.vy||0)>28,time:t});
+  }else{
+   ctx.save();ctx.translate(x,y);ctx.rotate(bot.angle);ctx.scale(bot.size,bot.size);
   ctx.shadowColor=col;ctx.shadowBlur=S.settings.quality==='low'?0:9;
   ctx.fillStyle=bot.role==='raider'?'#492239':bot.role==='freighter'?'#393d47':'#203852';
   ctx.strokeStyle=col;ctx.lineWidth=2;
@@ -1291,6 +1311,8 @@ function warp25DrawFleet(){
    ctx.beginPath();ctx.moveTo(24,0);ctx.lineTo(62,9*Math.sin(t*6));ctx.stroke();
   }
   ctx.restore();
+
+  }
   ctx.save();ctx.textAlign='center';ctx.font='bold 10px system-ui';ctx.fillStyle=col;
   if(Math.hypot(bot.x-S.x,bot.y-S.y)<1400||warp25Zoom()>1)
     ctx.fillText(desc?.title||'BOT',x,y-30*bot.size);
@@ -1713,7 +1735,10 @@ function updateMining(dt){
  const rate=Math.max(1.75,3.7-(S.upgrades.mining-1)*.31)/(1+activeShip().miningBonus)*factionMiningMultiplier();
  mineClock+=dt;
  if(mineClock<rate)return;
- mineClock=0;target.ore--;S.ore[target.kind]++;S.stats.mined++;warp23Record('mine');
+ mineClock=0;target.ore--;S.ore[target.kind]++;S.stats.mined++;
+ if(!S.asteroidOre||typeof S.asteroidOre!=='object')S.asteroidOre={};
+ (S.asteroidOre[S.system]??={})[String(target.id)]=target.ore;
+ warp23Record('mine');
  spawnParticles(target.x,target.y,OREDEF[target.kind].color,6,55);sfx.mine();
  log('Recovered 1 '+OREDEF[target.kind].name+' ore.');
  if(target.ore<=0){spawnParticles(target.x,target.y,OREDEF[target.kind].color,10,65);miningTarget=null;}
@@ -2622,6 +2647,15 @@ function v14SkinPalette(previewId=null){const id=previewId||S.cosmetics.equipped
 }
 function v14FittedHue(value){return typeof value==='string'&&/^#[\da-f]{6}$/i.test(value)?value:'#a0d8ee';}
 function v14DrawFactionHull(g,x,y,angle=0,scale=1,preview=null){const f=S.faction||'solar',p=v14SkinPalette(preview);
+ if(window.WarpShipDesigns?.draw){
+  const sp=activeShip(),kind=window.WarpShipDesigns.typeFor(S.shipId,sp.role);
+  return window.WarpShipDesigns.draw(g,{x,y,angle,
+   scale:scale*(sp.visualScale||1),kind,hull:p.hull||S.ship.hull,
+   accent:p.trail||S.ship.accent,trim:p.trim||'#d9f1ff',
+   quality:S.settings.quality||'medium',
+   thrust:!!(pressed.w||autopilot||S.rift?.waypoint),
+   time:performance.now()/1000});
+ }
  const sp=activeShip(),wing=Math.min(44,Math.max(18,sp.wing||21));
  g.save();g.translate(x,y);g.rotate(angle);g.scale(scale*(sp.visualScale||1),scale*(sp.visualScale||1));
  const engineGlow=p.trail;
@@ -3282,7 +3316,7 @@ $('factionDrawer').addEventListener('click',e=>{const b=e.target.closest('button
 $('factionSelectModal').addEventListener('click',e=>{const b=e.target.closest('[data-faction-join]');if(b)factionJoin(b.dataset.factionJoin);});
 $('factionHomeBtn').onclick=factionHomeRoute;
 $('hullColor').value=S.ship.hull; $('accentColor').value=S.ship.accent;
-renderLog();renderUI();setTab('market');save();log('Warp Coin v0.25 · Galactic Armada: camera zoom, capital ships, living NPC fleets and new weapons.');requestAnimationFrame(loop);
+renderLog();renderUI();setTab('market');save();log('Warp Coin v0.26 · Persistent Frontier: fewer persistent ships, fixed asteroid fields and new ship artwork.');requestAnimationFrame(loop);
 })();
 </script>
 </body>

@@ -51,8 +51,8 @@ const readDocs=()=>fs.readFileSync(new URL('../docs/index.html',import.meta.url)
 
 test('v0.24 launches a matching 2D game from both GitHub Pages entrypoints',()=>{
  const a=readRoot(),b=readDocs();
- assert.match(a,/<title>Warp Coin v0\.25 — Galactic Armada/);
- assert.match(b,/<title>Warp Coin v0\.25 — Galactic Armada/);
+ assert.match(a,/<title>Warp Coin v0\.26 — Persistent Frontier/);
+ assert.match(b,/<title>Warp Coin v0\.26 — Persistent Frontier/);
  assert.match(a,/src="\.\/docs\/space-upgrades\.js"/);
  assert.match(b,/src="\.\/space-upgrades\.js"/);
  assert.equal(a.match(/<script>\s*([\s\S]*?)<\/script>/)?.[1],

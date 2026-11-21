@@ -1,8 +1,8 @@
 {
   "name": "warp-coin",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "private": true,
-  "description": "Warp Coin 2D galactic armada with zoom, capital ships, live NPC fleets and an extended weapon arsenal",
+  "description": "Warp Coin: persistent saved galaxy with smaller system-wide fleets, deterministic resources and original layered ships",
   "type": "module",
   "scripts": {
     "start": "node server.js",

@@ -47,8 +47,8 @@ const readDocs=()=>fs.readFileSync(new URL('../docs/index.html',import.meta.url)
 
 test('3D mode, WebGL loading and obsolete graphics files are fully gone; 2D remains current',()=>{
  const root=readRoot(),docs=readDocs();
- assert.match(root,/<title>Warp Coin v0\.25 — Galactic Armada/);
- assert.match(docs,/<title>Warp Coin v0\.25 — Galactic Armada/);
+ assert.match(root,/<title>Warp Coin v0\.26 — Persistent Frontier/);
+ assert.match(docs,/<title>Warp Coin v0\.26 — Persistent Frontier/);
  for(const html of [root,docs]){
   assert.doesNotMatch(html,/scene-3d|space3d|Warp3D|warp22|viewModeBtn|v22MobileFlight/);
   assert.match(html,/id="space"/);

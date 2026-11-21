@@ -24,6 +24,10 @@ const upgrades=upgradeCtx.WarpGameplay24;
 
 const lifeCtx={};vm.runInNewContext(fs.readFileSync(new URL('../docs/galaxy-life.js',import.meta.url),'utf8'),lifeCtx);
 const life=lifeCtx.WarpGalaxyLife;
+const persistentCtx={};vm.runInNewContext(fs.readFileSync(new URL('../docs/persistent-world.js',import.meta.url),'utf8'),persistentCtx);
+const persistence=persistentCtx.WarpPersistentWorld;
+const artCtx={};vm.runInNewContext(fs.readFileSync(new URL('../docs/ship-designs.js',import.meta.url),'utf8'),artCtx);
+const art=artCtx.WarpShipDesigns;
 
 function boot25(html, starting=null){
  const raw=html.slice(html.indexOf('<script>')+8,html.lastIndexOf('</script>'));
@@ -41,7 +45,7 @@ function boot25(html, starting=null){
  const localStorage={getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)};
  const current={now:Date.parse('2026-11-18T12:00:00Z')};const ODate=Date;
  class FakeDate extends ODate{static now(){return current.now;}}
- const api=new Function('document','window','localStorage','requestAnimationFrame','addEventListener','innerWidth','innerHeight','setTimeout','clearTimeout','performance','crypto','confirm','Date',modified)(document,{devicePixelRatio:1,WarpTravelDrive:drive,WarpRoute:warpRoute,WarpCombatFX:combatFactory,WarpContracts:rules,WarpVisuals:visuals,WarpGameplay24:upgrades,WarpGalaxyLife:life},localStorage,nop,nop,1920,1080,nop,nop,{now:()=>2000},{randomUUID:()=>String(++seq)},()=>true,FakeDate);
+ const api=new Function('document','window','localStorage','requestAnimationFrame','addEventListener','innerWidth','innerHeight','setTimeout','clearTimeout','performance','crypto','confirm','Date',modified)(document,{devicePixelRatio:1,WarpTravelDrive:drive,WarpRoute:warpRoute,WarpCombatFX:combatFactory,WarpContracts:rules,WarpVisuals:visuals,WarpGameplay24:upgrades,WarpGalaxyLife:life,WarpPersistentWorld:persistence,WarpShipDesigns:art},localStorage,nop,nop,1920,1080,nop,nop,{now:()=>2000},{randomUUID:()=>String(++seq)},()=>true,FakeDate);
  return {api,elem,current,store};
 }
 
@@ -55,8 +59,8 @@ const readDocs=()=>fs.readFileSync(new URL('../docs/index.html',import.meta.url)
 
 test('v0.25 loads zoom/fleet module from public root and docs, no WebGL or Supabase',()=>{
  const root=readRoot(),docs=readDocs();
- assert.match(root,/<title>Warp Coin v0\.25 — Galactic Armada/);
- assert.match(docs,/<title>Warp Coin v0\.25 — Galactic Armada/);
+ assert.match(root,/<title>Warp Coin v0\.26 — Persistent Frontier/);
+ assert.match(docs,/<title>Warp Coin v0\.26 — Persistent Frontier/);
  assert.match(root,/src="\.\/docs\/galaxy-life\.js"/);
  assert.match(docs,/src="\.\/galaxy-life\.js"/);
  assert.equal(root.match(/<script>\s*([\s\S]*?)<\/script>/)?.[1],
@@ -134,7 +138,7 @@ test('five new guns are craftable with distinct recoil, cooldowns, pellets and g
 });
 test('new NPCs populate the actual 2D simulation with multiple classes',()=>{
  const {api}=boot25(readRoot());
- assert.ok(api.fleet.length>=20&&api.fleet.length<=40);
+ assert.ok(api.fleet.length>=4&&api.fleet.length<=8);
  assert.ok(api.scenery.length>=50);
  assert.ok(api.fleet.some(b=>b.role==='trader'));
  assert.ok(api.fleet.some(b=>b.role==='miner'));

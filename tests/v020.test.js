@@ -34,8 +34,8 @@ const readRoot=()=>fs.readFileSync(new URL('../index.html',import.meta.url),'utf
 const readDocs=()=>fs.readFileSync(new URL('../docs/index.html',import.meta.url),'utf8');
 test('public GitHub Pages root and docs both serve v0.20 and resolve every required module',()=>{
  const root=readRoot(),docs=readDocs();
- assert.match(root,/<title>Warp Coin v0\.25/);
- assert.match(docs,/<title>Warp Coin v0\.25/);
+ assert.match(root,/<title>Warp Coin v0\.26/);
+ assert.match(docs,/<title>Warp Coin v0\.26/);
  for(const module of ['trade-route-engine','travel-drive','frontier-encounters','warp-route','space-audio','space-visuals']){
   assert.ok(root.includes('src="./docs/'+module+'.js"'),module+' available from root');
   assert.ok(docs.includes('src="./'+module+'.js"'),module+' available from docs');
