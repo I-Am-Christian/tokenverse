@@ -1,3 +1,31 @@
+# Warp Coin v0.25 — Galactic Armada
+
+**Play:** https://i-am-christian.github.io/tokenverse/ (after merge and GitHub Pages publication).
+
+Warp Coin now has a **zoomable 2D camera**, **four substantially bigger capital ships**, **living AI traffic with civilian and hostile bots**, plus **five additional craftable weapon types**. Every large galaxy, old ship, currency, faction, mine, station, Warp Drive route, Rift mission and save continues to work.
+
+### Camera zoom
+
+The **− / + / 1:1** controls in the left ship telemetry panel, the **mouse wheel over the game field**, or keyboard **− / + / 0** zoom the whole 2D world between **36% and 240%**. At 36%, roughly 2.8× more map width is visible than at 100%. Click-to-fly, asteroid mining, stations, gates and floating salvage keep targeting the correct **world position** at all zoom levels. The minimap and fixed UI remain normal size. Zoom preference is kept in the local pilot save.
+
+### New capital ships
+
+Four late-game hangar hulls—**Orion Starcarrier**, **Aegis Battlecruiser**, **Exodus Star Ark** and **Titan Fleet Fortress**—have enlarged silhouettes, side decks and visible weapons, **365–720 hull**, significantly enlarged cargo holds and appropriately slower handling. The original Leviathan, Titan Freighter and Colossus Drill also now look substantially bigger. Open **Dock Console → Hangar → Capital ships** to browse and buy them using in-game Scrap Credits and material tokens.
+
+### More space activity and bots
+
+The game generates a bounded local population of nearby **merchants, miners, freighters, escort ships and outlaw raiders**. Ships move independently and security escorts attack outlaws. Outlaws can fire on you outside protected zones and leave salvage when defeated. Click NPC ships to hail them: buy repairs, Neonite ore, energy refills or a temporary security escort with in-game Scrap Credits. You can also browse the nearest ships in the new **Fleets** console. Background probes, broken satellites, drifting debris and crystal clusters make routes more visually interesting without bloating save files. Reduced graphics mode spawns fewer ships.
+
+### Extended gun arsenal
+
+Craft at stations: **Vulcan Autocannon** (rapid-fire kinetic), **Flak Barrage** (six-pellet spread), **Prism Twin-Laser** (fast twin bolt), **Ion Storm Projector** (three electric arcs) and **Stellar Seeker Torpedo** (slow guided explosive with small splash). They have distinct visual effects, damage, rates, speed and materials. Existing weapons, upgrades, damage multipliers and Rift shooting are preserved.
+
+**Controls:** W/A/S/D to fly, F fire, Q Shield Pulse, Z Dash, H Warp Drive, J Pulse Jump, V collect salvage route, **−/+** or mouse wheel to zoom, **0** reset zoom. Click a bot to hail or track it. The game remains fully 2D; no WebGL3D or Supabase connected.
+
+[Detailed notes for v0.25](WARP_COIN_V025.md)
+
+---
+
 # Warp Coin v0.24 — Salvage Wars
 
 **Play:** https://i-am-christian.github.io/tokenverse/ (after merging to the main branch and GitHub Pages publishing).
