@@ -29,7 +29,7 @@ const read=()=>fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
 
 test('v0.14 keeps existing ships, factions and 80% fullscreen game canvas',()=>{
  const html=read(),{api}=bootV14(html);
- assert.equal(Object.keys(api.SHIPS).length,36);
+ assert.equal(Object.keys(api.SHIPS).length,40);
  assert.equal(Object.keys(api.GUNS).length,9);
  assert.equal(Object.keys(api.FACTIONS).length,4);
  assert.equal(Object.keys(api.SYSTEMS).length,6);
