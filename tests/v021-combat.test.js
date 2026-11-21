@@ -38,8 +38,8 @@ const rootHtml=()=>fs.readFileSync(new URL('../index.html',import.meta.url),'utf
 const docsHtml=()=>fs.readFileSync(new URL('../docs/index.html',import.meta.url),'utf8');
 test('v0.21 root and docs share exactly the same gameplay and local save format',()=>{
  const root=rootHtml(),docs=docsHtml();
- assert.match(root,/<title>Warp Coin v0\.23/);
- assert.match(docs,/<title>Warp Coin v0\.23/);
+ assert.match(root,/<title>Warp Coin v0\.24/);
+ assert.match(docs,/<title>Warp Coin v0\.24/);
  assert.match(root,/id="shootBtn"/);
  assert.match(docs,/id="shootBtn"/);
  assert.match(root,/src="\.\/docs\/combat-fx\.js"/);
