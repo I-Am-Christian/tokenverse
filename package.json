@@ -1,8 +1,8 @@
 {
   "name": "warp-coin",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "private": true,
-  "description": "Warp Coin polished 2D space adventure with daily contracts, combat chains and defensive Shield Pulse",
+  "description": "Warp Coin 2D space adventure with recoverable salvage, evasive dash and tactical pirate AI",
   "type": "module",
   "scripts": {
     "start": "node server.js",
