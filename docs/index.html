@@ -4,22 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#050b19" />
-<title>Warp Coin v0.22 — 3D Galaxy</title>
+<title>Warp Coin v0.23 — Living 2D Galaxy</title>
 <style>
 
 :root{color-scheme:dark;--ink:#040a18;--glass:rgba(5,15,35,.72);--panel:rgba(7,19,42,.92);--stroke:rgba(99,171,215,.25);--text:#e9f6ff;--muted:#7e9db4;--ice:#6de8f2;--mint:#70f4cd;--violet:#9684ff;--amber:#ffca7a;--danger:#ff788d;font-family:Inter, 'Segoe UI',system-ui,sans-serif}
 *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{background:#030915;color:var(--text)}button,input{font:inherit}button{color:inherit;cursor:pointer}button:disabled{cursor:not-allowed;opacity:.32}button:focus-visible,input:focus-visible{outline:2px solid var(--ice);outline-offset:3px}
-#space3d{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block;pointer-events:none;touch-action:none}
-#space{z-index:2;background:transparent}
-#viewModeBtn{border-color:rgba(151,190,255,.6);background:linear-gradient(125deg,rgba(41,57,120,.83),rgba(24,75,97,.83))}
-#viewModeBtn.view-3d-active{border-color:#8deff4;box-shadow:0 0 20px rgba(59,197,249,.2)}
-#viewModeLabel{font-size:10px;letter-spacing:.8px}
-#v22MobileFlight{display:none}
-#v22MobileFlight button{touch-action:none;user-select:none;-webkit-user-select:none;min-height:42px;border:1px solid rgba(106,214,239,.55);background:rgba(13,60,83,.82);border-radius:7px;color:#d3faff;font-weight:800;font-size:12px;padding:8px 12px}
-#v22MobileFlight button:active{background:rgba(36,128,155,.98)}
-@media(max-width:860px){#gameShell.warp-3d-mode #v22MobileFlight{display:flex;gap:5px;align-items:center;justify-content:center;left:12px;bottom:75px;padding:5px;border-radius:9px;background:rgba(5,15,35,.7)}}
-@media(max-width:440px){#v22MobileFlight button{padding:8px 9px}#v22MobileFlight{bottom:69px!important}}
-@media(max-width:620px){#viewModeBtn{min-width:64px;width:64px;padding:6px 4px}#viewModeBtn span{display:inline!important;font-size:9px;line-height:1.1;letter-spacing:0;text-align:center}}
 #gameShell{position:relative;width:100vw;height:100dvh;min-height:400px;overflow:hidden;background:radial-gradient(ellipse at 60% 40%,#1c265b,#030817 65%)}#space{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
 #gameShell::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:1;background:linear-gradient(180deg,rgba(5,12,28,.26) 0%,transparent 18%,transparent 78%,rgba(3,8,19,.4) 100%)}#gameShell::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:9;opacity:.15;background:repeating-linear-gradient(to bottom,transparent 0,transparent 4px,rgba(150,202,255,.08) 5px,transparent 6px)}
 .hud{position:absolute;z-index:3;background:var(--glass);border:1px solid var(--stroke);box-shadow:0 14px 40px rgba(0,0,0,.22),inset 0 1px 0 rgba(132,218,255,.075);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
@@ -204,13 +193,12 @@
 </head>
 <body>
 <div id="gameShell">
-  <canvas id="space3d" aria-hidden="true"></canvas>
   <canvas id="space"></canvas>
 
   <div id="topBar" class="hud">
     <div id="brand">
       <div class="brand-mark"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true"><circle cx="16" cy="16" r="4" fill="#6fe8f2"/><ellipse cx="16" cy="16" rx="15" ry="6" stroke="#6fe8f2" fill="none" stroke-width="1.2" transform="rotate(-37 16 16)"/><path d="M7 26 25 6" stroke="#fff" stroke-width="1.1"/></svg></div>
-      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · 3D Galaxy 0.22</div></div>
+      <div class="brand-copy"><div class="logo">WARP<span>COIN</span></div><div class="sub">Warp Coin · Living Galaxy 0.23</div></div>
     </div>
     <div id="topCenter"><span class="sector-signal"><i class="signal-dot"></i>Solo sector</span><i class="sector-divider"></i><span id="systemTag" class="pill">Orion Belt</span><span id="factionTag" class="pill">Choose faction</span><button id="v14BellButton" class="pill" aria-label="Open the Twelve Bells event console">BELL · COUNTDOWN</button><span id="v14BellBadge" class="pill" aria-hidden="true">NEXT BELL</span><span id="zoneTag" class="pill">Frontier</span><i class="sector-divider"></i><span id="dockTag" class="pill">In flight</span><span id="hostileTag" class="pill">0 hostiles</span><span id="coordsTag" class="pill">X 0 • Y 0</span></div>
     <div id="topRight"><div class="top-credit"><div class="credit-caption">Credit balance</div><div id="topCredits">0 <small>SC</small></div></div></div>
@@ -236,16 +224,13 @@
       <button class="console-btn" id="toggleCargo" aria-label="Cargo manifest" aria-expanded="false" title="Cargo manifest"><svg viewBox="0 0 24 24"><path d="m3 7 9-4 9 4-9 5-9-5ZM3 7v11l9 4 9-4V7M12 12v10M8 5l9 5"/></svg><span>Cargo</span></button>
       <button class="console-btn" id="toggleMap" aria-label="Navigation map" aria-expanded="false" title="Navigation map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 2 2 4 4-6ZM12 2v4M12 18v4M2 12h4M18 12h4"/></svg><span>Navigation</span></button><button class="console-btn" id="toggleGates" aria-label="Star gates" aria-expanded="false" title="Star gates"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="10"/><path d="M4 12h16"/></svg><span>Gates</span></button>
       <button class="console-btn" id="toggleFaction" aria-label="Faction territories" aria-expanded="false" title="Faction territories"><svg viewBox="0 0 24 24"><path d="M5 21V4h10l-2.2 4L15 12H5M5 4V2M4 21h3"/><path d="M9 16h11M9 19h8"/></svg><span>Factions</span></button><button class="console-btn" id="toggleLog" aria-label="Comms log" aria-expanded="false" title="Comms log"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h12M4 17h8"/><rect x="2" y="2" width="20" height="20" rx="3"/></svg><span>Comms</span></button>
-      <button class="console-btn" id="viewModeBtn" aria-label="Toggle immersive 3D and classic 2D" aria-pressed="true" title="3D camera and graphics">
-        <span id="viewModeLabel">◆ 3D VIEW</span></button>
       <button class="console-btn" id="toggleSound" aria-label="Enable or disable space audio" aria-expanded="false" title="Toggle sound"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4ZM17 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg><span id="audioToggleLabel">Sound OFF</span></button>
     </div>
     <div id="walletDrawer" class="hud drawer"><h3>Asset ledger <span class="test-pill">LOCAL TEST</span></h3><div id="walletGrid" class="grid2"></div><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px"><span style="font-size:10px;color:var(--muted)">SIMULATED ASSETS · NO CASH VALUE</span><button id="resetInLedger" class="dock-action" style="min-width:0;height:30px;font-size:9px">Reset pilot</button></div></div>
     <div id="cargoDrawer" class="hud drawer"><h3 >Cargo manifest</h3><div id="oreGrid" class="grid2"></div></div>
     <div id="mapDrawer" class="hud drawer"><h3>Galactic chart · 192k × 115.2k</h3>
 <canvas id="navigationChart" width="440" height="264" role="img" aria-label="Galaxy chart with current ship position, gates and stations"></canvas>
-<div class="map-hint">In 3D: drag left/right to turn your ship, use W/A/S/D to thrust, F or FIRE to shoot, and click open space to plot a destination. Select 2D VIEW on the right to return to the original top-down navigation.</div>
- <div class="map-hint"><b>Tap the galaxy chart</b> to choose a distant destination. Warp Drive accelerates on clear routes, and J/Pulse Jump hops through safe waypoints. Normal controls take over near hazards and docking zones.</div><div class="map-hint">Four faction home territories are separated by neutral corridors. Colored markers show home bases and gates; white marker is your ship.</div>
+<div class="map-hint"><b>Tap the galaxy chart</b> to choose a distant destination. Warp Drive accelerates on clear routes, and J/Pulse Jump hops through safe waypoints. Normal controls take over near hazards and docking zones.</div><div class="map-hint">Four faction home territories are separated by neutral corridors. Colored markers show home bases and gates; white marker is your ship.</div>
 <div class="notice" style="margin-bottom:10px">All sectors are open. Danger increases with enemy tier, not invisible barriers.</div><div id="zoneList" class="zone-list"></div><h3 style="margin-top:15px">Outer Meridian transit network</h3><p class="map-hint">Plot a route or dock at any station and jump directly to an outer relay for 85 SC. Transit is simulated.</p><div id="warp16FrontierList" class="gate-list"></div></div>
     <div id="gatesDrawer" class="hud drawer"><h3>Interstellar Jump Gates</h3><div class="notice">North, east, south and west gates lead to four other star systems. Plot a safe route, brake, and cross the portal.</div><div id="gateList" class="gate-list"></div></div><div id="factionDrawer" class="hud drawer" aria-label="Faction management">
 <h3>Faction territories</h3>
@@ -261,9 +246,7 @@
       <p class="v14-sub" id="v14BellDetails"></p>
       <div class="v14-actions"><button id="v14BellRoute">Plot course to Rift</button><button id="v14BellEntry">Enter Heart Chamber</button><button id="v14BellExit" class="hidden">Extract cargo</button></div>
       <div class="v14-caption">Expedition ledger</div><p id="v14RiftCount" class="v14-sub"></p><p id="v14RiftResult" class="v14-sub"></p>
-      <div class="v14-caption">Graphics & access</div>
-       <p class="v14-sub">Immersive 3D uses your graphics hardware. The 2D renderer remains available as a fallback and can be selected from the right-side VIEW button. Ships move on the existing navigation plane; the camera, spacecraft, asteroids, stations, weapons and background are rendered in 3D.</p>
-       <label class="v14-sub" style="display:block;margin:10px 0">3D camera distance <input id="warp3dZoom" type="range" min="70" max="160" value="100" aria-label="Third-person 3D camera distance" style="width:min(210px,100%);vertical-align:middle;accent-color:#86dfff"></label><label class="v14-sub">Visual quality <select id="v14Quality"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="auto">Auto</option></select></label>
+      <div class="v14-caption">Graphics & access</div><label class="v14-sub">Visual quality <select id="v14Quality"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="auto">Auto</option></select></label>
       <label class="v14-sub" style="display:block;margin-top:10px"><input id="v14ReducedMotion" type="checkbox"> Reduced motion and flashes</label>
        <label class="v14-sub" style="display:block;margin-top:12px">Sound volume <input id="warpAudioVolume" type="range" min="0" max="100" value="65" aria-label="Sound effect and space ambiance volume"></label>
        <p class="v14-sub">Sound is off until enabled. Click Sound OFF on the right console to hear the original space ambience and engine effects.</p>
@@ -277,11 +260,6 @@
  <div class="gate-entry"><div><strong>Support drones</strong><small>Deploy or recall owned mining and escort drones.</small></div><button id="deployDronesBtn">Toggle</button></div>
 </div></div>
 
-  <div id="v22MobileFlight" class="hud" aria-label="3D touch flight controls">
-    <button id="v22TurnLeft" aria-label="Turn ship left" title="Turn left">◀</button>
-    <button id="v22Thrust" aria-label="Thrust ship forward" title="Hold to thrust">THRUST</button>
-    <button id="v22TurnRight" aria-label="Turn ship right" title="Turn right">▶</button>
-  </div>
   <div id="stationPrompt" class="hud"><b>Tap space</b> to plot a course · <b>Tap ore</b> to mine</div>
 
   <div id="actionBar" class="hud">
@@ -384,8 +362,6 @@
 <script src="./space-audio.js"></script>
 <script src="./space-visuals.js"></script>
 <script src="./combat-fx.js"></script>
-<script src="./scene-3d-core.js"></script>
-<script src="./scene-3d.js"></script>
 <script>
 (()=>{
 'use strict';
@@ -466,12 +442,10 @@ let autopilot=null,miningTarget=null,pointer={x:0,y:0,inside:false},pressed={},d
 const canvas=$('space'),ctx=canvas.getContext('2d');
 const warpAudio=window.WarpAudio?.create?.()||null;
 const warpCombatFX=window.WarpCombatFX?.create?.()||null;
-const scene3d=window.Warp3D?.create?.($('space3d'))||null;
-let warp22ReportedFallback=false;
 let touchFireHeld=false;
 let warp20LastAudioTick=0,warp20PreviousCruise=false;
 function DPR(){return Math.min(2,window.devicePixelRatio||1)}
-function resize(){canvas.width=Math.floor(innerWidth*DPR());canvas.height=Math.floor(innerHeight*DPR());ctx.setTransform(DPR(),0,0,DPR(),0,0);scene3d?.resize?.(innerWidth,innerHeight,DPR())} addEventListener('resize',resize); resize();
+function resize(){canvas.width=Math.floor(innerWidth*DPR());canvas.height=Math.floor(innerHeight*DPR());ctx.setTransform(DPR(),0,0,DPR(),0,0)} addEventListener('resize',resize); resize();
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))} function norm(vx,vy){const m=Math.hypot(vx,vy)||1; return [vx/m,vy/m,m]}
 function save(){localStorage.setItem('tokenverse-deep-space-v10',JSON.stringify(S))}
 function log(msg){logs.unshift({t:new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),msg:msg.replace(/[<>]/g,'')}); logs=logs.slice(0,22); renderLog();}
@@ -700,10 +674,7 @@ function repairShip(){if(!dockedStation)return toast('Dock first');if(S.hp>=S.ma
 function craft(cat,key){if(!dockedStation)return toast('Dock first');if(cat==='guns'&&!S.blueprints[key])return toast('Research this weapon blueprint first.'); const item=(cat==='guns'?GUNS[key]:UTILS[key]); if(!item||!item.cost||S.crafted[cat][key]) return; if(!spend(item.cost)) return toast('Need '+costText(item.cost)); S.crafted[cat][key]=true; log('Crafted '+item.name+'.'); toast(item.name+' crafted'); save(); renderUI()}
 function equip(cat,key){if(!dockedStation) return toast('Dock first'); if(cat==='guns'){if(!S.crafted.guns[key]) return; S.equipped.gun=key; log('Equipped '+GUNS[key].name+'.')} else {if(!S.crafted.utils[key]) return; S.equipped.utility=key; if(key==='shield'){S.maxHp=activeShip().hull+20; S.hp=Math.min(S.maxHp,S.hp+20)} else {S.maxHp=activeShip().hull; S.hp=Math.min(S.hp,S.maxHp)} log('Equipped '+UTILS[key].name+'.')} save(); renderUI()}
 function upgradeSys(kind){if(!dockedStation) return toast('Dock first'); const lv=S.upgrades[kind]; if(lv>=5) return toast('Already maxed'); const cost={credits:120*lv,tokens:{}}; if(kind==='thrusters') cost.tokens.neon=lv; if(kind==='mining'){if(lv<3) cost.tokens.neon=1+lv; else if(lv===3) cost.tokens.dust=2; else cost.tokens.diam=1;} if(kind==='cargo'){if(lv<3) cost.tokens.moon=1+lv; else if(lv===3) cost.tokens.neon=2; else cost.tokens.dust=2;} if(!spend(cost)) return toast('Need '+costText(cost)); S.upgrades[kind]++; log('Upgraded '+kind+' to Mk-'+S.upgrades[kind]+'.'); save(); renderUI()}
-function updateAim(dt=.016){
- if(warp22Enabled()&&!autopilot){
-   warp22Steer(dt);return;
- }
+function updateAim(){
  if(pointer.inside&&!autopilot){const dx=pointer.x-innerWidth/2,dy=pointer.y-innerHeight/2;if(Math.hypot(dx,dy)>4)S.angle=Math.atan2(dy,dx);}
  else if(autopilot){const to=autopilot.path[autopilot.step]||{x:autopilot.x,y:autopilot.y};S.angle=Math.atan2(to.y-S.y,to.x-S.x);}
  else if(Math.hypot(S.vx,S.vy)>20)S.angle=Math.atan2(S.vy,S.vx);
@@ -1199,98 +1170,7 @@ function drawNavigationChart(){
   drawTacticalRadar(g,{x:0,y:0,w:map.width,h:map.height});
 }
 
-
-/* v0.22 — WebGL2 world projection. The underlying ship simulation stays planar and unmodified. */
-function warp22Enabled(){return S.settings.view3D!==false&&!!scene3d?.available&&!scene3d.failed;}
-function warp22RefreshMode(){
- const on=warp22Enabled();
- $('space3d').style.display=on?'block':'none';
- $('viewModeLabel').textContent=on?'◆ 3D ON':'▧ 2D VIEW';
- $('gameShell').classList.toggle('warp-3d-mode',on);
- $('viewModeBtn').setAttribute('aria-pressed',String(on));
- $('viewModeBtn').classList.toggle('view-3d-active',on);
- $('stationPrompt').innerHTML=on?
-  '<b>3D FLIGHT</b> · Drag to steer · W thrust · Hold F to fire · Tap to plot course':
-  '<b>Tap space</b> to plot a course · <b>Tap ore</b> to mine';
-}
-function warp22ToggleMode(){
- if(!scene3d?.available||scene3d.failed){
-  S.settings.view3D=false;warp22RefreshMode();
-  toast('3D needs WebGL2 graphics support. Classic 2D is still available.');return;
- }
- S.settings.view3D=!warp22Enabled();
- warp22RefreshMode();save();
- toast(warp22Enabled()?'Immersive 3D enabled':'Classic 2D map enabled');
-}
-function warp22Steer(dt){
- const keyTurn=(pressed.q||pressed.Q?-1:0)+(pressed.r||pressed.R?1:0);
- const pointerTurn=pointer.inside?
-  Math.max(-1,Math.min(1,(pointer.x-innerWidth*.5)/Math.max(innerWidth*.37,1))):0;
- const turn=keyTurn||pointerTurn;
- if(Math.abs(turn)>.07)S.angle+=turn*dt*2;
-}
-function warp22Draw(){
- if(!warp22Enabled())return false;
- const t=performance.now()/1000,w=innerWidth,h=innerHeight;
- const ok=scene3d.render({
-  ship:S,shipShape:activeShip(),asteroids,drones,bullets,particles,
-  stations:S.system==='homestead'?[]:STATIONS,gates:S.system==='homestead'?[]:GATES,
-  outposts:S.outposts||[],patrols:factionPatrols,convoys:v14NpcConvoys,
-  boss:extBoss,signal:S.roaming?.active,autopilot,
-  rift:S.rift,riftBullets:v14RiftBullets,star:S.system==='homestead'?WARP_STAR:null,
-  quality:S.settings.quality,reducedMotion:!!S.settings.reducedMotion,
-  zoom:S.settings.cameraZoom||1,
-  time:t,cruising:warp18Cruising,thrust:!!(pressed.w||pressed.ArrowUp||autopilot)
- });
- if(!ok){
-  S.settings.view3D=false;$('space3d').style.display='none';
-  if(!warp22ReportedFallback){
-   warp22ReportedFallback=true;log('3D graphics unavailable; game switched to reliable 2D rendering.');
-  }
-  warp22RefreshMode();return false;
- }
- ctx.clearRect(0,0,w,h);
- // 2D glass HUD over the true perspective world: the minimap remains readable.
- if(!S.rift?.inside){const radar=hudRadarBounds(w,h);if(radar)drawTacticalRadar(ctx,radar);}
- drawNavigationChart();
- ctx.save();ctx.strokeStyle='rgba(142,241,249,.84)';ctx.lineWidth=1.5;
- const cx=w*.5,cy=h*.45;ctx.beginPath();
- ctx.moveTo(cx-18,cy);ctx.lineTo(cx-6,cy);ctx.moveTo(cx+6,cy);ctx.lineTo(cx+18,cy);
- ctx.moveTo(cx,cy-18);ctx.lineTo(cx,cy-7);ctx.moveTo(cx,cy+7);ctx.lineTo(cx,cy+18);ctx.stroke();
- ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.stroke();
- // Project live 3D targets into the readable glass-HUD overlay.
- const targets=[];
- for(const st of (S.system==='homestead'?[]:STATIONS)){
-  const d=Math.hypot(S.x-st.x,S.y-st.y);
-  if(d<2100)targets.push({x:st.x,y:st.y,h:95,
-    name:st.name||'STATION',distance:Math.round(d),color:'#9be8fc'});
- }
- for(const gate of (S.system==='homestead'?[]:GATES)){
-  const d=Math.hypot(S.x-gate.x,S.y-gate.y);
-  if(d<1500)targets.push({x:gate.x,y:gate.y,h:120,
-    name:'JUMP GATE',distance:Math.round(d),color:gate.color||'#b1f9ff'});
- }
- if(S.roaming?.active?.system===S.system){
-  const sig=S.roaming.active,d=Math.hypot(S.x-sig.x,S.y-sig.y);
-  if(d<2200)targets.push({x:sig.x,y:sig.y,h:95,
-   name:(sig.kind||'SIGNAL').toUpperCase(),distance:Math.round(d),color:'#e4b5ff'});
- }
- ctx.font='bold 10px system-ui';ctx.textAlign='center';
- for(const target of targets.slice(0,12)){
-   const at=scene3d.project(target.x,target.y,target.h,S.x,S.y);
-   if(!at||at.x<100||at.x>w-100||at.y<110||at.y>h-105)continue;
-   ctx.fillStyle=target.color;ctx.globalAlpha=.91;
-   ctx.fillText(target.name+' · '+target.distance.toLocaleString()+' u',at.x,at.y);
- }
- ctx.globalAlpha=1;
- ctx.font='bold 10px system-ui';ctx.textAlign='center';
- ctx.fillStyle='rgba(142,238,255,.8)';ctx.fillText('THIRD-PERSON FLIGHT',cx,cy+41);
- if(autopilot)ctx.fillText('NAVIGATION ROUTE ACTIVE · WARP DRIVE AVAILABLE',cx,cy+57);
- ctx.restore();
- return true;
-}
-
-function draw(){if(warp22Draw())return;if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=innerHeight,t=performance.now()/1000; ctx.clearRect(0,0,w,h); const bg=ctx.createRadialGradient(w*.72,h*.22,40,w*.52,h*.5,Math.max(w,h)); bg.addColorStop(0,'#2a2660'); bg.addColorStop(.46,'#0c1c49'); bg.addColorStop(1,'#020714'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h); if(!window.WarpVisuals?.backdrop?.(ctx,{w,h,x:S.x,y:S.y,t,system:S.system,quality:S.settings.quality||'medium',reducedMotion:!!S.settings.reducedMotion}))v14VisualBackdrop(ctx,w,h,t);ctx.save(); if(shake>0){ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake); shake*=.82}
+function draw(){if(S.rift?.inside){v14RiftDraw();return;}const w=innerWidth,h=innerHeight,t=performance.now()/1000; ctx.clearRect(0,0,w,h); const bg=ctx.createRadialGradient(w*.72,h*.22,40,w*.52,h*.5,Math.max(w,h)); bg.addColorStop(0,'#2a2660'); bg.addColorStop(.46,'#0c1c49'); bg.addColorStop(1,'#020714'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h); if(!window.WarpVisuals?.backdrop?.(ctx,{w,h,x:S.x,y:S.y,t,system:S.system,quality:S.settings.quality||'medium',reducedMotion:!!S.settings.reducedMotion}))v14VisualBackdrop(ctx,w,h,t);ctx.save(); if(shake>0){ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake); shake*=.82}
  if(!window.WarpVisuals?.starfield?.(ctx,{w,h,x:S.x,y:S.y,t,system:S.system,quality:S.settings.quality||'medium',reducedMotion:!!S.settings.reducedMotion,cruising:warp18Cruising})){for(let i=0;i<240;i++){const sx=((i*129.13-S.x*.11)%w+w)%w, sy=((i*77.33-S.y*.11)%h+h)%h; ctx.fillStyle=i%9===0?'#c7f7ff':i%4===0?'#93baf8':'#5870a8'; const rr=i%9===0?1.8:1; ctx.beginPath(); ctx.arc(sx,sy,rr,0,7); ctx.fill()}}
 
  if(warp18Cruising&&!S.settings.reducedMotion){
@@ -1934,7 +1814,7 @@ function v14Chime(type){
   setTimeout(()=>c.close(),1200);
  }catch{/* Muted browsers can reject audio context; subtitles remain. */}
 }
-function v14RiftAim(){if(warp22Enabled()){warp22Steer(.025);return;}if(pointer.inside){const dx=pointer.x-innerWidth/2,dy=pointer.y-innerHeight/2;if(Math.hypot(dx,dy)>6)S.angle=Math.atan2(dy,dx);}}
+function v14RiftAim(){if(pointer.inside){const dx=pointer.x-innerWidth/2,dy=pointer.y-innerHeight/2;if(Math.hypot(dx,dy)>6)S.angle=Math.atan2(dy,dx);}}
 function v14RiftFire(){const now=performance.now()/1000,gun=GUNS[S.equipped.gun];if(now-v14LastRiftFire<gun.fireRate)return;v14LastRiftFire=now;
  warpCombatFX?.muzzle({x:S.x+Math.cos(S.angle)*31,y:S.y+Math.sin(S.angle)*31,angle:S.angle,weapon:S.equipped.gun,color:gun.color});
  S.energy=Math.max(0,S.energy-2.5);
@@ -2595,7 +2475,7 @@ function warp16Transit(id){
  log('Meridian transit complete: '+to.name+' · 85 SC fare.');
  toast('Arrived at '+to.name);save();renderUI(true);
 }
-v14Init();v14SpawnConvoys();warpInit();warp16Init();warp17Init();warp18Init();warp19Init();warp20Init();factionInit();warpInitializeUI();warp19BuildUI();warp22RefreshMode();
+v14Init();v14SpawnConvoys();warpInit();warp16Init();warp17Init();warp18Init();warp19Init();warp20Init();factionInit();warpInitializeUI();warp19BuildUI();
 function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Chamber",tier:"EVENT"}:currentZone();$('systemTag').textContent=SYSTEMS[S.system].name;$('factionTag').textContent=S.faction?FACTIONS[S.faction].name:'Unaligned';$('factionTag').style.color=S.faction?FACTIONS[S.faction].color:'#dceafa'; $('zoneTag').textContent=zone.name+' · '+zone.tier; $('dockTag').textContent=dockedStation?('Dock: '+dockedStation.name):'Dock: no'; $('hostileTag').textContent=drones.filter(d=>Math.hypot(d.x-S.x,d.y-S.y)<700).length+' hostiles'; $('coordsTag').textContent='X '+Math.round(S.x)+' • Y '+Math.round(S.y); $('topCredits').innerHTML=S.credits+' <small>SC</small>'; $('hpText').textContent=Math.round(100*S.hp/S.maxHp)+'%'; $('energyText').textContent=Math.round(S.energy)+'%'; $('cargoText').textContent=cargoCount()+' / '+cargoCap(); $('speedText').textContent=Math.round(Math.hypot(S.vx,S.vy)); $('xpText').textContent=S.xp; $('gunText').textContent=GUNS[S.equipped.gun].name.replace(' Blaster','').replace(' Cannon','');$('damageBonusText').textContent='+'+damagePercent()+'%';$('combatReadout').textContent=activeShip().name+' · '+actualDamage()+' DMG / hit · '+gunDps()+' DPS · Mk-'+gunLevel(); $('assistBtnState').textContent=S.settings.assist?'ON':'OFF'; $('hpBar').style.width=(100*S.hp/S.maxHp)+'%'; $('energyBar').style.width=S.energy+'%'; $('cargoBar').style.width=(100*cargoCount()/cargoCap())+'%'; $('stationBtn').disabled=!dockedStation; $('stationPrompt').classList.toggle('hidden', !!dockedStation); $('stationSubtitle').textContent=dockedStation?('Docked at '+dockedStation.name):'Dock first'; $('stationTitle').textContent=dockedStation?(dockedStation.name+' • Ship console'):'Station services'; if(!dockedStation)$('stationModal').classList.remove('open'); $('toggleSound').setAttribute('aria-pressed',String(S.settings.sound)); $('toggleSound').title=S.settings.sound?'Mute audio':'Enable space ambience and effects';
  $('audioToggleLabel').textContent=S.settings.sound?'Sound ON':'Sound OFF';
  $('toggleSound').classList.toggle('warp20-sound-on',!!S.settings.sound);
@@ -2617,7 +2497,7 @@ function renderUI(includePanels=true){const zone=S.rift?.inside?{name:"Heart Cha
 function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt)){
  if(pressed.f||touchFireHeld)fireGun();
  warpCombatFX?.tick(dt);return;
-}updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim(dt);if(pressed.f||touchFireHeld)fireGun(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt);
+}updateGates();extUpdate(dt);updateFactionPatrols(dt); S.energy=Math.min(100,S.energy+dt*(14+(S.equipped.utility==='overdrive'?2:0))); if(clickMarker&&clickMarker.lock){clickMarker.x=clickMarker.lock.x; clickMarker.y=clickMarker.lock.y;} if(clickMarker){clickMarker.life=Math.max(0,clickMarker.life-dt); if(clickMarker.life<=0&&!autopilot) clickMarker=null;} updateAim();if(pressed.f||touchFireHeld)fireGun(); updateShip(dt); updateAsteroidCollision(); updateMining(dt); updateDrones(dt); updateBullets(dt); updateParticles(dt);warp19Tick(dt);
  if(performance.now()-warp20LastAudioTick>230){
   warp20LastAudioTick=performance.now();
   warpAudio?.update({cruising:warp18Cruising,speed:Math.hypot(S.vx,S.vy),
@@ -2626,26 +2506,9 @@ function update(dt){clock+=dt;warpTick(dt);if(v14GameplayTick(dt)){
 }
 let lastPersist=performance.now();function loop(ts){const dt=Math.min(.05,(ts-lastTime)/1000); lastTime=ts; update(dt); draw(); if((ts|0)%260<17) renderUI(false); if(ts-lastPersist>4000){lastPersist=ts;save();} requestAnimationFrame(loop)}
 function toggleDrawer(id){const d=$(id),opening=!d.classList.contains('open');document.querySelectorAll('.drawer').forEach(el=>el.classList.remove('open')); if(opening)d.classList.add('open');for(const [btn,panel] of Object.entries({toggleWallet:'walletDrawer',toggleCargo:'cargoDrawer',toggleMap:'mapDrawer',toggleGates:'gatesDrawer',toggleFaction:'factionDrawer'}))$(btn).setAttribute('aria-expanded',String($(panel).classList.contains('open')));}
-addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower)||(warp22Enabled()&&['q','r'].includes(lower)))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='h'&&!e.repeat)warp20ToggleDrive();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();else if(lower==='e'&&!e.repeat)warp19Claim();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
+addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;const k=e.key,lower=k.toLowerCase();if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();if($('stationModal').classList.contains('open')){if(k==='Escape')$('stationModal').classList.remove('open');return;}if(['w','s','a','d','arrowup','arrowdown','arrowleft','arrowright','shift',' '].includes(lower))manualOverride();pressed[k]=true;pressed[lower]=true;if(lower==='f')fireGun();if(lower==='j'&&!e.repeat)warp18PulseJump();if(lower==='h'&&!e.repeat)warp20ToggleDrive();if(lower==='m'&&!S.rift?.inside)mineNearest();if(lower==='e'&&S.rift?.inside)v14TryExtract();else if(lower==='e'&&!e.repeat)warp19Claim();if(k==='Escape'){autopilot=null;miningTarget=null;clickMarker=null;$('stationModal').classList.remove('open');}});
 addEventListener('keyup',e=>{pressed[e.key]=false; pressed[e.key.toLowerCase()]=false});
- canvas.addEventListener('pointerup',e=>{if(e.pointerType==='touch'||e.pointerType==='pen')pointer.inside=false;});
-canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const picked=warp22Enabled()?scene3d.pick(e.clientX,e.clientY,S.x,S.y):null;
- const wx=picked?.x??(S.x+(e.clientX-innerWidth/2)),wy=picked?.y??(S.y+(e.clientY-innerHeight/2));if(S.rift?.inside){v14RiftClick(wx,wy);return;} if(warp19Click(wx,wy))return;if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
-$('viewModeBtn').onclick=warp22ToggleMode;
-function warp22BindTouchButton(id,key){
- const btn=$(id),stop=()=>{pressed[key]=false;};
- btn.addEventListener('pointerdown',e=>{
-  e.preventDefault();manualOverride();pressed[key]=true;
-  try{btn.setPointerCapture?.(e.pointerId);}catch{}
- });
- btn.addEventListener('pointerup',stop);
- btn.addEventListener('pointercancel',stop);
- btn.addEventListener('lostpointercapture',stop);
- addEventListener('blur',stop);
-}
-warp22BindTouchButton('v22TurnLeft','q');
-warp22BindTouchButton('v22Thrust','w');
-warp22BindTouchButton('v22TurnRight','r');
+canvas.addEventListener('pointermove',e=>{pointer.x=e.clientX; pointer.y=e.clientY; pointer.inside=true}); canvas.addEventListener('pointerleave',()=>pointer.inside=false); canvas.addEventListener('contextmenu',e=>e.preventDefault()); canvas.addEventListener('pointerdown',e=>{if(e.button===2){fireGun(); return} const wx=S.x+(e.clientX-innerWidth/2), wy=S.y+(e.clientY-innerHeight/2);if(S.rift?.inside){v14RiftClick(wx,wy);return;} if(warp19Click(wx,wy))return;if(extClick(wx,wy))return;let station=STATIONS.find(st=>Math.hypot(st.x-wx,st.y-wy)<48); if(station){routeToStation(station.id);return} let target=asteroids.filter(a=>a.ore>0).sort((a,b)=>Math.hypot(a.x-wx,a.y-wy)-Math.hypot(b.x-wx,b.y-wy))[0]; if(target&&Math.hypot(target.x-wx,target.y-wy)<target.r+24){setAutopilot('mine',target.x,target.y,target);return}const gate=GATES.find(g=>Math.hypot(g.x-wx,g.y-wy)<92);if(gate){routeGate(gate.id);return;}setAutopilot('point',clamp(wx,0,WORLD.w),clamp(wy,0,WORLD.h))});
 $('toggleWallet').onclick=()=>toggleDrawer('walletDrawer'); $('toggleCargo').onclick=()=>toggleDrawer('cargoDrawer'); $('toggleMap').onclick=()=>toggleDrawer('mapDrawer'); $('toggleGates').onclick=()=>{renderGates();toggleDrawer('gatesDrawer')};$('toggleFaction').onclick=()=>{renderFactionUI();toggleDrawer('factionDrawer')}; $('gateList').addEventListener('click',e=>{const b=e.target.closest('[data-gate]');if(b){routeGate(b.dataset.gate);$('gatesDrawer').classList.remove('open');}}); $('toggleLog').onclick=()=>{const hidden=$('quickLog').classList.toggle('hidden');$('toggleLog').setAttribute('aria-expanded',String(!hidden));}; $('toggleSound').onclick=()=>{
  S.settings.sound=!S.settings.sound;
  if(S.settings.sound){
@@ -2704,19 +2567,6 @@ $('v14BellEntry').onclick=v14EnterRift;
 $('v14BellExit').onclick=v14TryExtract;
 $('v14Quality').addEventListener('change',e=>{S.settings.quality=e.target.value;save();toast('Quality: '+e.target.value);});
 $('v14ReducedMotion').addEventListener('change',e=>{S.settings.reducedMotion=!!e.target.checked;save();});
- S.settings.cameraZoom=clamp(Number(S.settings.cameraZoom)||1,.7,1.6);
- $('warp3dZoom').value=Math.round(S.settings.cameraZoom*100);
- $('warp3dZoom').addEventListener('input',e=>{
-  S.settings.cameraZoom=clamp((Number(e.target.value)||100)/100,.7,1.6);
-  save();
- });
- canvas.addEventListener('wheel',e=>{
-  if(!warp22Enabled())return;
-  e.preventDefault();
-  S.settings.cameraZoom=clamp((S.settings.cameraZoom||1)+(Math.sign(e.deltaY)*.09),.7,1.6);
-  $('warp3dZoom').value=Math.round(S.settings.cameraZoom*100);
-  save();
- },{passive:false});
  $('warpAudioVolume').value=Math.round((S.settings.audioVolume??.65)*100);
  $('warpAudioVolume').addEventListener('input',e=>{
   S.settings.audioVolume=clamp((Number(e.target.value)||0)/100,0,1);
@@ -2750,7 +2600,7 @@ $('factionDrawer').addEventListener('click',e=>{const b=e.target.closest('button
 $('factionSelectModal').addEventListener('click',e=>{const b=e.target.closest('[data-faction-join]');if(b)factionJoin(b.dataset.factionJoin);});
 $('factionHomeBtn').onclick=factionHomeRoute;
 $('hullColor').value=S.ship.hull; $('accentColor').value=S.ship.accent;
-renderLog();renderUI();setTab('market');save();log('Warp Coin v0.22 · Immersive WebGL2 3D galaxy with a 2D fallback and unchanged pilot saves.');requestAnimationFrame(loop);
+renderLog();renderUI();setTab('market');save();log('Warp Coin v0.21 · Weapons Reforged: animated bolts, impact rings, muzzle flashes and hold-to-fire.');requestAnimationFrame(loop);
 })();
 </script>
 </body>
