@@ -109,6 +109,17 @@ function pickRay(camera,px,py,worldX,worldY,planeHeight=0){
  if(t<0||t>9000)return null;
  return {x:worldX+camera.eye[0]+dir[0]*t,y:worldY+camera.eye[2]+dir[2]*t,range:t};
 }
+function project(camera,x,y,z){
+ if(!camera||![x,y,z].every(Number.isFinite))return null;
+ const mat=multiply(camera.projection,camera.view);
+ const pos=[x,y,z,1],out=[0,0,0,0];
+ for(let r=0;r<4;r++)for(let k=0;k<4;k++)out[r]+=mat[k*4+r]*pos[k];
+ const w=out[3];
+ if(w<=0.01)return null;
+ const nx=out[0]/w,ny=out[1]/w,nz=out[2]/w;
+ if(Math.abs(nx)>1.12||Math.abs(ny)>1.12||Math.abs(nz)>1.1)return null;
+ return {x:(nx+1)*camera.width*.5,y:(1-ny)*camera.height*.5,depth:w};
+}
 const VERTEX=[
  '#version 300 es','precision highp float;','in vec3 aPos;','in vec3 aNormal;',
  'uniform mat4 uVP;','uniform mat4 uModel;','uniform float uSize;',
@@ -131,5 +142,5 @@ const FRAGMENT=[
  'outColor=vec4(c,uOpacity);','}'
 ].join('\n');
 root.Warp3DCore=Object.freeze({perspective,lookAt,multiply,model,hash,color,
- geometry,triangles,torus,cameraFor,pickRay,VERTEX,FRAGMENT});
+ geometry,triangles,torus,cameraFor,pickRay,project,VERTEX,FRAGMENT});
 })(typeof window!=='undefined'?window:typeof globalThis!=='undefined'?globalThis:this);
