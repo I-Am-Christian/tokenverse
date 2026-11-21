@@ -1271,7 +1271,15 @@ function warp25DrawFleet(){
   if(!warp25VisibleScreen(x,y,110*bot.size))continue;
   const desc=window.WarpGalaxyLife?.role?.(bot.role);
   const col=desc?.color||'#9abff5';
-  ctx.save();ctx.translate(x,y);ctx.rotate(bot.angle);ctx.scale(bot.size,bot.size);
+  if(window.WarpShipDesigns?.draw){
+   const kind=window.WarpShipDesigns.typeFor(bot.id,bot.role);
+   window.WarpShipDesigns.draw(ctx,{x,y,angle:bot.angle,
+    scale:bot.size,kind,hull:bot.role==='raider'?'#855365':
+     bot.role==='miner'?'#648e89':bot.role==='freighter'?'#8c8b88':'#779aba',
+    accent:col,trim:'#d5e6f4',quality:S.settings.quality||'medium',
+    thrust:Math.hypot(bot.vx||0,bot.vy||0)>28,time:t});
+  }else{
+   ctx.save();ctx.translate(x,y);ctx.rotate(bot.angle);ctx.scale(bot.size,bot.size);
   ctx.shadowColor=col;ctx.shadowBlur=S.settings.quality==='low'?0:9;
   ctx.fillStyle=bot.role==='raider'?'#492239':bot.role==='freighter'?'#393d47':'#203852';
   ctx.strokeStyle=col;ctx.lineWidth=2;
@@ -1303,6 +1311,8 @@ function warp25DrawFleet(){
    ctx.beginPath();ctx.moveTo(24,0);ctx.lineTo(62,9*Math.sin(t*6));ctx.stroke();
   }
   ctx.restore();
+
+  }
   ctx.save();ctx.textAlign='center';ctx.font='bold 10px system-ui';ctx.fillStyle=col;
   if(Math.hypot(bot.x-S.x,bot.y-S.y)<1400||warp25Zoom()>1)
     ctx.fillText(desc?.title||'BOT',x,y-30*bot.size);
@@ -2637,6 +2647,15 @@ function v14SkinPalette(previewId=null){const id=previewId||S.cosmetics.equipped
 }
 function v14FittedHue(value){return typeof value==='string'&&/^#[\da-f]{6}$/i.test(value)?value:'#a0d8ee';}
 function v14DrawFactionHull(g,x,y,angle=0,scale=1,preview=null){const f=S.faction||'solar',p=v14SkinPalette(preview);
+ if(window.WarpShipDesigns?.draw){
+  const sp=activeShip(),kind=window.WarpShipDesigns.typeFor(S.shipId,sp.role);
+  return window.WarpShipDesigns.draw(g,{x,y,angle,
+   scale:scale*(sp.visualScale||1),kind,hull:p.hull||S.ship.hull,
+   accent:p.trail||S.ship.accent,trim:p.trim||'#d9f1ff',
+   quality:S.settings.quality||'medium',
+   thrust:!!(pressed.w||autopilot||S.rift?.waypoint),
+   time:performance.now()/1000});
+ }
  const sp=activeShip(),wing=Math.min(44,Math.max(18,sp.wing||21));
  g.save();g.translate(x,y);g.rotate(angle);g.scale(scale*(sp.visualScale||1),scale*(sp.visualScale||1));
  const engineGlow=p.trail;
