@@ -25,7 +25,7 @@ function factionSmoke(html){
  assert(api.WORLD.w===192000&&api.WORLD.h===115200,'world not fourfold');
  result.world=[api.WORLD.w,api.WORLD.h];result.factions=Object.keys(api.FACTIONS);
  result.stations=api.STATIONS.length;result.ships=Object.keys(api.SHIPS).length;result.guns=Object.keys(api.GUNS).length;
- assert(result.ships===36&&result.guns===9,'existing ships/guns overwritten');
+ assert(result.ships===40&&result.guns===14,'existing ships/guns overwritten');
  assert(elem('factionSelectModal').classList.contains('open'),'first-join UI not shown');
  for(const [id,f] of Object.entries(api.FACTIONS)){
   assert(api.factionTerritoryAt(f.home.x,f.home.y)?.id===id,'territory ownership mismatch '+id);
@@ -68,7 +68,7 @@ test('four factions, protected home regions, reputation, docking, and world expa
  const html=fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
  const result=factionSmoke(html);
  assert.equal(result.factions.length,4);
- assert.equal(result.ships,36);
+ assert.equal(result.ships,40);
  assert.equal(result.guns,9);
  assert.equal(result.patrols,28);
  assert.deepEqual(result.world,[192000,115200]);
